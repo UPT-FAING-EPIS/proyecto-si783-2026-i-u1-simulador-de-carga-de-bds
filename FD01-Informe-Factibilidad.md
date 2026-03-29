@@ -18,7 +18,7 @@ Docente: *MAG.PATRICK CUADROS QUIROGA*
 
 Integrantes:
 
-***Edgar Diego Chara Apaza        (2019065026)***  
+***Vargas Luque, Jhony             (2019065026)***  
 ***Abel Fernando Pacompía Ortiz   (2023076797)***
 
 **Tacna – Perú**
@@ -28,7 +28,7 @@ Integrantes:
 </center>
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-Sistema *Desarrollo de un sistema de detección de intrusos (IDS) para monitoreo de tráfico de red*
+Sistema *SimCargaDB*
 
 Informe de Factibilidad
 
@@ -76,33 +76,34 @@ Versión *{1.0}*
 
     1.1. Nombre del proyecto
    
-Desarrollo de un sistema básico de detección de intrusos (IDS) para monitoreo de tráfico de red
+SimCargaDB
 
     1.2. Duración del proyecto
+    
+El proyecto tiene una duracion de 4 semanas (1 mes)
 
     1.3. Descripción
 
-En la actualidad, el uso de redes informáticas se ha incrementado significativamente en entornos académicos, empresariales y personales, lo que ha generado también un aumento en las amenazas de seguridad informática, como accesos no autorizados, ataques de denegación de servicio y escaneo de puertos.
+El proyecto SimCargaDB consiste en el desarrollo de un sistema que permite simular la carga de trabajo en bases de datos, con el objetivo de analizar su comportamiento y rendimiento ante múltiples solicitudes.
 
-Muchas redes, especialmente en entornos pequeños o educativos, no cuentan con mecanismos adecuados para detectar actividades sospechosas en tiempo real. Esta falta de monitoreo permite que posibles intrusiones pasen desapercibidas, comprometiendo la integridad, confidencialidad y disponibilidad de la información.
+Este proyecto se realiza en el contexto académico universitario, como parte del aprendizaje en el área de sistemas y desarrollo de software. Su propósito es aplicar conocimientos teóricos en una solución práctica que permita comprender mejor el funcionamiento de las bases de datos en escenarios de uso real.
 
-Además, las soluciones comerciales de detección de intrusos suelen ser complejas y costosas, lo que limita su implementación en contextos académicos o de bajo presupuesto. Esto genera la necesidad de desarrollar herramientas accesibles que permitan analizar el tráfico de red y detectar comportamientos anómalos de manera eficiente.
-
-Por lo tanto, surge la necesidad de diseñar e implementar un sistema básico de detección de intrusos (IDS) que permita monitorear el tráfico de red, identificar posibles amenazas mediante reglas simples y generar alertas oportunas, contribuyendo así a mejorar la seguridad y el control en redes locales.
+Además, busca aportar una herramienta básica que facilite la evaluación del rendimiento de sistemas, permitiendo identificar posibles mejoras y optimizaciones.
 
     1.4. Objetivos
 
         1.4.1 Objetivo general
 
-Desarrollar un sistema básico de detección de intrusos (IDS) capaz de monitorear el tráfico de red y generar alertas ante posibles actividades sospechosas.
+Desarrollar un sistema simulador de carga de bases de datos que permita ejecutar operaciones concurrentes y analizar el rendimiento mediante métricas y reportes.
 
         1.4.2 Objetivos Específicos
         
-- Implementar un módulo de captura de paquetes de red en tiempo real mediante librerías especializadas
-- Desarrollar un sistema de análisis basado en reglas para identificar patrones de tráfico sospechoso 
-- Detectar comportamientos anómalos como escaneo de puertos o intentos de acceso repetidos 
-- Generar alertas clasificadas según el nivel de riesgo detectado 
-- Validar el sistema mediante pruebas funcionales e integración 
+- Implementar la conexión a bases de datos (MySQL y PostgreSQL)  
+- Desarrollar la simulación de usuarios virtuales y ejecución concurrente  
+- Implementar operaciones de carga (SELECT, INSERT, UPDATE, DELETE)  
+- Registrar métricas de rendimiento y tiempos de ejecución  
+- Generar reportes y visualización de resultados  
+- Realizar pruebas del sistema y validar su funcionamiento 
             
             Para cada objetivo específico se indicara que se va a lograr
 
@@ -112,23 +113,24 @@ Desarrollar un sistema básico de detección de intrusos (IDS) capaz de monitore
 
 2.1. Limitaciones técnicas
 
-El sistema puede presentar dificultades para capturar y analizar correctamente el tráfico de red en tiempo real, especialmente si no se cuenta con experiencia previa en herramientas como Python o librerías de redes.
+Durante el desarrollo del proyecto SimCargaDB, se identifican los siguientes riesgos:
 
-2.2. Falsos positivos y falsos negativos
-El sistema podría generar alertas incorrectas:
-Falsos positivos: detectar amenazas inexistentes
-Falsos negativos: no detectar ataques reales
-Esto afectaría la confiabilidad del IDS.
+- Fallas en la conexión a la base de datos  
+- Limitaciones de hardware  
+- Errores en la ejecución concurrente  
+- Sobrecarga del sistema durante las pruebas  
+- Falta de experiencia en herramientas o tecnologías  
+- Problemas en la medición de métricas  
+- Tiempo limitado de desarrollo  
 
-2.3. Limitaciones de tiempo
+
+2.2. Limitaciones de tiempo
 
 El tiempo asignado para el desarrollo puede no ser suficiente para implementar todas las funcionalidades previstas o realizar pruebas exhaustivas.
 
-2.4. Recursos limitados
+2.3. Recursos limitados
 
 La falta de equipos adecuados o acceso restringido a redes reales puede dificultar las pruebas del sistema en escenarios reales.
-
-
 
 
 
@@ -142,34 +144,35 @@ La falta de equipos adecuados o acceso restringido a redes reales puede dificult
 
     3.1. Planteamiento del problema
 
-Actualmente, muchas redes no cuentan con mecanismos eficientes para detectar intrusiones o actividades sospechosas en tiempo real, lo que permite que ataques o accesos no autorizados pasen desapercibidos.
-La falta de herramientas accesibles para el monitoreo del tráfico de red dificulta la identificación de comportamientos anómalos, generando riesgos en la integridad, confidencialidad y disponibilidad de la información.
-Además, las soluciones existentes en el mercado suelen requerir altos costos y conocimientos técnicos avanzados, lo que limita su uso en entornos académicos o de pequeña escala.
-Ante esta problemática, surge la necesidad de desarrollar un sistema básico de detección de intrusos (IDS) que permita monitorear el tráfico de red, identificar posibles amenazas mediante reglas simples y generar alertas oportunas, contribuyendo así a mejorar la seguridad de la red.
+En la actualidad, muchas aplicaciones que utilizan bases de datos no cuentan con mecanismos adecuados para evaluar su rendimiento antes de ser implementadas en entornos reales. Esto genera problemas como lentitud en las consultas, caídas del sistema y una mala experiencia para los usuarios finales.
+Generalmente, las pruebas realizadas son limitadas o no representan escenarios reales de alta concurrencia, lo que dificulta identificar fallas relacionadas con el manejo de múltiples solicitudes simultáneas.
+Ante esta situación, surge la necesidad de desarrollar una herramienta que permita simular cargas de trabajo sobre bases de datos, con el fin de analizar su comportamiento, medir su rendimiento y detectar posibles deficiencias antes de su uso en producción.
+
 
     3.2. Consideraciones de hardware y software
 
  ### 💻 Hardware requerido
 
-| Recurso            | Especificación                                  | Descripción |
-|------------------|-----------------------------------------------|-------------|
-| Procesador        | Intel Core i3 o equivalente en adelante        | Permite ejecutar el sistema de monitoreo sin problemas |
-| Memoria RAM       | 4 GB mínimo (8 GB recomendado)                 | Necesaria para análisis de tráfico en tiempo real |
-| Almacenamiento    | 250 GB disponibles                            | Espacio para sistema y almacenamiento de logs |
-| Tarjeta de red    | Compatible con modo promiscuo                  | Permite capturar paquetes de red |
-| Conectividad      | Red local (LAN o Wi-Fi)                        | Necesaria para monitoreo del tráfico |
+| Recurso             | Especificación                         | Descripción                                                                 |
+|---------------------|----------------------------------------|-----------------------------------------------------------------------------|
+| Computadora         | PC o laptop                           | Equipo principal para desarrollo y pruebas                                  |
+| Procesador          | Intel Core i5 o equivalente            | Permite ejecutar simulaciones de carga de manera eficiente                  |
+| Memoria RAM         | 8 GB mínimo                            | Necesaria para ejecutar múltiples procesos concurrentes                     |
+| Almacenamiento      | 256 GB o superior                      | Espacio para sistema y ejecución de pruebas                                 |
+| Conexión a internet | Acceso estable                         | Necesaria para instalación de herramientas y pruebas                        |
+
+---
 
 ### 🧰 Software requerido
 
-| Software                | Tipo / Versión        | Propósito |
-|------------------------|----------------------|----------|
-| Sistema operativo      | Windows / Linux / macOS | Ejecución del sistema (Linux recomendado) |
-| Python                 | 3.x                  | Lenguaje de desarrollo |
-| Scapy                  | Librería Python      | Captura y análisis de paquetes |
-| Socket                 | Librería estándar    | Manejo básico de red |
-| Visual Studio Code     | IDE                  | Desarrollo del sistema |
-| Flask (opcional)       | Framework web        | Interfaz de visualización |
-| Git                    | Control de versiones | Gestión del código fuente |
+| Software             | Tipo / Versión        | Propósito                                      |
+|----------------------|----------------------|------------------------------------------------|
+| Sistema operativo    | Windows o Linux       | Ejecución del sistema                          |
+| Lenguaje             | Java o Python         | Desarrollo del simulador                       |
+| Framework (opcional) | Spring Boot           | Desarrollo backend (si se usa Java)            |
+| Base de datos        | MySQL / PostgreSQL    | Pruebas de carga                              |
+| IDE                  | NetBeans / VS Code    | Desarrollo del sistema                         |
+| Navegador web        | Google Chrome         | Visualización de resultados                    |
 
 
 
