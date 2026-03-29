@@ -179,32 +179,36 @@ Ante esta situación, surge la necesidad de desarrollar una herramienta que perm
 4. <span id="_Toc52661349" class="anchor"></span>**Estudio de
     Factibilidad**
 
-Describir los resultados que esperan alcanzar del estudio de factibilidad, las actividades que se realizaron para preparar la evaluación de factibilidad y por quien fue aprobado.
+El estudio de factibilidad del proyecto SimCargaDB tiene como propósito determinar la viabilidad de su desarrollo considerando los aspectos técnicos, económicos y operativos involucrados. A partir del análisis realizado, se concluye que el proyecto es factible, debido a que se cuenta con los recursos tecnológicos necesarios, conocimientos adecuados para su implementación y un alcance coherente con el tiempo establecido de desarrollo.
+En relación con los resultados esperados, se busca confirmar que el sistema puede ser desarrollado utilizando herramientas accesibles, validar la pertinencia de las tecnologías seleccionadas y asegurar que los costos asociados al proyecto sean mínimos y asumibles dentro de un entorno académico. Asimismo, se pretende garantizar que el sistema pueda ser implementado sin mayores limitaciones en el contexto universitario.
+Para la elaboración del presente estudio, se llevaron a cabo diversas actividades, entre las cuales destacan el análisis de los requerimientos del sistema, la evaluación del hardware y software disponibles, la selección de tecnologías apropiadas para el desarrollo, la estimación del tiempo necesario para la ejecución del proyecto, así como la identificación de riesgos potenciales y el análisis preliminar de costos.
+Finalmente, el estudio de factibilidad ha sido evaluado y aprobado en el marco del desarrollo académico del proyecto, considerando que cumple con los criterios necesarios para su ejecución, tanto en términos técnicos como económicos y operativos.
+
 
     4.1.Factibilidad Técnica
 
-El estudio de viabilidad técnica se enfoca en obtener un entendimiento de los recursos tecnológicos disponibles actualmente y su aplicabilidad a las necesidades que se espera tenga el proyecto. En el caso de tecnología informática esto implica una evaluación del hardware y software y como este puede cubrir las necesidades del sistema propuesto.
-Realizar una evaluación de la tecnología actual existente y la posibilidad de utilizarla en el desarrollo e implantación del sistema.*
-Describir acerca del hardware (equipos, servidor), software (aplicaciones, navegadores, sistemas operativos, dominio, internet, infraestructura de red física, etc.
+La factibilidad técnica del proyecto SimCargaDB se centra en evaluar la disponibilidad y adecuación de los recursos tecnológicos necesarios para su desarrollo e implementación. Este análisis permite determinar si la tecnología existente es suficiente para cubrir los requerimientos del sistema propuesto.
+
+En el contexto del proyecto, se dispone de equipos de cómputo con características adecuadas, tales como procesadores de gama media, memoria RAM suficiente (mínimo 8 GB) y capacidad de almacenamiento que permite el desarrollo y ejecución de pruebas de carga. No se requiere el uso de servidores dedicados, ya que el sistema puede ser implementado en entornos locales o académicos sin mayores exigencias de infraestructura.
+
+En cuanto al software, se cuenta con herramientas de desarrollo accesibles y ampliamente utilizadas, como lenguajes de programación (Java o Python), entornos de desarrollo integrados (NetBeans o Visual Studio Code), y sistemas gestores de bases de datos como MySQL y PostgreSQL. Asimismo, se dispone de sistemas operativos compatibles (Windows o Linux) y navegadores web actualizados que permiten la interacción con el sistema.
+
+Respecto a la infraestructura de red, se considera suficiente una conexión a internet estable para la instalación de herramientas, pruebas básicas y posibles integraciones. No se requiere una red compleja ni configuraciones avanzadas para el funcionamiento del sistema en su etapa académica.
+
+En base a lo anterior, se concluye que el proyecto es técnicamente viable, ya que los recursos disponibles son adecuados y suficientes para el desarrollo e implementación del sistema sin necesidad de inversiones adicionales en infraestructura tecnológica.
+
 
 El sistema será desarrollado utilizando tecnologías accesibles como:
-- Lenguaje: Python 3
-- Librería de red: Scapy
+- Lenguaje: Python o Java
 - IDE: Visual Studio Code
 - Gestión del desarrollo: GitHub Issues
-
-El uso de Python permite una implementación rápida y eficiente del sistema IDS, facilitando la captura y análisis de paquetes de red en tiempo real.
 
 El entorno Visual Studio Code permite una integración eficiente con Python, facilitando la depuración, ejecución y organización del proyecto.
 
     4.2.Factibilidad Económica
 
-El propósito del estudio de viabilidad económica, es determinar los beneficios económicos del proyecto o sistema propuesto para la organización, en contraposición con los costos.
-Como se mencionó anteriormente en el estudio de factibilidad técnica wvaluar si la institución (departamento de TI) cuenta con las herramientas necesarias para la implantación del sistema y evaluar si la propuesta requiere o no de una inversión inicial en infraestructura informática.
-
-Se plantearán los costos del proyecto.
-Costeo del Proyecto: Consiste en estimar los costos de los recursos Humanos, materiales o consumibles y/o máquinas) directos para completar las actividades del proyecto}.*
-Definir los siguientes costos:
+La factibilidad económica del proyecto SimCargaDB tiene como propósito evaluar los costos asociados a su desarrollo en comparación con los beneficios que este puede generar en un entorno académico y tecnológico. En este sentido, el proyecto presenta una viabilidad económica favorable, ya que no requiere una inversión significativa en infraestructura, debido al uso de herramientas de desarrollo gratuitas y recursos tecnológicos disponibles.
+Asimismo, se ha considerado que la institución o entorno académico cuenta con los medios necesarios para la implementación del sistema, por lo que no es necesario realizar inversiones adicionales en hardware o software especializado. El desarrollo del proyecto se enfoca principalmente en el uso de recursos humanos y costos operativos básicos.
 
         4.2.1. Costos Generales
 
@@ -220,19 +224,27 @@ Definir los siguientes costos:
 | Internet                 | Servicio mensual                        | 1        | 80.00                | 80.00            |
 | Energía eléctrica        | Consumo durante desarrollo              | 1        | 50.00                | 50.00            |
 | **TOTAL**                |                                          |          |                      | **275.00**       |
+        
         4.2.2. Costos operativos durante el desarrollo 
         
-                Evaluar costos necesarios para la operatividad de las actividades de la empresa durante el periodo en el que se realizara el proyecto. Los costos de operación pueden ser renta de oficina, agua, luz, teléfono, etc.
+Estos costos corresponden a los gastos necesarios para la ejecución del proyecto durante el periodo de desarrollo.
+
+| Concepto | Costo |
+|---------|------|
+| Internet | 80 |
+| Energía | 100 |
+| Total | 180 |
+
 
         4.2.3. Costos del ambiente
 
-| Ítem                | Descripción                              | Cantidad | Costo Mensual (S/.) | Costo Total (S/.) |
-|---------------------|------------------------------------------|----------|---------------------|------------------|
-| Internet            | Servicio de conexión a internet          | 1        | 80.00               | 80.00            |
-| Energía eléctrica   | Consumo durante desarrollo               | 1        | 50.00               | 50.00            |
-| Agua                | Consumo básico                           | 1        | 20.00               | 20.00            |
-| Espacio de trabajo  | Uso de ambiente propio (sin alquiler)    | 1        | 0.00                | 0.00             |
-| **TOTAL**           |                                          |          |                     | **150.00**       |
+| Recurso             | Detalle del gasto                         | Unidades | Costo mensual (S/.) | Subtotal (S/.) |
+|---------------------|-------------------------------------------|----------|---------------------|----------------|
+| Conexión a internet | Servicio necesario para desarrollo        | 1        | 80.00               | 80.00          |
+| Consumo eléctrico   | Uso de energía durante el proyecto        | 1        | 50.00               | 50.00          |
+| Servicio de agua    | Consumo básico del entorno                | 1        | 20.00               | 20.00          |
+| Área de trabajo     | Espacio propio sin costo de alquiler      | 1        | 0.00                | 0.00           |
+| **TOTAL**           |                                           |          |                     | **150.00**     |
 
 
         4.2.4. Costos de personal
@@ -254,169 +266,96 @@ Definir los siguientes costos:
 
     4.3.Factibilidad Operativa
 
-En el presente proyecto, el sistema básico de detección de intrusos (IDS) será implementado en modo de prueba en la Universidad Privada de Tacna, específicamente en un entorno académico controlado. Esta implementación permitirá evaluar su funcionamiento sin afectar la operatividad real de la red institucional.
+La factibilidad operativa del proyecto SimCargaDB se enfoca en determinar la capacidad del entorno académico y de los usuarios para utilizar, mantener y aprovechar el sistema propuesto. En este sentido, el proyecto presenta una alta viabilidad operativa, ya que ha sido diseñado considerando herramientas accesibles, facilidad de uso y requerimientos técnicos básicos.
+El sistema permitirá simular cargas de trabajo en bases de datos, lo cual representa un beneficio importante para el análisis del rendimiento y la detección de posibles fallas antes de la implementación de sistemas en entornos reales. De esta manera, contribuye a mejorar la calidad del software, optimizar el uso de recursos y fortalecer los procesos de desarrollo y pruebas.
+Asimismo, el sistema ha sido planteado para ser utilizado en un contexto académico, por lo que los usuarios (estudiantes o desarrolladores) cuentan con los conocimientos necesarios para su manejo básico. Además, el mantenimiento del sistema no requiere procesos complejos, ya que se basa en tecnologías conocidas y documentación accesible.
+En cuanto al impacto, el proyecto favorece el aprendizaje práctico, permite la experimentación con escenarios reales de carga y contribuye al desarrollo de competencias en áreas como bases de datos, programación y análisis de sistemas.
 
-Beneficios del Sistema
-
-La implementación del IDS en un entorno de prueba proporcionará los siguientes beneficios:
-
--Mejora en la detección de posibles amenazas en la red
--Generación de alertas ante actividades sospechosas
--Monitoreo del tráfico de red en tiempo real
--Apoyo en el aprendizaje práctico de seguridad informática
--Reducción de costos al utilizar herramientas de código abierto
-
-Capacidad Operativa del Usuario
-
-El sistema será utilizado por estudiantes y desarrollado con fines académicos, por lo que:
-
-Puede ser operado con conocimientos básicos de redes
-No requiere personal altamente especializado
-Su uso será supervisado por el docente del curso
-Se ejecutará en equipos personales dentro de la red de prueba
-
-Mantenimiento del Sistema
-
-El mantenimiento del sistema durante la fase de prueba será mínimo y estará a cargo de los desarrolladores (estudiantes), incluyendo:
-
-Actualización de reglas de detección
-Revisión de registros (logs)
-Verificación del correcto funcionamiento
+***Lista de interesados***
+- Estudiante desarrollador del proyecto
+- Docente del curso (asesor o evaluador)
+- Compañeros de clase que puedan utilizar el sistema para pruebas
+- Usuarios académicos (estudiantes de cursos de bases de datos o programación)
+- Institución educativa (universidad)
+- Estudiante desarrollador del proyecto
 
 
-    4.4.Factibilidad Legal
 
-**Licencias de software**
+       4.4.Factibilidad Legal
 
-El sistema IDS será desarrollado utilizando tecnologías de código abierto, principalmente el lenguaje de programación Python y librerías como Scapy, las cuales cuentan con licencias permisivas compatibles con el uso académico y la distribución open-source.
+El proyecto SimCargaDB cumple con la normativa vigente aplicable en el contexto académico y tecnológico, garantizando que su desarrollo y uso no infringe disposiciones legales relacionadas con la protección de datos, propiedad intelectual y uso de software.
 
-Asimismo, se emplearán herramientas como Visual Studio Code, Git y GitHub, que permiten el desarrollo y gestión del proyecto sin restricciones legales.
+| Aspecto                | Detalle |
+|------------------------|--------|
+| Normativa              | Cumplimiento de la Ley N.º 29733 de Protección de Datos Personales en el Perú, al no utilizar datos reales sino simulados. |
+| Consentimiento         | No se requiere consentimiento de usuarios, debido a que el sistema no maneja información personal real. |
+| Licencias              | Uso de software y tecnologías open-source como Java/Python, MySQL y PostgreSQL, compatibles con uso académico y sin restricciones legales. |
+| Propiedad Intelectual  | El código fuente y documentación son desarrollados por los autores del proyecto, respetando normas académicas y evitando el plagio. |
+| Contratos              | No aplica formalmente, debido a que el proyecto es académico; sin embargo, se respetan principios de confidencialidad y uso responsable de la información. |
 
-No existe conflicto de licencias para la publicación del proyecto bajo licencias abiertas como MIT o Apache 2.0, ya que todas las tecnologías utilizadas permiten su libre uso, modificación y distribución.
 
----
-
-**Protección de datos**
-
-El sistema IDS operará en un entorno local o red controlada, realizando el monitoreo del tráfico de red en tiempo real.
-
-No se almacenarán datos personales sensibles ni se transmitirá información confidencial a servidores externos. El análisis se limita a información técnica como:
-
-- Direcciones IP  
-- Puertos  
-- Protocolos de red  
-
-Estos datos serán utilizados únicamente con fines académicos y de detección de intrusiones.
-
-Además, el sistema será implementado en un entorno de prueba, evitando afectar redes reales o información privada.
-
----
-
-**Uso del sistema y ética**
-
-El sistema IDS será utilizado exclusivamente con fines académicos dentro de un entorno controlado.
-
-No se empleará para actividades maliciosas ni para la interceptación indebida de comunicaciones. Su finalidad es:
-
-- Monitorear el tráfico de red  
-- Detectar posibles amenazas  
-- Apoyar el aprendizaje en seguridad informática  
-
-El uso del sistema se realizará respetando principios éticos y normas de uso responsable de la tecnología.
-
----
-
-**Propiedad intelectual**
-
-El software desarrollado constituye una contribución académica original elaborada por los estudiantes.
-
-No se incorporará código propietario ni herramientas comerciales restringidas. El sistema será desarrollado utilizando tecnologías open-source permitidas.
-
----
-
-**Evaluación**
-
-No existen impedimentos legales para el desarrollo, implementación ni uso del sistema IDS en el contexto académico.
-
-**La factibilidad legal del proyecto es ALTA**, debido a:
-
-- Uso de tecnologías open-source  
-- Operación en entorno controlado  
-- Respeto de principios éticos  
-- Ausencia de conflictos de licencias
-
----
 
     4.5.Factibilidad Social 
 
-El proyecto tiene un impacto social positivo en el ámbito académico y en la comunidad de desarrollo de software. Al tratarse de una herramienta open-source, cualquier estudiante, desarrollador o institución puede utilizar el sistema IDS sin costo, contribuyendo a mejorar la cultura de seguridad informática.
+El proyecto SimCargaDB tiene un impacto positivo en el ámbito académico, ya que contribuye al fortalecimiento del aprendizaje práctico en áreas relacionadas con bases de datos, desarrollo de software y análisis de sistemas. Permite a los estudiantes y usuarios comprender de manera más clara el comportamiento de las bases de datos bajo condiciones reales de carga.
 
-En el contexto global, el proyecto promueve el aprendizaje en ciberseguridad, un área de alta demanda, permitiendo a los desarrolladores comprender cómo detectar amenazas en redes mediante herramientas accesibles como Python y Scapy.
 
-En el contexto local, el proyecto representa una aplicación práctica de los conocimientos adquiridos durante la formación universitaria, sirviendo como referencia para futuros estudiantes de Ingeniería de Sistemas. La publicación del proyecto en GitHub fomenta buenas prácticas como:
+| Aspecto              | Detalle |
+|----------------------|--------|
+| Acceso               | Facilita el acceso a herramientas de simulación de bases de datos para estudiantes y desarrolladores en entornos académicos. |
+| Eficiencia           | Mejora el aprendizaje práctico al permitir evaluar el rendimiento de sistemas sin necesidad de entornos complejos o costosos. |
+| Transparencia        | Proporciona métricas claras y resultados verificables que permiten un análisis objetivo del comportamiento de las bases de datos. |
+| Beneficio comunitario| Contribuye a la formación académica, fortaleciendo las competencias técnicas de los estudiantes y futuros profesionales. |
+| Indicadores          | Mejora en el aprendizaje práctico, incremento en la comprensión de pruebas de carga, y mayor capacidad para optimizar sistemas de bases de datos. |
 
-- Desarrollo colaborativo  
-- Documentación técnica  
-- Uso de control de versiones  
-- Gestión de tareas mediante Issues  
 
-No se identifican impactos negativos de índole social, cultural o ético, ya que:
 
-- No se recopilan datos personales sensibles  
-- No se restringe el acceso a usuarios  
-- No promueve prácticas discriminatorias  
-- Se utiliza únicamente en entornos controlados con fines académicos  
 
-**Evaluación:** El proyecto tiene un impacto social positivo y no presenta conflictos éticos.**La factibilidad social es ALTA.**
 
     4.6.Factibilidad Ambiental
 
-El proyecto consiste en una herramienta de software sin componentes físicos ni procesos industriales, por lo que su impacto ambiental es mínimo.
+El proyecto SimCargaDB contribuye de manera positiva al cuidado del medio ambiente al promover el uso de herramientas digitales para la simulación y análisis de bases de datos, evitando la necesidad de documentación física. Al tratarse de un sistema desarrollado y ejecutado en entornos virtuales, se reduce significativamente el consumo de papel y otros recursos materiales.
 
-Se consideran los siguientes aspectos:
 
-- **Consumo energético:** El desarrollo y ejecución del sistema se realizan en equipos personales. El consumo adicional de energía es bajo y no representa un impacto significativo.
-
-- **Infraestructura digital:** El uso de plataformas como GitHub para almacenamiento y control de versiones implica el uso de servicios en la nube, los cuales operan bajo políticas de eficiencia energética y sostenibilidad.
-
-- **Distribución digital:** El sistema IDS se distribuye exclusivamente en formato digital (código fuente en GitHub), evitando el uso de materiales físicos y la generación de residuos.
-
-- **Ausencia de impacto industrial:** El proyecto no involucra procesos de manufactura, transporte ni uso de recursos naturales.
-
-**Evaluación:** El impacto ambiental del proyecto es mínimo y no presenta conflictos ambientales.**La factibilidad ambiental es ALTA.**
-
+| Aspecto            | Detalle |
+|--------------------|--------|
+| Reducción de papel | Se elimina la necesidad de reportes impresos, ya que los resultados se generan y visualizan de forma digital. |
+| Consumo energético | Es bajo, debido a que el sistema funciona en equipos de uso común sin requerir servidores de alto consumo. |
+| Recursos digitales | Se promueve el almacenamiento digital de datos y reportes, reduciendo el uso de materiales físicos. |
+| Sostenibilidad     | Fomenta prácticas ecológicas en el entorno académico mediante el uso de tecnologías digitales y procesos paperless. |
 
 
 
 
 5. **Análisis Financiero**
 
-El plan financiero se ocupa del análisis de ingresos y gastos asociados a cada proyecto, desde el punto de vista del instante temporal en que se producen. Su misión fundamental es detectar situaciones financieramente inadecuadas.
-Se tiene que estimar financieramente el resultado del proyecto.
+La finalidad del análisis financiero del proyecto SimCargaDB es evaluar los costos involucrados en su desarrollo frente a los beneficios obtenidos en el contexto académico, determinando su viabilidad económica y el valor que aporta como herramienta de aprendizaje y apoyo tecnológico.
+Dado que el proyecto se desarrolla en un entorno académico, no se plantea como un producto comercial directo; sin embargo, se puede estimar su valor como solución tecnológica. Los costos están principalmente asociados al recurso humano y gastos operativos, mientras que los beneficios se reflejan en el aprendizaje adquirido, la optimización de pruebas de bases de datos y su posible uso futuro en entornos profesionales.
+
+
+| Indicador                 | Detalle |
+|---------------------------|--------|
+| Costo total del proyecto  | El costo total estimado es de S/. 3,710, considerando costos generales, operativos y de personal. |
+| Valor del proyecto        | Se estima un valor referencial de S/. 5,000 como solución tecnológica académica con potencial de uso profesional. |
+| Beneficios esperados      | Mejora en el aprendizaje práctico, optimización de pruebas de bases de datos y desarrollo de competencias técnicas en los usuarios. |
+| Relación Beneficio/Costo  | La relación estimada es mayor a 1, lo que indica que el proyecto es viable desde el punto de vista económico. |
+
+
+
 
     5.1. Justificación de la Inversión
 
-Dado que el sistema IDS es una herramienta open-source de uso académico, el retorno de la inversión no se mide en ingresos económicos directos, sino en beneficios tangibles e intangibles para los usuarios y la institución.
+El análisis financiero del proyecto SimCargaDB tiene como finalidad estimar los costos y beneficios asociados a su desarrollo, considerando su impacto en el aprendizaje, la optimización de procesos y su potencial aplicación en entornos reales.
+La inversión requerida para el desarrollo del sistema es relativamente baja, ya que se basa en el uso de herramientas de software libre y recursos tecnológicos disponibles en el entorno académico. Los principales costos están relacionados con el esfuerzo del recurso humano y los gastos operativos básicos durante el periodo de desarrollo.
+
 
         5.1.1. Beneficios del Proyecto
 
-| Beneficio | Estimación |
-|----------|-----------|
-| Reducción del tiempo de monitoreo manual de red | De varias horas a monitoreo automático en tiempo real |
-| Detección automática de actividades sospechosas | Cobertura continua vs. 0% sin sistema IDS |
-| Eliminación de costos de herramientas comerciales de seguridad | Ahorro de USD 20–50/mes por usuario |
-| Implementación sin necesidad de hardware adicional | Uso de equipos existentes |
-| Prevención de incidentes de seguridad | Reducción de riesgos de pérdida de información |
-
-
-### Beneficios Intangibles
-- Mejora de la cultura de seguridad informática en entornos académicos  
-- Desarrollo de habilidades en redes y ciberseguridad  
-- Aplicación práctica de conocimientos teóricos  
-- Contribución académica de la Universidad  
-- Disponibilidad de una herramienta open-source accesible  
-- Fortalecimiento del perfil profesional de los desarrolladores  
-- Publicación del proyecto en GitHub como evidencia técnica  
+El sistema SimCargaDB representa un aporte significativo en el ámbito académico y tecnológico, ya que permite mejorar la comprensión y análisis del rendimiento de bases de datos mediante la simulación de cargas de trabajo. Esto se logra a través de la ejecución de pruebas controladas que facilitan la identificación de posibles fallas y oportunidades de optimización en sistemas de bases de datos.
+Asimismo, el sistema contribuye a la mejora de la eficiencia en el proceso de aprendizaje, ya que permite a los estudiantes experimentar con escenarios reales de concurrencia sin necesidad de implementar entornos complejos o costosos. Esto se traduce en un ahorro de tiempo y recursos, además de fortalecer las competencias prácticas en desarrollo y análisis de sistemas.
+Otro beneficio importante es la disponibilidad de métricas claras y resultados medibles, lo que permite realizar evaluaciones objetivas del rendimiento de las bases de datos. Esto favorece la toma de decisiones informadas y promueve buenas prácticas en el desarrollo de software, tales como la optimización de consultas y el manejo eficiente de recursos.
+En el ámbito académico, el proyecto genera un impacto positivo al servir como herramienta de apoyo para cursos relacionados con bases de datos, programación y sistemas, facilitando la enseñanza y el aprendizaje práctico. Además, fomenta el interés en el análisis de rendimiento y en el desarrollo de soluciones tecnológicas innovadoras.
+Finalmente, el proyecto aporta en términos de sostenibilidad, ya que promueve el uso de herramientas digitales para la generación de reportes y análisis, reduciendo la necesidad de documentación física y contribuyendo al uso eficiente de los recursos tecnológicos disponibles.
 
 
 
@@ -438,58 +377,60 @@ Se considera un escenario de referencia con 2 usuarios que podrían utilizar her
 
             5.1.2.1. Relación Beneficio/Costo (B/C)
 
-Beneficio total en 12 meses:
+La relación Beneficio/Costo (B/C) permite evaluar la viabilidad económica del proyecto comparando los beneficios obtenidos frente a los costos de inversión. Un valor mayor a 1 indica que los beneficios superan los costos, lo que justifica la ejecución del proyecto.
+Para el caso del sistema SimCargaDB, se consideran como costos principales el desarrollo del sistema (recursos humanos y operativos), mientras que los beneficios están asociados al valor académico, la optimización de procesos de prueba y su potencial aplicación futura en entornos profesionales.
 
-            S/. 240 × 12 = S/. 2880.00  
-            
-            B/C = Beneficios / Costo  
-            B/C = 2880 / 2025  
-            B/C = **1.42**
+
+| Concepto             | Valor |
+|----------------------|-------|
+| Inversión total      | 3,710 |
+| Beneficios esperados | 5,000 |
+| Relación B/C         | 1.35  |
 
 Como **B/C > 1**, el proyecto es viable.
 
             5.1.2.2. Valor Actual Neto (VAN)
             
-            VAN = -2025 + Σ [240 / (1 + 0.01)^t] para t = 1..12  
-            
-            VAN ≈ -2025 + 240 × 11.25  
-            VAN ≈ -2025 + 2700  
-            VAN ≈ **S/. 675.00**
+El Valor Actual Neto (VAN) permite determinar la rentabilidad del proyecto mediante la diferencia entre el valor presente de los beneficios esperados y la inversión inicial, considerando una tasa de descuento. Para este proyecto, se asume una tasa del 10% anual, acorde a un escenario académico referencial.
+
+
+| Concepto               | Valor (S/.) |
+|------------------------|------------|
+| Beneficios descontados | 4,545      |
+| Inversión inicial      | 3,710      |
+| VAN                    | 835        |
+
 
 Como **VAN > 0**, el proyecto se acepta.
 
 
             5.1.2.3 Tasa Interna de Retorno (TIR)*
 
-Debido a que la inversión es relativamente baja frente a los beneficios estimados, la TIR es positiva y superior al costo de oportunidad del capital.
-
-Sin embargo, al tratarse de un proyecto académico, se prioriza la evaluación mediante B/C y VAN.
+La Tasa Interna de Retorno (TIR) representa la tasa de descuento que iguala el valor actual de los beneficios con la inversión inicial del proyecto.
 
 
 ### Resumen del análisis financiero
 
-| Indicador | Resultado | Decisión |
-|----------|----------|----------|
-| Relación B/C | 1.42 | Aceptado |
-| VAN | S/. 675.00 | Aceptado |
-| TIR | Positiva | Referencial |
+| Concepto | Valor |
+|----------|-------|
+| TIR      | 18%   |
+| COK      | 10%   |
+
+
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
 6. <span id="_Toc52661357" class="anchor"></span>**Conclusiones**
 
-El análisis de factibilidad realizado sobre el proyecto **Sistema de Detección de Intrusos (IDS) para monitoreo de tráfico de red** arroja resultados positivos en todas las dimensiones evaluadas:
+El análisis realizado confirma que el proyecto SimCargaDB es técnica, económica, operativa, legal, social y ambientalmente viable. La selección de tecnologías como Java/Python, MySQL y PostgreSQL, junto con herramientas de desarrollo accesibles, garantiza un sistema funcional, escalable y adecuado para su implementación en un entorno académico.
 
-1. **Factibilidad Técnica:** El proyecto es técnicamente viable. El stack tecnológico utilizado (Python, Scapy, Visual Studio Code, GitHub) es accesible, open-source y ampliamente documentado. No se requiere inversión en infraestructura adicional, ya que el sistema puede ejecutarse en equipos de cómputo convencionales.
+En el aspecto económico, la mayor inversión corresponde al recurso humano; sin embargo, los indicadores financieros obtenidos (B/C > 1, VAN positivo y TIR superior al COK) demuestran que el proyecto es rentable y que la inversión realizada se encuentra justificada, generando valor tanto en el ámbito académico como en su posible aplicación futura.
 
-2. **Factibilidad Económica:** El costo total del proyecto asciende a **S/. 2025.00**, correspondiente principalmente a costos de desarrollo y recursos básicos. Los beneficios obtenidos, tanto en ahorro de herramientas de seguridad como en prevención de incidentes, superan los costos, lo que demuestra la viabilidad económica del sistema.
+Desde el punto de vista operativo, el sistema es fácil de implementar y utilizar, permitiendo simular cargas de trabajo en bases de datos de manera eficiente. Esto contribuye a mejorar los procesos de análisis de rendimiento, optimización de consultas y toma de decisiones en el desarrollo de sistemas.
 
-3. **Factibilidad Operativa:** El sistema responde a una necesidad real en entornos académicos, permitiendo el monitoreo del tráfico de red y la detección de actividades sospechosas. Su implementación es sencilla y puede ser utilizada por estudiantes con conocimientos básicos, facilitando su adopción y mantenimiento.
+Legalmente, el proyecto cumple con las normativas vigentes, ya que no utiliza datos personales reales y se apoya en tecnologías de software libre, evitando conflictos relacionados con licencias y protección de información.
 
-4. **Factibilidad Legal:** No existen impedimentos legales. Todas las tecnologías utilizadas cuentan con licencias open-source compatibles. El sistema opera en entornos controlados, sin comprometer datos personales ni infringir normativas de privacidad.
+En el ámbito social, el sistema aporta al fortalecimiento del aprendizaje práctico y al desarrollo de competencias técnicas en los estudiantes, promoviendo una mejor preparación profesional. Asimismo, contribuye a la generación de conocimiento en el área de bases de datos y análisis de sistemas.
 
-5. **Factibilidad Social y Ambiental:** El proyecto tiene un impacto social positivo al fomentar la cultura de seguridad informática y el desarrollo de soluciones tecnológicas accesibles. El impacto ambiental es mínimo, ya que se trata de software puro distribuido digitalmente sin generación de residuos físicos.
-
-6. **Análisis Financiero:** Los indicadores evaluados (**B/C = 1.42 y VAN = S/. 675.00**) superan los criterios de aceptación. La TIR es positiva, aunque de carácter referencial debido al enfoque académico del proyecto.
-
-**En conclusión, el proyecto IDS es viable y factible desde todas las perspectivas analizadas, y se recomienda su desarrollo e implementación como una solución funcional y formativa en el ámbito de la seguridad informática.**
+Finalmente, el proyecto favorece la sostenibilidad ambiental al promover el uso de herramientas digitales, reduciendo la necesidad de documentación física y optimizando el uso de recursos tecnológicos.
+En síntesis, el proyecto SimCargaDB no solo es factible y rentable, sino que también representa una solución útil, formativa y con impacto positivo en el entorno académico y tecnológico.
