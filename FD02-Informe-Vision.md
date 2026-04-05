@@ -10,19 +10,20 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *{Nombre de Proyecto}***
+**Proyecto *SimCargaDB***
 
-Curso: *{Nombre de Asignatura}*
+Curso: *BASE DE DATOS II*
 
-Docente: *{Nombre de Docente}*
+Docente: *MAG.PATRICK CUADROS QUIROGA*
 
 Integrantes:
 
-***{Apellidos y nombres del estudiante (código universitario)}***
+***Vargas Luque, Jhony             (2019065026)***  
+***Abel Fernando Pacompía Ortiz   (2023076797)***
 
 **Tacna – Perú**
 
-***{Año}***
+***2026***
 
 **  
 **
@@ -32,7 +33,7 @@ Integrantes:
 |CONTROL DE VERSIONES||||||
 | :-: | :- | :- | :- | :- | :- |
 |Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|10/10/2020|Versión Original|
+|1\.0|MPV|ELV|ARV|04/04/2026|Versión Original|
 
 
 
@@ -45,7 +46,7 @@ Integrantes:
 
 
 
-**Sistema *{Nombre del Sistema}***
+**Sistema *Simulación de carga de bds***
 
 **Documento de Visión**
 
@@ -57,7 +58,7 @@ Integrantes:
 |CONTROL DE VERSIONES||||||
 | :-: | :- | :- | :- | :- | :- |
 |Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|10/10/2020|Versión Original|
+|1\.0|MPV|ELV|ARV|04/04/2026|Versión Original|
 
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
