@@ -10,9 +10,9 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *{Nombre de Proyecto}***
+**Proyecto *SimCargaDB***
 
-Curso: *CALIDAD Y PRUEBAS DE SOFTWARE*
+Curso: *BASE DE DATOS II*
 
 Docente: *MAG.PATRICK CUADROS QUIROGA*
 
@@ -28,7 +28,7 @@ Integrantes:
 </center>
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-Sistema *SimCargaDB*
+Sistema *Simulación de carga de bds*
 
 Informe de Factibilidad
 
