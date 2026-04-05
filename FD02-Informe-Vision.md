@@ -68,47 +68,193 @@ Integrantes:
 #
 [1.	Introducción](#_Toc52661346)
 
-1.1	Propósito
+    1.1	Propósito
+    
+El presente documento de visión tiene como propósito describir de manera general el sistema SimCargaDB, el cual consiste en una herramienta para la simulación de carga en bases de datos. Este documento define el alcance del sistema, los usuarios involucrados, las necesidades principales y las características generales del producto, sirviendo como base para el desarrollo del proyecto.
 
-1.2	Alcance
 
-1.3	Definiciones, Siglas y Abreviaturas
+    1.2	Alcance
 
-1.4	Referencias
+El sistema SimCargaDB permitirá simular cargas de trabajo en bases de datos mediante la ejecución de operaciones concurrentes como SELECT, INSERT, UPDATE y DELETE.
+Está dirigido principalmente a estudiantes y desarrolladores en entornos académicos, con el objetivo de analizar el rendimiento de bases de datos y detectar posibles fallas antes de su implementación en producción.
+El sistema no está orientado a uso comercial, sino educativo, y será desarrollado utilizando tecnologías accesibles como Python o Java.   
 
-1.5	Visión General
+
+    1.3	Definiciones, Siglas y Abreviaturas
+    
+Para una mejor comprensión del presente documento, se definen los siguientes términos:
+- Base de Datos (BD): Conjunto organizado de datos que pueden ser almacenados, gestionados y consultados mediante sistemas informáticos.
+- IDE (Entorno de Desarrollo Integrado): Software que proporciona herramientas necesarias para el desarrollo de aplicaciones, como editor de código, compilador y depurador.
+- SQL (Structured Query Language): Lenguaje utilizado para gestionar y manipular bases de datos relacionales mediante consultas.
+- Concurrencia: Capacidad de un sistema para ejecutar múltiples procesos o tareas de manera simultánea.
+
+
+      1.4	Referencias
+
+- Informe de Factibilidad del proyecto SimCargaDB
+- Documentación oficial de MySQL y PostgreSQL
+- Guías académicas del curso Base de Datos II
+- Documentación de Python / Java
+
+
+        1.5	Visión General
+
+El documento está estructurado en secciones que describen el posicionamiento del sistema, los interesados y usuarios, así como una vista general del producto. Se detallan las capacidades del sistema, sus limitaciones y los aspectos clave para su desarrollo dentro del entorno académico.
+
+
 
 [2.	Posicionamiento](#_Toc52661347)
 
-2.1	Oportunidad de negocio
+    2.1	Oportunidad de negocio
 
-2.2	Definición del problema
+Actualmente, muchas aplicaciones no cuentan con herramientas adecuadas para evaluar el rendimiento de sus bases de datos antes de ser implementadas, lo que puede generar fallas, lentitud o caídas del sistema.
+SimCargaDB surge como una solución académica que permite simular escenarios reales de carga, facilitando el análisis del rendimiento sin necesidad de herramientas costosas.
+
+
+    2.2	Definición del problema
+
+Las pruebas de rendimiento en bases de datos suelen ser limitadas o no representan escenarios reales de alta concurrencia.
+
+Esto impide detectar problemas como:
+- Lentitud en consultas
+- Fallas en concurrencia
+- Sobrecarga del sistema
+
+Por ello, es necesario contar con una herramienta que permita simular múltiples solicitudes y analizar el comportamiento del sistema antes de su uso real.
+
+
 
 [3.	Descripción de los interesados y usuarios](#_Toc52661348)
 
-3.1	Resumen de los interesados
+    3.1	Resumen de los interesados
 
-3.2	Resumen de los usuarios
+En esta subsección se presentan los principales actores involucrados en el desarrollo y uso del sistema, así como su rol dentro del proyecto.
 
-3.3	Entorno de usuario
+| Interesado                  | Descripción                                              |
+|---------------------------|----------------------------------------------------------|
+| Estudiantes desarrolladores | Encargados del desarrollo e implementación del sistema   |
+| Docente                   | Supervisor y evaluador del proyecto                      |
+| Universidad               | Entorno académico donde se desarrolla el sistema         |
+| Compañeros de clase       | Posibles usuarios para pruebas del sistema               |
 
-3.4	Perfiles de los interesados
+    
+    3.2	Resumen de los usuarios
 
-3.5	Perfiles de los Usuarios
+Aquí se identifican los usuarios finales del sistema, quienes interactuarán directamente con la herramienta para cumplir sus objetivos.
 
-3.6	Necesidades de los interesados y usuarios
+| Usuario         | Descripción                                              |
+|----------------|----------------------------------------------------------|
+| Estudiantes    | Utilizan el sistema para prácticas y aprendizaje         |
+| Desarrolladores| Analizan el rendimiento de bases de datos               |
+
+
+    3.3	Entorno de usuario
+    
+Esta subsección describe las condiciones técnicas y el ambiente en el que el sistema será utilizado, incluyendo hardware, software y conectividad.
+
+| Elemento            | Descripción                                              |
+|--------------------|----------------------------------------------------------|
+| Tipo de entorno    | Académico (universidad)                                  |
+| Dispositivo        | PC o laptop                                              |
+| Sistema operativo  | Windows o Linux                                          |
+| Procesador         | Intel Core i5 o equivalente                              |
+| Memoria RAM        | 8 GB mínimo                                              |
+| Software requerido | Navegador web, IDE (VS Code / NetBeans)                  |
+| Conectividad       | Acceso a internet                                        |
+
+    
+    3.4	Perfiles de los interesados
+    
+En esta sección se describen las características y expectativas de los interesados, considerando su relación con el sistema y su participación en el proyecto.
+
+| Interesado     | Perfil                                                   |
+|---------------|----------------------------------------------------------|
+| Docente       | Evalúa el cumplimiento de objetivos académicos           |
+| Universidad   | Promueve el aprendizaje práctico                         |
+| Desarrollador | Diseña, implementa y prueba el sistema                   |
+
+
+    3.5	Perfiles de los Usuarios
+
+Se presentan los perfiles de los usuarios finales, considerando sus conocimientos, habilidades y forma de interacción con el sistema.
+
+| Usuario          | Perfil                                                   |
+|------------------|----------------------------------------------------------|
+| Estudiante       | Con conocimientos básicos en bases de datos              |
+| Usuario técnico  | Capaz de interpretar métricas y resultados              |
+
+    
+    3.6	Necesidades de los interesados y usuarios
+    
+Esta subsección identifica los requerimientos principales que el sistema debe satisfacer para cumplir con las expectativas de los interesados y usuarios.
+
+| Necesidad                          | Descripción                                             |
+|----------------------------------|---------------------------------------------------------|
+| Simulación de carga              | Ejecutar múltiples operaciones simultáneas              |
+| Análisis de rendimiento          | Medir tiempos y comportamiento del sistema              |
+| Detección de fallas              | Identificar errores en condiciones de alta carga        |
+| Aprendizaje práctico             | Facilitar la comprensión de bases de datos              |
+| Accesibilidad                    | Uso sencillo con herramientas disponibles               |
+
 
 [4.	Vista General del Producto](#_Toc52661349)
 
-4.1	Perspectiva del producto
+    4.1	Perspectiva del producto
 
-4.2	Resumen de capacidades
+SimCargaDB es un sistema independiente que interactúa con bases de datos como MySQL y PostgreSQL para ejecutar pruebas de carga.
+No depende de sistemas externos complejos y puede ejecutarse en entornos locales.
 
-4.3	Suposiciones y dependencias
 
-4.4	Costos y precios
+    4.2	Resumen de capacidades
 
-4.5	Licenciamiento e instalación
+El sistema permitirá:
+- Simulación de múltiples usuarios concurrentes
+- Ejecución de operaciones SQL
+- Registro de tiempos de respuesta
+- Generación de métricas
+- Visualización de resultados
+
+
+        4.3	Suposiciones y dependencias
+- Disponibilidad de una base de datos para pruebas
+- Acceso a herramientas de desarrollo (IDE)
+- Conexión a internet
+- Conocimientos básicos del usuario
+
+
+        4.4	Costos y precios
+
+En esta sección se presentan los costos estimados para el desarrollo del sistema SimCargaDB, considerando recursos materiales, servicios básicos y esfuerzo del personal involucrado. Dado que se trata de un proyecto académico, no se establece un precio de comercialización, sino un análisis referencial del costo total de implementación.
+
+
+  | Tipo de costo        | Descripción                                      | Costo (S/.) |
+|---------------------|--------------------------------------------------|------------|
+| Recursos tecnológicos | Uso de laptop/computadora (recurso propio)      | 0.00       |
+| Materiales           | Cuadernos, lapiceros, impresiones               | 135.00     |
+| Servicios básicos    | Internet y energía eléctrica                    | 130.00     |
+| Desarrollo           | Mano de obra (2 desarrolladores)                | 1600.00    |
+| **Total estimado**   | Costo total del desarrollo del sistema          | **2025.00** |
+| Precio del sistema   | No aplica (proyecto académico)                  | 0.00       |
+
+
+
+        4.5	Licenciamiento e instalación
+
+Esta sección describe las condiciones de uso del sistema, así como los requerimientos necesarios para su instalación. El sistema se basa en tecnologías open-source, lo que permite su uso libre en entornos académicos, facilitando su implementación en equipos personales sin costos de licencia.
+
+  | Aspecto               | Descripción                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| Tipo de licencia     | Software open-source (código abierto)                                       |
+| Lenguaje             | Python o Java                                                               |
+| Base de datos        | MySQL / PostgreSQL                                                          |
+| IDE                  | Visual Studio Code / NetBeans                                               |
+| Sistema operativo    | Compatible con Windows y Linux                                              |
+| Instalación          | Instalación local en equipos personales                                     |
+| Requisitos mínimos   | PC o laptop, 8GB RAM, conexión a internet                                   |
+| Costo de licencia    | Gratuito                                                                    |
+| Distribución         | Uso académico y educativo                                                   |
+
+
 
 [5.	Características del producto](#_Toc52661350)
 
