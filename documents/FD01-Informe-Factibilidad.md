@@ -30,10 +30,10 @@ Informe de Factibilidad
 
 Versión *{1.0}*
 
-|CONTROL DE VERSIONES||||||
-| :-: | :- | :- | :- | :- | :- |
-|Versión|Hecha por|Revisada por|Aprobada por|Fecha|Motivo|
-|1\.0|MPV|ELV|ARV|20/03/2020|Versión Original|
+| CONTROL DE VERSIONES |           |              |               |            |                 |
+|:--------------------:|:----------|:-------------|:--------------|:-----------|:----------------|
+|       Versión        | Hecha por | Revisada por | Aprobada por  | Fecha      | Motivo          |
+|         1.0          | APO, JVL  | APO, JVL     | P. Cuadros Q. | 2026-04-02 | Versión inicial |
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
