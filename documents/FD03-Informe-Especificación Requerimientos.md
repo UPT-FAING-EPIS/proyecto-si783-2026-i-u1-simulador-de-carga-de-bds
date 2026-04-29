@@ -25,7 +25,7 @@ Integrantes:
 
 <div style="page-break-after: always; visibility: hidden">\pagebreak</div>
 
-Sistema *Analizador de Dependencias Java (JavaDepAnalyzer)*
+**Sistema *Simulación de carga de bds***
 
 Informe de Especificación de Requerimientos
 
