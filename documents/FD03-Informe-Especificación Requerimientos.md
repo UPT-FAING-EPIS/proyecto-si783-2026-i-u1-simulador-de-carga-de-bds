@@ -6,7 +6,7 @@
 
 **Escuela Profesional de Ingeniería de Sistemas**
 
-**Proyecto *Analizador de Dependencias Java***
+**Proyecto *SimCargaDB***
 
 Curso: *Calidad y Pruebas de Software*
 
@@ -14,9 +14,8 @@ Docente: *Patrick Cuadros Quiroga*
 
 Integrantes:
 
-***Carbajal Vargas, Andre Alejandro (2023077287)***
-
-***Yupa Gómez, Fátima Sofía (2023076618)***
+***Vargas Luque, Jhony             (2019065026)***  
+***Abel Fernando Pacompía Ortiz   (2023076797)***
 
 **Tacna – Perú**
 
