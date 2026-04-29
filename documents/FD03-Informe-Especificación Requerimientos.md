@@ -31,10 +31,10 @@ Informe de Especificación de Requerimientos
 
 Versión *1.0*
 
-| CONTROL DE VERSIONES |           |              |               |            |                 |
+ CONTROL DE VERSIONES |           |              |               |            |                 |
 |:--------------------:|:----------|:-------------|:--------------|:-----------|:----------------|
 |       Versión        | Hecha por | Revisada por | Aprobada por  | Fecha      | Motivo          |
-|         1.0          | ACV, FYG  | ACV, FYG     | P. Cuadros Q. | 2026-04-22 | Versión inicial |
+|         1.0          | APO, JVL  | APO, JVL     | P. Cuadros Q. | 2026-04-28 | Versión inicial |
 
 # ÍNDICE GENERAL
 
