@@ -320,6 +320,20 @@
       animation: code-ripple 0.65s ease-out forwards;
     }
 
+    /* ── Hero title word-mask animation ── */
+    .hw  {
+      display: inline-block; overflow: hidden; vertical-align: bottom;
+      padding-bottom: 0.06em; margin-bottom: -0.06em;
+    }
+    .hwi {
+      display: inline-block; opacity: 0;
+      animation: hw-rise 0.75s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    @keyframes hw-rise {
+      0%   { transform: translateY(110%); opacity: 0; }
+      100% { transform: translateY(0);    opacity: 1; }
+    }
+
     /* ── Mouse spotlight ── */
     .mouse-spotlight { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
@@ -745,6 +759,57 @@
 </footer>
 
 <script>
+  // ── Hero title animation ──
+  (function() {
+    const h1 = document.querySelector('section h1');
+    if (!h1) return;
+
+    // Disable generic reveal on this element
+    h1.classList.remove('reveal', 'reveal-delay-1');
+    h1.style.opacity   = '1';
+    h1.style.transform = 'none';
+    h1.style.transition = 'none';
+
+    // Helper: wrap a word in the mask-slide structure
+    let d = 0.08;
+    const w = text => {
+      const delay = d.toFixed(2);
+      d += 0.13;
+      return `<span class="hw"><span class="hwi" style="animation-delay:${delay}s">${text}</span></span>`;
+    };
+
+    // Rebuild h1 — line 2 starts hidden (scramble will reveal it)
+    h1.innerHTML =
+      `${w('Aprende')} ${w('SQL')}<br/>` +
+      `<span class="grad-text" id="heroGrad" style="opacity:0;display:inline-block">en 7 motores</span><br/>` +
+      `${w('de')} ${w('BD')}`;
+
+    // Matrix scramble for the gradient line
+    const gradEl = document.getElementById('heroGrad');
+    const final  = 'en 7 motores';
+    const syms   = '!<>[]{}/\\=+*^#@%$01abcde';
+    let frame = 0;
+
+    // Start scramble after first two words are mid-animation
+    setTimeout(() => {
+      gradEl.style.opacity = '1';
+      (function tick() {
+        const locked = Math.floor(frame / 2.2);
+        let out = '';
+        for (let i = 0; i < final.length; i++) {
+          if (final[i] === ' ') { out += ' '; continue; }
+          if (i < locked)           out += final[i];
+          else if (i <= locked + 5) out += syms[Math.floor(Math.random() * syms.length)];
+          else                      out += ' '; // figure space placeholder
+        }
+        gradEl.textContent = out;
+        frame++;
+        if (locked < final.length) requestAnimationFrame(tick);
+        else gradEl.textContent = final;
+      })();
+    }, 320);
+  })();
+
   // ── Scroll reveal ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
