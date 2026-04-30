@@ -5,685 +5,689 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Simulador DB — Practica SQL y NoSQL gratis en tu computadora</title>
   <meta name="description" content="Herramienta educativa gratuita para practicar SQL y NoSQL en 7 motores — SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis — sin instalar servidores." />
-
-  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
   <meta property="og:type"        content="website" />
   <meta property="og:title"       content="Simulador DB — Practica SQL y NoSQL gratis" />
   <meta property="og:description" content="7 motores de bases de datos en una sola app. SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis. Gratis, sin registro." />
   <meta property="og:image"       content="https://jhonyvargas.github.io/simulador-bds/og-preview.png" />
   <meta property="og:url"         content="https://jhonyvargas.github.io/simulador-bds" />
-
-  <!-- Twitter / X Card -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="Simulador DB — Practica SQL y NoSQL gratis" />
   <meta name="twitter:description" content="7 motores de bases de datos en una sola app. Gratis, sin registro." />
   <meta name="twitter:image"       content="https://jhonyvargas.github.io/simulador-bds/og-preview.png" />
-
-  <!-- Favicon (inline SVG) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231d4ed8'/><ellipse cx='16' cy='10' rx='9' ry='3' fill='white' opacity='.9'/><path d='M7 10v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4' stroke='white' stroke-width='1.5' fill='none' opacity='.9'/><path d='M7 14v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4' stroke='white' stroke-width='1.5' fill='none' opacity='.9'/></svg>" />
-
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: #080c12; color: #e2e8f0; overflow-x: hidden; }
+    body { font-family: 'Inter', sans-serif; background: #050810; color: #e2e8f0; overflow-x: hidden; margin: 0; }
 
-    /* ── Gradient mesh background ── */
-    .hero-bg {
-      background:
-        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(59,130,246,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99,102,241,0.10) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 60% at 50% 0%,  rgba(16,185,129,0.06) 0%, transparent 50%),
-        #080c12;
+    /* ── Aurora background ── */
+    .aurora-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .aurora-bg::before {
+      content: '';
+      position: absolute; width: 900px; height: 900px;
+      top: -200px; left: -200px;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, transparent 70%);
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+    .aurora-bg::after {
+      content: '';
+      position: absolute; width: 700px; height: 700px;
+      bottom: -150px; right: -100px;
+      background: radial-gradient(ellipse, rgba(59,130,246,0.14) 0%, transparent 70%);
+      animation: drift2 15s ease-in-out infinite alternate;
+    }
+    .aurora-mid {
+      position: absolute; width: 600px; height: 600px;
+      top: 40%; left: 50%; transform: translate(-50%,-50%);
+      background: radial-gradient(ellipse, rgba(16,185,129,0.06) 0%, transparent 70%);
+      animation: drift3 18s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(120px,80px) scale(1.15)} }
+    @keyframes drift2 { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(-100px,-60px) scale(1.2)} }
+    @keyframes drift3 { 0%{transform:translate(-50%,-50%) scale(1)} 100%{transform:translate(-45%,-55%) scale(1.1)} }
+
+    /* ── Grid noise texture ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 40L40 0M-5 5L5-5M35 45L45 35' stroke='rgba(255,255,255,0.015)' stroke-width='1'/%3E%3C/svg%3E");
     }
 
     /* ── Gradient text ── */
-    .gradient-text {
-      background: linear-gradient(135deg, #fff 30%, #93c5fd 70%, #60a5fa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .grad-text {
+      background: linear-gradient(135deg, #ffffff 0%, #bfdbfe 45%, #a5b4fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .gradient-text-green {
+    .grad-text-green {
       background: linear-gradient(135deg, #34d399, #10b981);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    /* ── Glow buttons ── */
-    .btn-primary {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      box-shadow: 0 0 30px rgba(34,197,94,0.3), 0 4px 15px rgba(0,0,0,0.4);
-      transition: all 0.25s ease;
-    }
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #4ade80, #22c55e);
-      box-shadow: 0 0 45px rgba(34,197,94,0.45), 0 6px 20px rgba(0,0,0,0.4);
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(10px);
-      transition: all 0.25s ease;
-    }
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.10);
-      border-color: rgba(255,255,255,0.2);
-      transform: translateY(-1px);
-    }
-
-    /* ── Cards ── */
-    .card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-    }
-    .card:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(59,130,246,0.3);
-      transform: translateY(-3px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(59,130,246,0.1);
-    }
-
-    /* ── App mockup ── */
-    .mockup {
-      background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 12px;
-      box-shadow:
-        0 50px 100px rgba(0,0,0,0.6),
-        0 0 0 1px rgba(255,255,255,0.05),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-      overflow: hidden;
-    }
-    .mockup-bar { background: #161b27; border-bottom: 1px solid rgba(255,255,255,0.07); }
-    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-    /* ── Engine badge ── */
-    .engine-badge {
-      transition: all 0.25s ease;
-      cursor: default;
-    }
-    .engine-badge:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-    }
-
-    /* ── Section fade-in ── */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* ── Floating orbs ── */
-    @keyframes float1 { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } }
-    @keyframes float2 { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(15px) scale(0.95); } }
-    @keyframes pulse-glow { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
-    .orb1 { animation: float1 8s ease-in-out infinite; }
-    .orb2 { animation: float2 10s ease-in-out infinite; }
-
-    /* ── Gradient border ── */
-    .gradient-border {
-      position: relative;
-      background: rgba(255,255,255,0.03);
-      border-radius: 16px;
-    }
-    .gradient-border::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 16px;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(99,102,241,0.3), rgba(16,185,129,0.3));
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
+    .grad-text-blue {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
     /* ── Nav ── */
-    .nav-blur {
-      background: rgba(8,12,18,0.8);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(5,8,16,0.7); backdrop-filter: blur(20px) saturate(180%);
+      transition: background 0.3s;
     }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(59,130,246,0.4);
+    }
+    .nav-logo-text { font-size: 15px; font-weight: 700; color: #f8fafc; letter-spacing: -0.3px; }
+    .nav-logo-text span { color: #60a5fa; }
+    .nav-badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 14px; color: #94a3b8; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #f8fafc; }
+    .nav-cta {
+      display: flex; align-items: center; gap-8px; padding: 9px 20px; border-radius: 10px;
+      background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: all 0.2s; box-shadow: 0 0 20px rgba(34,197,94,0.25);
+    }
+    .nav-cta:hover { box-shadow: 0 0 30px rgba(34,197,94,0.4); transform: translateY(-1px); }
 
-    /* ── OS download buttons ── */
-    .os-btn {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.10);
+    /* ── Glass card ── */
+    .glass {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .glass:hover { border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.04); }
+
+    /* ── Reveal animation ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── Badge pill ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 100px;
+      background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+      font-size: 13px; font-weight: 500; color: #a5b4fc;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 8px #6366f1; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ── CTA Button ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px; padding: 14px 28px; border-radius: 12px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: white; font-weight: 700; font-size: 15px; text-decoration: none;
+      box-shadow: 0 0 30px rgba(34,197,94,0.3), 0 4px 20px rgba(0,0,0,0.3);
+      transition: all 0.25s; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(34,197,94,0.45), 0 8px 30px rgba(0,0,0,0.3); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 9px; padding: 14px 28px; border-radius: 12px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+      color: #cbd5e1; font-weight: 600; font-size: 15px; text-decoration: none;
       transition: all 0.25s;
     }
-    .os-btn:hover {
-      background: rgba(59,130,246,0.12);
-      border-color: rgba(59,130,246,0.4);
-      box-shadow: 0 0 20px rgba(59,130,246,0.15);
-      transform: translateY(-2px);
-    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: #fff; }
 
-    /* ── Stats counter ── */
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
+    /* ── App Mockup ── */
+    .mockup-wrap {
+      position: relative;
+      perspective: 1200px;
     }
+    .mockup-tilt {
+      transform: rotateY(-8deg) rotateX(4deg) scale(0.96);
+      transform-origin: center center;
+      transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 100px rgba(59,130,246,0.12);
+    }
+    .mockup-wrap:hover .mockup-tilt { transform: rotateY(-4deg) rotateX(2deg) scale(0.98); }
+    .mockup-glow {
+      position: absolute; inset: -40px; z-index: -1;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(59,130,246,0.15), transparent);
+      pointer-events: none;
+    }
+    .mockup-titlebar {
+      background: #161b2e; padding: 11px 16px; display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .dot-red   { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+    .dot-yellow{ width: 11px; height: 11px; border-radius: 50%; background: #ffbd2e; }
+    .dot-green { width: 11px; height: 11px; border-radius: 50%; background: #28c840; }
+    .mockup-tabs { display: flex; gap: 4px; margin-left: 12px; }
+    .mockup-tab { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; color: #64748b; font-family: 'Inter', sans-serif; }
+    .mockup-tab.active { background: rgba(59,130,246,0.2); color: #93c5fd; }
+    .mockup-body { display: flex; background: #0d1117; }
+    .mockup-sidebar { width: 130px; background: #111827; padding: 12px 8px; border-right: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+    .sidebar-db { font-size: 10px; color: #94a3b8; padding: 4px 8px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .sidebar-item { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 6px; font-size: 10px; color: #cbd5e1; }
+    .sidebar-item.active { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .sidebar-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .sidebar-count { margin-left: auto; font-size: 9px; color: #475569; }
+    .mockup-editor { flex: 1; padding: 14px; min-width: 0; }
+    .mockup-code { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; line-height: 1.7; white-space: pre; overflow: hidden; }
+    .c-kw  { color: #c084fc; } /* keyword */
+    .c-fn  { color: #60a5fa; } /* function/clause */
+    .c-tbl { color: #34d399; } /* table name */
+    .c-col { color: #e2e8f0; } /* column */
+    .c-op  { color: #fb923c; } /* operator */
+    .c-str { color: #fbbf24; } /* string/number */
+    .c-cm  { color: #475569; } /* comment */
+    .mockup-results { background: #0d1117; border-top: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+    .results-header { display: flex; gap: 12px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .results-tab { font-size: 10px; color: #60a5fa; font-weight: 600; padding: 3px 8px; background: rgba(59,130,246,0.12); border-radius: 4px; }
+    .results-table-mini { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+    .results-table-mini th { background: #161b2e; padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 8.5px; letter-spacing: 0.06em; }
+    .results-table-mini td { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #cbd5e1; font-family: 'JetBrains Mono', monospace; }
+    .results-table-mini tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
 
-    /* ── Code block ── */
-    .code-block {
-      background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.08);
-      font-family: 'JetBrains Mono', monospace;
+    /* ── Stats row ── */
+    .stat-card { text-align: center; padding: 24px 32px; }
+    .stat-value { font-size: 42px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 13px; color: #64748b; font-weight: 500; }
+    .stat-sep { width: 1px; background: rgba(255,255,255,0.07); margin: 16px 0; }
+
+    /* ── Bento grid ── */
+    .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .bento-card { padding: 28px; border-radius: 20px; position: relative; overflow: hidden; }
+    .bento-card.wide { grid-column: span 2; }
+    .bento-card.tall { grid-row: span 2; }
+    .bento-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+    .bento-title { font-size: 17px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; letter-spacing: -0.3px; }
+    .bento-desc { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+    /* Bento card accent borders on hover */
+    .bento-card::before { content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+    .bento-card:hover::before { opacity: 1; }
+
+    /* ── Engine badges ── */
+    .engine-badge {
+      display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 12px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.25s; cursor: default;
     }
+    .engine-badge:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); transform: translateY(-2px); }
+    .engine-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .engine-name { font-size: 14px; font-weight: 600; color: #cbd5e1; }
+    .engine-type { font-size: 11px; color: #475569; margin-left: auto; }
+
+    /* ── OS download cards ── */
+    .os-card {
+      padding: 24px; border-radius: 18px; text-align: center; cursor: pointer;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.25s; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .os-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .os-card-name { font-size: 16px; font-weight: 700; color: #f8fafc; }
+    .os-card-sub { font-size: 12px; color: #475569; }
+
+    /* ── Steps ── */
+    .step-line { width: 1px; height: 60px; background: linear-gradient(to bottom, rgba(99,102,241,0.4), transparent); margin: 0 auto; }
 
     /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #080c12; }
-    ::-webkit-scrollbar-thumb { background: #263044; border-radius: 2px; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #050810; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
 
-    /* ── Step line connector ── */
-    .step-line { background: linear-gradient(to bottom, #3b82f6, rgba(59,130,246,0)); }
+    /* ── Download btn ── */
+    .dl-btn {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 11px; border-radius: 10px; font-size: 12px; font-weight: 600;
+      transition: all 0.2s; text-decoration: none; width: 100%;
+    }
+    .dl-btn-primary { background: #2563eb; color: white; }
+    .dl-btn-primary:hover { background: #1d4ed8; }
+    .dl-btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; }
+    .dl-btn-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-card.wide { grid-column: span 1; }
+    }
   </style>
 </head>
-<body class="hero-bg">
+<body>
 
-  <!-- ══════════════════════ NAV ══════════════════════ -->
-  <nav class="nav-blur fixed top-0 left-0 right-0 z-50 h-16 flex items-center px-6 md:px-12">
-    <div class="max-w-6xl mx-auto w-full flex items-center justify-between">
-      <!-- Logo -->
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-900/50">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>
-        </div>
-        <span class="font-bold text-white text-[15px] tracking-tight">Simulador <span class="text-blue-400">DB</span></span>
-        <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-600/20 text-blue-400 border border-blue-600/30 font-semibold">v1.0</span>
-      </div>
+<!-- Aurora -->
+<div class="aurora-bg"><div class="aurora-mid"></div></div>
 
-      <!-- Links -->
-      <div class="hidden md:flex items-center gap-8 text-sm text-slate-400">
-        <a href="#features" class="hover:text-white transition-colors">Características</a>
-        <a href="#engines"  class="hover:text-white transition-colors">Motores</a>
-        <a href="#howto"    class="hover:text-white transition-colors">Cómo funciona</a>
-        <a href="#download" class="hover:text-white transition-colors">Descargar</a>
-      </div>
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+    </div>
+    <span class="nav-logo-text">Simulador <span>DB</span></span>
+    <span class="nav-badge">v1.0</span>
+  </a>
 
-      <!-- CTA -->
-      <a href="#download" class="btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Descargar gratis
+  <div class="nav-links">
+    <a href="#features">Características</a>
+    <a href="#engines">Motores</a>
+    <a href="#howto">Cómo funciona</a>
+    <a href="#download">Descargar</a>
+  </div>
+
+  <a href="#download" class="nav-cta" style="padding:9px 20px; border-radius:10px; gap:6px;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Descargar gratis
+  </a>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section style="min-height:100vh; display:flex; align-items:center; padding:100px 32px 60px; position:relative; z-index:1; max-width:1280px; margin:0 auto; gap:60px;">
+
+  <!-- Left: Text -->
+  <div style="flex:1; max-width:540px;">
+    <div class="badge reveal" style="margin-bottom:28px;">
+      <span class="badge-dot"></span>
+      Herramienta educativa — 100% gratuita
+    </div>
+
+    <h1 class="reveal reveal-delay-1" style="font-size:clamp(42px,5vw,72px); font-weight:900; line-height:1.05; letter-spacing:-2.5px; margin:0 0 22px; color:#f8fafc;">
+      Aprende SQL<br/>
+      <span class="grad-text">en 7 motores</span><br/>
+      de BD
+    </h1>
+
+    <p class="reveal reveal-delay-2" style="font-size:17px; color:#64748b; line-height:1.7; margin:0 0 36px; max-width:420px;">
+      SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis — todo en una sola aplicación. Sin instalar servidores. Sin configuraciones.
+    </p>
+
+    <div class="reveal reveal-delay-3" style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:44px;">
+      <a href="https://github.com/JhonyVargas/simulador-bds/releases/download/v1.0.0/Simulador.DB.Setup.1.0.0.exe" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar para Windows
+        <span style="font-size:11px;opacity:0.7;font-weight:500;">Gratis</span>
+      </a>
+      <a href="#features" class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ver características
       </a>
     </div>
-  </nav>
 
-  <!-- ══════════════════════ HERO ══════════════════════ -->
-  <section class="relative min-h-screen flex items-center justify-center pt-16 px-6 overflow-hidden">
-
-    <!-- Orbs decorativos -->
-    <div class="orb1 absolute top-32 left-10 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none"></div>
-    <div class="orb2 absolute bottom-20 right-10 w-96 h-96 rounded-full bg-indigo-600/08 blur-3xl pointer-events-none"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-blue-900/5 blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-6xl mx-auto w-full text-center relative z-10">
-
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 text-blue-400 text-sm font-medium mb-8">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        Herramienta educativa — 100% gratuita
+    <!-- Mini stats -->
+    <div class="reveal reveal-delay-4" style="display:flex; gap:28px;">
+      <div>
+        <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;">7</div>
+        <div style="font-size:12px; color:#475569;">Motores de BD</div>
       </div>
-
-      <!-- Headline -->
-      <h1 class="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-[1.05]">
-        <span class="gradient-text">Aprende SQL</span><br/>
-        <span class="text-white">en 7 motores de BD</span>
-      </h1>
-
-      <!-- Sub -->
-      <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-        SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis —
-        todo en una sola aplicación de escritorio. Sin instalaciones de servidores. Sin configuraciones.
-      </p>
-
-      <!-- CTAs -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-        <a href="#download" class="btn-primary flex items-center gap-3 px-8 py-4 rounded-xl text-base font-bold text-white w-full sm:w-auto justify-center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar para Windows
-          <span class="text-green-200/60 text-sm font-normal">Gratis</span>
-        </a>
-        <a href="#features" class="btn-secondary flex items-center gap-3 px-8 py-4 rounded-xl text-base font-semibold text-slate-300 w-full sm:w-auto justify-center">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Ver características
-        </a>
+      <div style="width:1px; background:rgba(255,255,255,0.07);"></div>
+      <div>
+        <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;" class="grad-text-green">100%</div>
+        <div style="font-size:12px; color:#475569;">Gratuito</div>
       </div>
-
-      <!-- Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-16">
-        <div class="stat-card rounded-2xl p-4">
-          <div class="text-3xl font-black text-white mb-1">7</div>
-          <div class="text-sm text-slate-500">Motores de BD</div>
-        </div>
-        <div class="stat-card rounded-2xl p-4">
-          <div class="text-3xl font-black text-white mb-1">100%</div>
-          <div class="text-sm text-slate-500">Gratuito</div>
-        </div>
-        <div class="stat-card rounded-2xl p-4">
-          <div class="text-3xl font-black text-white mb-1">0</div>
-          <div class="text-sm text-slate-500">Config. requerida</div>
-        </div>
-        <div class="stat-card rounded-2xl p-4">
-          <div class="text-3xl font-black gradient-text-green mb-1">∞</div>
-          <div class="text-sm text-slate-500">Consultas</div>
-        </div>
+      <div style="width:1px; background:rgba(255,255,255,0.07);"></div>
+      <div>
+        <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;">0</div>
+        <div style="font-size:12px; color:#475569;">Config. requerida</div>
       </div>
+      <div style="width:1px; background:rgba(255,255,255,0.07);"></div>
+      <div>
+        <div style="font-size:24px; font-weight:900;" class="grad-text-blue">∞</div>
+        <div style="font-size:12px; color:#475569;">Consultas</div>
+      </div>
+    </div>
+  </div>
 
-      <!-- App mockup -->
-      <div class="mockup max-w-5xl mx-auto reveal">
-        <!-- Mockup top bar -->
-        <div class="mockup-bar flex items-center gap-3 px-4 py-3">
-          <div class="flex gap-1.5">
-            <div class="mockup-dot bg-red-500/70"></div>
-            <div class="mockup-dot bg-yellow-500/70"></div>
-            <div class="mockup-dot bg-green-500/70"></div>
+  <!-- Right: App mockup -->
+  <div style="flex:1.1; min-width:0;" class="reveal reveal-delay-2">
+    <div class="mockup-wrap">
+      <div class="mockup-glow"></div>
+      <div class="mockup-tilt">
+        <!-- Title bar -->
+        <div class="mockup-titlebar">
+          <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+          <div class="mockup-tabs" style="margin-left:16px;">
+            <span class="mockup-tab active">SQL Server</span>
+            <span class="mockup-tab">MySQL</span>
+            <span class="mockup-tab">MongoDB</span>
+            <span class="mockup-tab">+ 4</span>
           </div>
-          <div class="flex-1 flex items-center gap-2 ml-2">
-            <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+          <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+            <div style="width:24px;height:24px;border-radius:6px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="#22c55e"/></svg>
             </div>
-            <span class="text-xs font-bold text-white">Simulador <span class="text-blue-400">DB</span></span>
-            <span class="text-[9px] px-1.5 rounded-full bg-blue-600/20 text-blue-400 border border-blue-600/30">v1.0</span>
-            <div class="flex-1"></div>
-            <!-- Engine tabs -->
-            <div class="hidden sm:flex gap-1">
-              <span class="text-[10px] px-2.5 py-1 rounded-md bg-blue-600/20 text-blue-300 border-b-2 border-blue-500">SQL Server</span>
-              <span class="text-[10px] px-2.5 py-1 rounded-md text-slate-500">MySQL</span>
-              <span class="text-[10px] px-2.5 py-1 rounded-md text-slate-500">PostgreSQL</span>
-              <span class="text-[10px] px-2.5 py-1 rounded-md text-slate-500">MongoDB</span>
-            </div>
-            <div class="flex-1"></div>
-            <div class="flex gap-1.5 items-center">
-              <div class="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-              </div>
-              <div class="w-20 h-6 rounded-md bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center gap-1">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <span class="text-[10px] font-bold text-white">Ejecutar</span>
-              </div>
-            </div>
+            <span style="font-size:10px;color:#22c55e;font-weight:600;">Ejecutar</span>
           </div>
         </div>
-        <!-- Mockup content -->
-        <div class="flex" style="height:320px">
+        <!-- Body -->
+        <div class="mockup-body">
           <!-- Sidebar -->
-          <div class="w-48 border-r border-white/5 p-3 hidden sm:block flex-shrink-0">
-            <div class="text-[9px] text-slate-600 uppercase tracking-wider mb-2 px-1">Base de datos</div>
-            <div class="space-y-1">
-              <div class="flex items-center gap-2 px-2 py-1.5 rounded-md bg-blue-600/15 border border-blue-600/20">
-                <div class="w-2 h-2 rounded-full bg-blue-400"></div>
-                <span class="text-[11px] text-blue-300 font-medium">FarmaciaDB</span>
-              </div>
-              <div class="ml-3 space-y-0.5">
-                <div class="flex items-center gap-1.5 px-2 py-1 rounded">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                  <span class="text-[10px] text-slate-500">Categorias</span>
-                  <span class="ml-auto text-[9px] text-slate-600">5</span>
-                </div>
-                <div class="flex items-center gap-1.5 px-2 py-1 rounded">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                  <span class="text-[10px] text-slate-500">Medicamentos</span>
-                  <span class="ml-auto text-[9px] text-slate-600">6</span>
-                </div>
-                <div class="flex items-center gap-1.5 px-2 py-1 rounded">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                  <span class="text-[10px] text-slate-500">Proveedores</span>
-                  <span class="ml-auto text-[9px] text-slate-600">3</span>
-                </div>
-              </div>
+          <div class="mockup-sidebar">
+            <div class="sidebar-db">Base de datos</div>
+            <div class="sidebar-item active">
+              <span class="sidebar-dot" style="background:#6366f1;"></span> FarmaciaDB
             </div>
+            <div style="padding:6px 8px 3px; font-size:9px; color:#334155; text-transform:uppercase; letter-spacing:0.07em; font-weight:600;">Tablas</div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Categorias <span class="sidebar-count">5</span></div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Medicamentos <span class="sidebar-count">6</span></div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Proveedores <span class="sidebar-count">3</span></div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Ventas <span class="sidebar-count">8</span></div>
           </div>
-          <!-- Editor + results -->
-          <div class="flex-1 flex flex-col">
-            <!-- Editor -->
-            <div class="flex-1 p-4 code-block" style="background:#0d1117">
-              <div class="text-[11px] leading-relaxed" style="font-family:'JetBrains Mono',monospace">
-                <span class="text-blue-400">SELECT</span><span class="text-slate-300"> m.Nombre, m.Precio, c.Nombre </span><span class="text-blue-400">AS</span><span class="text-slate-300"> Categoria</span><br/>
-                <span class="text-blue-400">FROM</span><span class="text-slate-300"> Medicamentos m</span><br/>
-                <span class="text-blue-400">INNER JOIN</span><span class="text-slate-300"> Categorias c </span><span class="text-blue-400">ON</span><span class="text-slate-300"> m.IdCategoria = c.IdCategoria</span><br/>
-                <span class="text-blue-400">WHERE</span><span class="text-slate-300"> m.Stock </span><span class="text-purple-400">&gt;</span><span class="text-orange-300"> 0</span><br/>
-                <span class="text-blue-400">ORDER BY</span><span class="text-slate-300"> m.Precio </span><span class="text-blue-400">DESC</span><span class="text-slate-300">;</span>
-              </div>
-            </div>
-            <!-- Results -->
-            <div class="border-t border-white/5 p-3">
-              <div class="text-[9px] text-slate-500 mb-2">✓ 6 filas devueltas · 2.4ms</div>
-              <table class="w-full text-[10px]">
-                <thead><tr class="text-slate-500">
-                  <th class="text-left pb-1 pr-4">Nombre</th>
-                  <th class="text-left pb-1 pr-4">Precio</th>
-                  <th class="text-left pb-1">Categoria</th>
-                </tr></thead>
-                <tbody class="text-slate-300">
-                  <tr><td class="pr-4 py-0.5">Amoxicilina 500mg</td><td class="pr-4">$12.50</td><td>Antibióticos</td></tr>
-                  <tr class="text-slate-500"><td class="pr-4 py-0.5">Paracetamol 500mg</td><td class="pr-4">$5.80</td><td>Analgésicos</td></tr>
-                  <tr><td class="pr-4 py-0.5">Vitamina C 1000mg</td><td class="pr-4">$8.90</td><td>Vitaminas</td></tr>
-                </tbody>
-              </table>
-            </div>
+          <!-- Editor -->
+          <div class="mockup-editor">
+            <div class="mockup-code"><span class="c-kw">SELECT</span> m.<span class="c-col">Nombre</span>, m.<span class="c-col">Precio</span>,
+       c.<span class="c-col">Nombre</span> <span class="c-kw">AS</span> <span class="c-tbl">Categoria</span>
+<span class="c-kw">FROM</span> <span class="c-tbl">Medicamentos</span> m
+<span class="c-fn">INNER JOIN</span> <span class="c-tbl">Categorias</span> c
+  <span class="c-kw">ON</span> m.<span class="c-col">IdCategoria</span> <span class="c-op">=</span> c.<span class="c-col">IdCategoria</span>
+<span class="c-kw">WHERE</span> m.<span class="c-col">Stock</span> <span class="c-op">></span> <span class="c-str">0</span>
+<span class="c-kw">ORDER BY</span> m.<span class="c-col">Precio</span> <span class="c-kw">DESC</span><span class="c-op">;</span></div>
           </div>
+        </div>
+        <!-- Results -->
+        <div class="mockup-results">
+          <div class="results-header">
+            <span class="results-tab">Resultados — 6 filas · 2.4ms</span>
+          </div>
+          <table class="results-table-mini">
+            <thead><tr><th>Nombre</th><th>Precio</th><th>Categoria</th></tr></thead>
+            <tbody>
+              <tr><td>Paracetamol 500mg</td><td>$12.50</td><td>Analgésicos</td></tr>
+              <tr><td>Ibuprofeno 400mg</td><td>$9.80</td><td>Analgésicos</td></tr>
+              <tr><td>Amoxicilina 500mg</td><td>$18.20</td><td>Antibióticos</td></tr>
+              <tr><td>Vitamina C 1g</td><td>$7.40</td><td>Vitaminas</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ══════════════════════ FEATURES ══════════════════════ -->
-  <section id="features" class="py-28 px-6">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16 reveal">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 text-blue-400 text-sm font-medium mb-6">
-          Todo lo que necesitas
-        </div>
-        <h2 class="text-4xl md:text-5xl font-black text-white mb-5">Características <span class="gradient-text">poderosas</span></h2>
-        <p class="text-slate-400 text-lg max-w-xl mx-auto">Una herramienta completa para aprender, practicar y dominar bases de datos modernas.</p>
+<!-- ══════════════ ENGINES MARQUEE ══════════════ -->
+<div style="position:relative;z-index:1; padding:0 0 80px; overflow:hidden;">
+  <div style="text-align:center; font-size:12px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:#334155; margin-bottom:24px;">
+    7 motores integrados
+  </div>
+  <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:10px; max-width:900px; margin:0 auto; padding:0 32px;">
+    <div class="engine-badge reveal"><span class="engine-dot" style="background:#0078d4;box-shadow:0 0 8px #0078d4"></span><span class="engine-name">SQL Server</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-1"><span class="engine-dot" style="background:#f29111;box-shadow:0 0 8px #f29111"></span><span class="engine-name">MySQL</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-2"><span class="engine-dot" style="background:#336791;box-shadow:0 0 8px #336791"></span><span class="engine-name">PostgreSQL</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-3"><span class="engine-dot" style="background:#44b0ff;box-shadow:0 0 8px #44b0ff"></span><span class="engine-name">SQLite</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-4"><span class="engine-dot" style="background:#c74634;box-shadow:0 0 8px #c74634"></span><span class="engine-name">Oracle</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal"><span class="engine-dot" style="background:#4db33d;box-shadow:0 0 8px #4db33d"></span><span class="engine-name">MongoDB</span><span class="engine-type">NoSQL</span></div>
+    <div class="engine-badge reveal reveal-delay-1"><span class="engine-dot" style="background:#dc382d;box-shadow:0 0 8px #dc382d"></span><span class="engine-name">Redis</span><span class="engine-type">NoSQL</span></div>
+  </div>
+</div>
+
+<!-- ══════════════ FEATURES BENTO ══════════════ -->
+<section id="features" style="position:relative;z-index:1; padding:80px 32px; max-width:1200px; margin:0 auto;">
+  <div style="text-align:center; margin-bottom:64px;" class="reveal">
+    <div class="badge" style="margin-bottom:20px; background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.25); color:#34d399;">
+      <span class="badge-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+      Por qué elegir Simulador DB
+    </div>
+    <h2 style="font-size:clamp(32px,4vw,52px); font-weight:900; letter-spacing:-2px; color:#f8fafc; margin:0 0 16px;">
+      Todo lo que necesitas,<br/><span class="grad-text">sin complejidad</span>
+    </h2>
+    <p style="font-size:17px; color:#475569; max-width:480px; margin:0 auto; line-height:1.6;">Diseñado para estudiantes y profesionales que quieren practicar sin fricciones.</p>
+  </div>
+
+  <div class="bento-grid">
+    <!-- Card 1: wide — Editor -->
+    <div class="glass bento-card wide reveal" style="background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(99,102,241,0.04));">
+      <div class="bento-icon" style="background:rgba(59,130,246,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       </div>
+      <div class="bento-title">Editor SQL con resaltado de sintaxis</div>
+      <div class="bento-desc" style="margin-bottom:20px;">Monaco Editor (el mismo de VS Code) con autocompletado, resaltado por motor y formato automático.</div>
+      <div style="background:#0d1117; border-radius:10px; padding:14px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.7; border:1px solid rgba(255,255,255,0.06);">
+        <span class="c-kw">SELECT</span> <span class="c-col">*</span> <span class="c-kw">FROM</span> <span class="c-tbl">Usuarios</span>
+        <span class="c-kw">WHERE</span> <span class="c-col">activo</span> <span class="c-op">=</span> <span class="c-str">true</span>
+        <span class="c-kw">LIMIT</span> <span class="c-str">10</span><span class="c-op">;</span>
+      </div>
+    </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Feature cards -->
-        <div class="card rounded-2xl p-6 reveal">
-          <div class="w-11 h-11 rounded-xl bg-blue-600/20 flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          </div>
-          <h3 class="font-bold text-white text-lg mb-2">Editor SQL Inteligente</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">Editor Monaco con autocompletado, resaltado de sintaxis, atajos de teclado y soporte multi-pestaña para cada motor.</p>
+    <!-- Card 2: tall — Multi-engine -->
+    <div class="glass bento-card tall reveal reveal-delay-1" style="background:linear-gradient(160deg,rgba(99,102,241,0.08),rgba(139,92,246,0.04));">
+      <div class="bento-icon" style="background:rgba(99,102,241,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+      </div>
+      <div class="bento-title">7 motores de BD</div>
+      <div class="bento-desc">Cambia entre SQL y NoSQL en un clic. Cada motor con su sintaxis y comportamiento real.</div>
+      <div style="margin-top:24px; display:flex; flex-direction:column; gap:8px;">
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(0,120,212,0.12);border:1px solid rgba(0,120,212,0.2);font-size:12px;font-weight:600;color:#7dd3fc;">● SQL Server</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(242,145,17,0.1);border:1px solid rgba(242,145,17,0.2);font-size:12px;font-weight:600;color:#fcd34d;">● MySQL</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(51,103,145,0.12);border:1px solid rgba(51,103,145,0.25);font-size:12px;font-weight:600;color:#93c5fd;">● PostgreSQL</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(77,179,61,0.1);border:1px solid rgba(77,179,61,0.2);font-size:12px;font-weight:600;color:#86efac;">● MongoDB</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(220,56,45,0.1);border:1px solid rgba(220,56,45,0.2);font-size:12px;font-weight:600;color:#fca5a5;">● Redis</div>
+      </div>
+    </div>
+
+    <!-- Card 3 — Simulation -->
+    <div class="glass bento-card reveal reveal-delay-2" style="background:linear-gradient(135deg,rgba(16,185,129,0.07),rgba(5,150,105,0.03));">
+      <div class="bento-icon" style="background:rgba(16,185,129,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="bento-title">Simulación de entorno</div>
+      <div class="bento-desc">Latencia de red, errores aleatorios, niveles de aislamiento — simula condiciones reales de producción.</div>
+    </div>
+
+    <!-- Card 4 — Export -->
+    <div class="glass bento-card reveal reveal-delay-3" style="background:linear-gradient(135deg,rgba(251,191,36,0.07),rgba(245,158,11,0.03));">
+      <div class="bento-icon" style="background:rgba(251,191,36,0.12);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div class="bento-title">Exporta resultados</div>
+      <div class="bento-desc">Descarga tablas en CSV, Excel o JSON con un solo clic. Comparte tus resultados fácilmente.</div>
+      <div style="display:flex; gap:6px; margin-top:16px;">
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.2);">CSV</span>
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(59,130,246,0.12);color:#93c5fd;border:1px solid rgba(59,130,246,0.2);">Excel</span>
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(251,191,36,0.12);color:#fcd34d;border:1px solid rgba(251,191,36,0.2);">JSON</span>
+      </div>
+    </div>
+
+    <!-- Card 5 — History wide -->
+    <div class="glass bento-card wide reveal reveal-delay-1" style="background:linear-gradient(135deg,rgba(168,85,247,0.07),rgba(139,92,246,0.03));">
+      <div class="bento-icon" style="background:rgba(168,85,247,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M3 3h18v18H3z" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="bento-title">Historial y estadísticas</div>
+      <div class="bento-desc">Guarda automáticamente todas tus consultas. Ve métricas de rendimiento, tiempo de ejecución y uso de memoria por motor.</div>
+      <div style="display:flex; gap:16px; margin-top:20px;">
+        <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#c084fc;letter-spacing:-1px;">50</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;">Consultas guardadas</div>
         </div>
-
-        <div class="card rounded-2xl p-6 reveal" style="transition-delay:0.1s">
-          <div class="w-11 h-11 rounded-xl bg-emerald-600/20 flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>
-          </div>
-          <h3 class="font-bold text-white text-lg mb-2">7 Motores de BD</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">Cambia entre SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis con un clic. Cada uno con su sintaxis correcta.</p>
+        <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#34d399;letter-spacing:-1px;">&lt;5ms</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;">Tiempo promedio</div>
         </div>
-
-        <div class="card rounded-2xl p-6 reveal" style="transition-delay:0.2s">
-          <div class="w-11 h-11 rounded-xl bg-purple-600/20 flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </div>
-          <h3 class="font-bold text-white text-lg mb-2">Importar &amp; Exportar</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">Importa esquemas SQL completos. Exporta resultados en CSV, JSON, Excel o genera el script SQL completo para cualquier motor.</p>
-        </div>
-
-        <div class="card rounded-2xl p-6 reveal" style="transition-delay:0.05s">
-          <div class="w-11 h-11 rounded-xl bg-orange-600/20 flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
-          <h3 class="font-bold text-white text-lg mb-2">Explorador de Esquemas</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">Visualiza en tiempo real la estructura de tus tablas, colecciones y claves. Vista previa de datos con un clic.</p>
-        </div>
-
-        <div class="card rounded-2xl p-6 reveal" style="transition-delay:0.15s">
-          <div class="w-11 h-11 rounded-xl bg-cyan-600/20 flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          </div>
-          <h3 class="font-bold text-white text-lg mb-2">Historial &amp; Estadísticas</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">Registro completo de todas tus consultas con tiempo de ejecución, motor usado y filas afectadas. Copia cualquier consulta anterior.</p>
-        </div>
-
-        <div class="card rounded-2xl p-6 reveal" style="transition-delay:0.25s">
-          <div class="w-11 h-11 rounded-xl bg-pink-600/20 flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <h3 class="font-bold text-white text-lg mb-2">Datos Persistentes</h3>
-          <p class="text-slate-400 text-sm leading-relaxed">Tus bases de datos se guardan en IndexedDB y persisten entre sesiones. Cierra y vuelve a abrir sin perder nada.</p>
+        <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#60a5fa;letter-spacing:-1px;">100%</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;">Sin pérdidas</div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ══════════════════════ ENGINES ══════════════════════ -->
-  <section id="engines" class="py-24 px-6 relative">
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent pointer-events-none"></div>
-    <div class="max-w-6xl mx-auto relative">
-      <div class="text-center mb-14 reveal">
-        <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Todos los motores, <span class="gradient-text">un solo lugar</span></h2>
-        <p class="text-slate-400 text-lg max-w-xl mx-auto">Practica con cada motor usando su sintaxis exacta y características únicas.</p>
+    <!-- Card 6 — Theme -->
+    <div class="glass bento-card reveal reveal-delay-2" style="background:linear-gradient(135deg,rgba(148,163,184,0.06),rgba(100,116,139,0.03));">
+      <div class="bento-icon" style="background:rgba(148,163,184,0.1);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
       </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 reveal">
-        <!-- SQL Server -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(0,120,212,0.15)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#0078d4" fill-opacity="0.2"/><ellipse cx="16" cy="10" rx="10" ry="3.5" fill="#0078d4"/><path d="M6 10v5c0 1.93 4.48 3.5 10 3.5s10-1.57 10-3.5v-5c0 1.93-4.48 3.5-10 3.5S6 11.93 6 10z" fill="#0078d4" opacity=".7"/><path d="M6 15v5c0 1.93 4.48 3.5 10 3.5s10-1.57 10-3.5v-5c0 1.93-4.48 3.5-10 3.5S6 16.93 6 15z" fill="#0078d4" opacity=".4"/></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">SQL Server</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Microsoft</div>
-          </div>
-        </div>
-        <!-- MySQL -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(249,145,17,0.15)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#f29111" fill-opacity="0.2"/><text x="16" y="22" text-anchor="middle" font-size="16" font-weight="900" fill="#f29111" font-family="serif">M</text></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">MySQL</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Oracle</div>
-          </div>
-        </div>
-        <!-- PostgreSQL -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(51,103,145,0.2)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#336791" fill-opacity="0.2"/><text x="16" y="22" text-anchor="middle" font-size="16" font-weight="900" fill="#4a90d9" font-family="serif">PG</text></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">PostgreSQL</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Postgres</div>
-          </div>
-        </div>
-        <!-- SQLite -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(68,176,255,0.15)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#44b0ff" fill-opacity="0.15"/><text x="16" y="22" text-anchor="middle" font-size="13" font-weight="900" fill="#44b0ff" font-family="monospace">SQL</text></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">SQLite</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Embebido</div>
-          </div>
-        </div>
-        <!-- Oracle -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(199,70,52,0.15)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#c74634" fill-opacity="0.2"/><text x="16" y="22" text-anchor="middle" font-size="15" font-weight="900" fill="#c74634" font-family="serif">O</text></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">Oracle</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Enterprise</div>
-          </div>
-        </div>
-        <!-- MongoDB -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(71,162,72,0.15)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#47a248" fill-opacity="0.2"/><path d="M16 5c0 0-5 5-5 11 0 3.31 2.24 6 5 6s5-2.69 5-6c0-6-5-11-5-11z" fill="#47a248"/></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">MongoDB</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">NoSQL</div>
-          </div>
-        </div>
-        <!-- Redis -->
-        <div class="engine-badge card rounded-2xl p-4 flex flex-col items-center gap-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(220,56,45,0.15)">
-            <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#dc382d" fill-opacity="0.2"/><text x="16" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#dc382d" font-family="monospace">Redis</text></svg>
-          </div>
-          <div class="text-center">
-            <div class="text-xs font-bold text-white">Redis</div>
-            <div class="text-[10px] text-slate-500 mt-0.5">In-memory</div>
-          </div>
-        </div>
+      <div class="bento-title">Modo oscuro / claro</div>
+      <div class="bento-desc">Cambia el tema según tu preferencia. Se recuerda entre sesiones automáticamente.</div>
+      <div style="display:flex; gap:6px; margin-top:16px;">
+        <div style="flex:1;height:28px;border-radius:8px;background:#0d1117;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#a5b4fc;">DARK</div>
+        <div style="flex:1;height:28px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#475569;">LIGHT</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ══════════════════════ HOW IT WORKS ══════════════════════ -->
-  <section id="howto" class="py-28 px-6">
-    <div class="max-w-4xl mx-auto">
-      <div class="text-center mb-16 reveal">
-        <h2 class="text-4xl md:text-5xl font-black text-white mb-4">Empieza en <span class="gradient-text">3 pasos</span></h2>
-        <p class="text-slate-400 text-lg">Sin configuraciones complicadas. Listo para usar en minutos.</p>
+<!-- ══════════════ HOW IT WORKS ══════════════ -->
+<section id="howto" style="position:relative;z-index:1; padding:80px 32px 100px; max-width:800px; margin:0 auto; text-align:center;">
+  <div class="reveal" style="margin-bottom:64px;">
+    <div class="badge" style="margin-bottom:20px;">
+      <span class="badge-dot" style="background:#60a5fa; box-shadow:0 0 8px #60a5fa;"></span>
+      Empieza en minutos
+    </div>
+    <h2 style="font-size:clamp(32px,4vw,52px); font-weight:900; letter-spacing:-2px; color:#f8fafc; margin:0;">
+      Tan simple como<br/><span class="grad-text">1, 2, 3</span>
+    </h2>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:0; position:relative;">
+    <!-- Step 1 -->
+    <div class="reveal" style="display:flex; gap:28px; align-items:flex-start; text-align:left; padding:28px;">
+      <div style="flex-shrink:0;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(99,102,241,0.2));border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#818cf8;">1</div>
       </div>
-
-      <div class="space-y-6">
-        <div class="gradient-border p-7 reveal flex items-start gap-6">
-          <div class="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-600/30 flex items-center justify-center shrink-0 text-2xl font-black text-blue-400">1</div>
-          <div class="flex-1">
-            <h3 class="font-bold text-white text-xl mb-2">Descarga e instala</h3>
-            <p class="text-slate-400 leading-relaxed">Descarga el instalador para tu sistema operativo. Compatible con Windows 10/11, macOS 12+ y Linux. La instalación tarda menos de un minuto.</p>
-          </div>
-          <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 shrink-0">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </div>
-        </div>
-
-        <div class="gradient-border p-7 reveal flex items-start gap-6" style="transition-delay:0.1s">
-          <div class="w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-600/30 flex items-center justify-center shrink-0 text-2xl font-black text-emerald-400">2</div>
-          <div class="flex-1">
-            <h3 class="font-bold text-white text-xl mb-2">Importa tu base de datos</h3>
-            <p class="text-slate-400 leading-relaxed">Importa tu script SQL (.sql) desde el botón Importar. El sistema reconoce automáticamente las tablas, relaciones y tipos de datos.</p>
-          </div>
-          <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 shrink-0">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-        </div>
-
-        <div class="gradient-border p-7 reveal flex items-start gap-6" style="transition-delay:0.2s">
-          <div class="w-14 h-14 rounded-2xl bg-purple-600/20 border border-purple-600/30 flex items-center justify-center shrink-0 text-2xl font-black text-purple-400">3</div>
-          <div class="flex-1">
-            <h3 class="font-bold text-white text-xl mb-2">¡Escribe y ejecuta consultas!</h3>
-            <p class="text-slate-400 leading-relaxed">Usa el editor con autocompletado, selecciona el motor que necesitas y ejecuta con <kbd class="px-1.5 py-0.5 bg-white/10 rounded text-xs font-mono text-white">Ctrl+Enter</kbd>. Los resultados se muestran instantáneamente.</p>
-          </div>
-          <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-xl bg-white/5 shrink-0">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
-        </div>
+      <div style="padding-top:8px;">
+        <div style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-0.5px;margin-bottom:8px;">Descarga e instala</div>
+        <div style="font-size:15px;color:#475569;line-height:1.6;">Un instalador de ~101 MB para Windows. Sin dependencias, sin configuración de servidores. Abre y listo.</div>
       </div>
     </div>
-  </section>
 
-  <!-- ══════════════════════ DOWNLOAD ══════════════════════ -->
-  <section id="download" class="py-28 px-6 relative">
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-950/15 to-transparent pointer-events-none"></div>
-    <div class="max-w-4xl mx-auto text-center relative">
-      <div class="reveal">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600/10 border border-emerald-600/20 text-emerald-400 text-sm font-medium mb-8">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Gratuito para siempre
-        </div>
-        <h2 class="text-4xl md:text-6xl font-black text-white mb-5">Descarga ahora</h2>
-        <p class="text-slate-400 text-xl mb-12 max-w-xl mx-auto">Disponible para todos los sistemas operativos. Sin registro, sin suscripción.</p>
+    <div class="step-line"></div>
 
-        <!-- OS buttons -->
-        <div class="grid md:grid-cols-3 gap-4 mb-6">
-          <!-- Windows -->
-          <div class="os-btn rounded-2xl p-6 flex flex-col items-center gap-3 group cursor-default">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M3 5.5L11 4v8H3V5.5zM3 18.5L11 20v-8H3v6.5zM12 3.7L21 2v10h-9V3.7zM12 20.3L21 22V12h-9v8.3z" fill="#0078d4"/></svg>
-            <div>
-              <div class="font-bold text-white text-base">Windows</div>
-              <div class="text-xs text-slate-500 mt-0.5">Windows 10 / 11 · 64-bit · ~101 MB</div>
-            </div>
-            <div class="mt-auto flex flex-col gap-2 w-full">
-              <a href="https://github.com/JhonyVargas/simulador-bds/releases/download/v1.0.0/Simulador.DB.Setup.1.0.0.exe" class="flex items-center justify-center gap-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg py-2 transition-colors">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Instalador (.exe)
-              </a>
-              <a href="https://github.com/JhonyVargas/simulador-bds/releases/download/v1.0.0/Simulador.DB.1.0.0.exe" class="flex items-center justify-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 rounded-lg py-2 transition-colors">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Portátil (sin instalar)
-              </a>
-            </div>
-          </div>
-
-          <!-- macOS -->
-          <a href="#" class="os-btn rounded-2xl p-6 flex flex-col items-center gap-3 group">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="#e2e8f0"/></svg>
-            <div>
-              <div class="font-bold text-white text-base group-hover:text-blue-300 transition-colors">macOS</div>
-              <div class="text-xs text-slate-500 mt-0.5">macOS 12 Monterey+</div>
-              <div class="text-[10px] text-slate-600 mt-1">Instalador .dmg · ~101 MB</div>
-            </div>
-            <div class="mt-auto flex items-center gap-1.5 text-xs font-semibold text-blue-400 group-hover:text-blue-300">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descargar
-            </div>
-          </a>
-
-          <!-- Linux -->
-          <a href="#" class="os-btn rounded-2xl p-6 flex flex-col items-center gap-3 group">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9 9a3 3 0 1 1 5.12 2.12L12 13.5"/><circle cx="12" cy="17" r=".5" fill="#f97316"/></svg>
-            <div>
-              <div class="font-bold text-white text-base group-hover:text-blue-300 transition-colors">Linux</div>
-              <div class="text-xs text-slate-500 mt-0.5">Ubuntu, Debian, Fedora+</div>
-              <div class="text-[10px] text-slate-600 mt-1">AppImage · ~101 MB</div>
-            </div>
-            <div class="mt-auto flex items-center gap-1.5 text-xs font-semibold text-blue-400 group-hover:text-blue-300">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descargar
-            </div>
-          </a>
-        </div>
-
-        <p class="text-slate-600 text-xs mb-4">v1.0.0 — Sin registro, sin suscripción, sin telemetría</p>
-        <p class="text-slate-600 text-sm">
-          ¿Tienes preguntas?
-          <a href="mailto:juanchoqueperca@gmail.com" class="text-blue-400 hover:text-blue-300 transition-colors ml-1">Contáctanos</a>
-        </p>
+    <!-- Step 2 -->
+    <div class="reveal reveal-delay-1" style="display:flex; gap:28px; align-items:flex-start; text-align:left; padding:28px;">
+      <div style="flex-shrink:0;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(5,150,105,0.2));border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#34d399;">2</div>
+      </div>
+      <div style="padding-top:8px;">
+        <div style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-0.5px;margin-bottom:8px;">Elige tu motor</div>
+        <div style="font-size:15px;color:#475569;line-height:1.6;">Selecciona entre los 7 motores disponibles. Incluye bases de datos de ejemplo listas para consultar (FarmaciaDB, TiendaDB).</div>
       </div>
     </div>
-  </section>
 
-  <!-- ══════════════════════ FOOTER ══════════════════════ -->
-  <footer class="border-t border-white/05 py-12 px-6">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
-        </div>
+    <div class="step-line"></div>
+
+    <!-- Step 3 -->
+    <div class="reveal reveal-delay-2" style="display:flex; gap:28px; align-items:flex-start; text-align:left; padding:28px;">
+      <div style="flex-shrink:0;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(245,158,11,0.2));border:1px solid rgba(251,191,36,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fbbf24;">3</div>
+      </div>
+      <div style="padding-top:8px;">
+        <div style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-0.5px;margin-bottom:8px;">Escribe y ejecuta</div>
+        <div style="font-size:15px;color:#475569;line-height:1.6;">Usa el editor con resaltado de sintaxis y presiona Ctrl+Enter para ejecutar. Los resultados aparecen en milisegundos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ DOWNLOAD ══════════════ -->
+<section id="download" style="position:relative;z-index:1; padding:80px 32px 100px;">
+  <!-- Glow center -->
+  <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(99,102,241,0.12),transparent);pointer-events:none;"></div>
+
+  <div style="max-width:900px; margin:0 auto; text-align:center; position:relative;">
+    <div class="reveal" style="margin-bottom:48px;">
+      <div class="badge" style="margin-bottom:20px; background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.25); color:#4ade80;">
+        <span class="badge-dot" style="background:#22c55e; box-shadow:0 0 8px #22c55e;"></span>
+        Gratuito para siempre — sin límites
+      </div>
+      <h2 style="font-size:clamp(36px,5vw,64px); font-weight:900; letter-spacing:-2.5px; color:#f8fafc; margin:0 0 18px;">
+        Descarga ahora
+      </h2>
+      <p style="font-size:18px; color:#475569; max-width:440px; margin:0 auto;">Sin registro. Sin suscripción. Sin telemetría. Solo la herramienta.</p>
+    </div>
+
+    <!-- OS Cards -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;" class="reveal reveal-delay-1">
+
+      <!-- Windows -->
+      <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
+        <svg width="44" height="44" viewBox="0 0 24 24"><path d="M3 5.5L11 4v8H3V5.5z" fill="#0078d4"/><path d="M3 18.5L11 20v-8H3v6.5z" fill="#0078d4"/><path d="M12 3.7L21 2v10h-9V3.7z" fill="#0078d4"/><path d="M12 20.3L21 22V12h-9v8.3z" fill="#0078d4"/></svg>
         <div>
-          <div class="font-bold text-white text-sm">Simulador <span class="text-blue-400">DB</span> <span class="text-slate-600 font-normal">v1.0.0</span></div>
-          <div class="text-xs text-slate-600">Multi-Engine Database Simulator</div>
+          <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:3px;">Windows</div>
+          <div style="font-size:12px;color:#475569;">Windows 10 / 11 · 64-bit · ~101 MB</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;margin-top:4px;">
+          <a href="https://github.com/JhonyVargas/simulador-bds/releases/download/v1.0.0/Simulador.DB.Setup.1.0.0.exe" class="dl-btn dl-btn-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Instalador (.exe)
+          </a>
+          <a href="https://github.com/JhonyVargas/simulador-bds/releases/download/v1.0.0/Simulador.DB.1.0.0.exe" class="dl-btn dl-btn-ghost">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Portátil (sin instalar)
+          </a>
         </div>
       </div>
 
-      <div class="flex items-center gap-6 text-sm text-slate-500">
-        <a href="#features" class="hover:text-white transition-colors">Características</a>
-        <a href="#engines"  class="hover:text-white transition-colors">Motores</a>
-        <a href="#download" class="hover:text-white transition-colors">Descargar</a>
+      <!-- macOS -->
+      <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="#e2e8f0"/></svg>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:3px;">macOS</div>
+          <div style="font-size:12px;color:#475569;">macOS 12 Monterey+ · ~101 MB</div>
+        </div>
+        <a href="#" class="dl-btn dl-btn-ghost" style="margin-top:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Próximamente
+        </a>
       </div>
 
-      <div class="text-sm text-slate-600">
-        © 2025 Simulador DB · Herramienta educativa gratuita
+      <!-- Linux -->
+      <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M20.581 19.049c-.55-.446-.336-1.431-.932-1.928-.196-.12-.41-.207-.573-.231-.27-.047-.456-.04-.61-.1-.355-.142-.427-.693-.777-.977a6.263 6.263 0 0 0-1.265-.66c-.97-.36-1.255-.31-2.51.09-.72.23-1.286-.195-2.085-.27-.442-.043-.708-.067-.806-.33-.126-.346.202-.734.46-.925.198-.148.47-.261.615-.449.207-.263.15-.5.047-.672-.137-.227-.372-.389-.608-.472-.151-.053-.392-.017-.608-.017-.254 0-.35.15-.531.345-.211.225-.466.476-.643.73-.266.393-.356.768-.404 1.17-.047.397-.058.796-.107 1.18-.047.37-.18.83-.118 1.208.064.383.331.74.607 1.023.222.231.574.452.695.737.123.289-.089.644-.073.978.012.24.139.573.073.832-.07.282-.291.413-.445.59-.203.243-.255.587-.179.868.083.3.285.587.557.77.336.225.7.328.938.664.263.367.283.64.459.943.163.284.5.376.794.473.228.075.5.113.723.11.338-.004.693-.017 1.023-.065.385-.055.72-.17.889-.493.207-.393-.052-.83-.159-1.228-.104-.385-.074-.733.14-1.009.189-.245.489-.36.797-.36.281 0 .585.118.85.204.42.137.745.32 1.112.461.4.153.73.246 1.14.283.28.025.574-.02.783-.21.166-.153.216-.38.17-.59-.046-.208-.195-.367-.366-.476zM12 2C6.486 2 2 6.486 2 12c0 5.515 4.487 10 10 10 5.515 0 10-4.485 10-10 0-5.514-4.486-10-10-10z" fill="#f97316"/></svg>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:3px;">Linux</div>
+          <div style="font-size:12px;color:#475569;">Ubuntu, Debian, Fedora · ~101 MB</div>
+        </div>
+        <a href="#" class="dl-btn dl-btn-ghost" style="margin-top:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Próximamente
+        </a>
       </div>
     </div>
-  </footer>
 
-  <script>
-    // Reveal on scroll
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); }
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    <p style="font-size:13px; color:#334155;" class="reveal reveal-delay-2">
+      v1.0.0 · Sin registro · Sin suscripción · Sin telemetría ·
+      <a href="mailto:juanchoqueperca@gmail.com" style="color:#60a5fa;text-decoration:none;">¿Preguntas?</a>
+    </p>
+  </div>
+</section>
 
-    // Smooth nav highlight
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
-      navLinks.forEach(a => {
-        a.classList.toggle('text-white', a.getAttribute('href') === '#' + current);
-        a.classList.toggle('text-slate-400', a.getAttribute('href') !== '#' + current);
-      });
-    });
-  </script>
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer style="position:relative;z-index:1; border-top:1px solid rgba(255,255,255,0.05); padding:40px 32px;">
+  <div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; align-items:center; text-align:center;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="nav-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:#f8fafc;">Simulador <span style="color:#60a5fa;">DB</span></span>
+      <span class="nav-badge">v1.0.0</span>
+    </div>
+    <div style="display:flex; gap:32px;">
+      <a href="#features" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'">Características</a>
+      <a href="#engines" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'">Motores</a>
+      <a href="#download" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'">Descargar</a>
+      <a href="https://github.com/JhonyVargas/simulador-bds" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'" target="_blank">GitHub</a>
+    </div>
+    <div style="font-size:12px; color:#1e293b;">© 2025 Simulador DB · Herramienta educativa gratuita</div>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
