@@ -1,0 +1,242 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THEME — CSS custom properties (space-separated RGB channels so Tailwind's
+   opacity modifier syntax works: bg-surface-800/60 → rgb(R G B / 0.6)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Dark (default) ──────────────────────────────────── */
+  --s-900: 13 17 23;
+  --s-800: 22 27 39;
+  --s-700: 28 35 51;
+  --s-600: 33 41 58;
+  --s-500: 38 48 68;
+  --s-400: 45 58 80;
+  --s-300: 55 67 87;
+}
+
+:root.light {
+  /* ── Light ───────────────────────────────────────────── */
+  --s-900: 246 248 252;
+  --s-800: 236 241 249;
+  --s-700: 222 231 244;
+  --s-600: 204 217 233;
+  --s-500: 175 194 217;
+  --s-400: 135 160 190;
+  --s-300:  95 127 163;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SMOOTH THEME TRANSITION
+   Only active for ~280 ms after the user clicks the toggle. Affects only
+   color-related properties so that keyframe animations are not disrupted.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.switching-theme *,
+.switching-theme *::before,
+.switching-theme *::after {
+  transition-property: background-color, border-color, color, fill, stroke, outline-color !important;
+  transition-duration: 220ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Never transition elements that have their own keyframe animations */
+.switching-theme [class*="animate-"] { transition: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: rgb(var(--s-900));
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root { height: 100vh; display: flex; flex-direction: column; }
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: rgb(var(--s-800)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--s-400)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--s-300)); }
+
+/* ─── Toggle switch ──────────────────────────────────────────────────────── */
+
+.toggle { position: relative; display: inline-block; width: 38px; height: 21px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; cursor: pointer; inset: 0; background: rgb(var(--s-400)); border-radius: 21px; transition: 0.25s; }
+.toggle-slider::before { content: ''; position: absolute; height: 15px; width: 15px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.25s; }
+input:checked + .toggle-slider { background: #3b82f6; }
+input:checked + .toggle-slider::before { transform: translateX(17px); }
+
+/* ─── Results table ──────────────────────────────────────────────────────── */
+
+.results-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.results-table th {
+  background: rgb(var(--s-700));
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  border-bottom: 1px solid rgb(var(--s-500));
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+.results-table td {
+  padding: 7px 14px;
+  border-bottom: 1px solid rgb(var(--s-700));
+  color: #e2e8f0;
+  font-family: 'Consolas', 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+.results-table tr:hover td { background: rgb(var(--s-700)) !important; }
+.results-table tr:nth-child(odd) td  { background: rgb(var(--s-800)); }
+.results-table tr:nth-child(even) td { background: rgb(var(--s-900)); }
+
+/* ─── Inputs / select ────────────────────────────────────────────────────── */
+
+input[type="number"],
+select {
+  background: rgb(var(--s-700));
+  border: 1px solid rgb(var(--s-500));
+  color: #e2e8f0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  outline: none;
+}
+input[type="number"] { width: 80px; cursor: text; }
+select { cursor: pointer; }
+input[type="number"]:focus,
+select:focus { border-color: #3b82f6; }
+
+/* ─── Misc ───────────────────────────────────────────────────────────────── */
+
+.snippet-code {
+  background: rgb(var(--s-900));
+  border: 1px solid rgb(var(--s-500));
+  border-radius: 4px;
+  padding: 8px;
+  font-family: 'Consolas', monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.section-header { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; padding: 12px 16px 6px; }
+.sidebar-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px; font-size: 12px; }
+.sidebar-row-label { color: #94a3b8; }
+.sidebar-row-value { color: #e2e8f0; font-weight: 500; }
+.editor-host { border: 1px solid rgb(var(--s-500)); border-radius: 0; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIGHT MODE — comprehensive Tailwind utility overrides
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── body / base text ─────────────────────────────────────────────────── */
+html.light body { color: #0f172a; }
+html.light input[type="number"],
+html.light select { color: #0f172a; }
+html.light .results-table td   { color: #0f172a; }
+html.light .results-table th   { color: #475569; }
+html.light .snippet-code        { color: #334155; }
+html.light .sidebar-row-label   { color: #475569; }
+html.light .sidebar-row-value   { color: #0f172a; }
+html.light .section-header      { color: #64748b; }
+
+/* ── Neutral text ─────────────────────────────────────────────────────── */
+html.light .text-white     { color: #0f172a !important; }
+html.light .text-slate-100 { color: #0f172a !important; }
+html.light .text-slate-200 { color: #1e293b !important; }
+html.light .text-slate-300 { color: #334155 !important; }
+html.light .text-slate-400 { color: #475569 !important; }
+html.light .text-slate-500 { color: #64748b !important; }
+html.light .text-slate-600 { color: #94a3b8 !important; }
+
+html.light .hover\:text-white:hover      { color: #0f172a !important; }
+html.light .hover\:text-slate-200:hover  { color: #1e293b !important; }
+html.light .hover\:text-slate-300:hover  { color: #334155 !important; }
+html.light .group\/card:hover .group-hover\/card\:opacity-100 { opacity: 1; }
+
+/* ── Accent text (more saturated for light backgrounds) ───────────────── */
+html.light .text-blue-300    { color: #1d4ed8 !important; }
+html.light .text-blue-400    { color: #2563eb !important; }
+html.light .text-green-300   { color: #15803d !important; }
+html.light .text-green-400   { color: #16a34a !important; }
+html.light .text-yellow-300  { color: #a16207 !important; }
+html.light .text-yellow-400  { color: #ca8a04 !important; }
+html.light .text-yellow-500  { color: #b45309 !important; }
+html.light .text-red-200     { color: #b91c1c !important; }
+html.light .text-red-300     { color: #dc2626 !important; }
+html.light .text-red-400     { color: #ef4444 !important; }
+html.light .text-purple-300  { color: #7e22ce !important; }
+html.light .text-purple-400  { color: #9333ea !important; }
+html.light .text-orange-400  { color: #ea580c !important; }
+html.light .text-indigo-400  { color: #4338ca !important; }
+html.light .text-violet-400  { color: #7c3aed !important; }
+html.light .text-cyan-400    { color: #0891b2 !important; }
+html.light .text-pink-400    { color: #db2777 !important; }
+html.light .text-emerald-400 { color: #059669 !important; }
+
+html.light .hover\:text-red-300:hover  { color: #dc2626 !important; }
+html.light .hover\:text-red-400:hover  { color: #ef4444 !important; }
+html.light .hover\:text-red-200:hover  { color: #b91c1c !important; }
+html.light .hover\:text-blue-300:hover { color: #1d4ed8 !important; }
+
+/* ── Dark tint backgrounds → light tint equivalents ──────────────────── */
+html.light .bg-blue-900\/20  { background-color: rgba(37,99,235,0.09)  !important; }
+html.light .bg-blue-900\/30  { background-color: rgba(37,99,235,0.12)  !important; }
+html.light .bg-blue-900\/40  { background-color: rgba(37,99,235,0.14)  !important; }
+html.light .bg-blue-600\/20  { background-color: rgba(37,99,235,0.09)  !important; }
+html.light .bg-red-900\/20   { background-color: rgba(220,38,38,0.08)  !important; }
+html.light .bg-red-900\/30   { background-color: rgba(220,38,38,0.10)  !important; }
+html.light .bg-red-900\/40   { background-color: rgba(220,38,38,0.12)  !important; }
+html.light .bg-red-800\/50   { background-color: rgba(220,38,38,0.14)  !important; }
+html.light .bg-green-900\/20 { background-color: rgba(22,163,74,0.10)  !important; }
+html.light .bg-purple-900\/40{ background-color: rgba(147,51,234,0.10) !important; }
+html.light .bg-yellow-900\/10{ background-color: rgba(202,138,4,0.08)  !important; }
+
+/* ── Hover tint backgrounds ───────────────────────────────────────────── */
+html.light .hover\:bg-red-900\/20:hover   { background-color: rgba(220,38,38,0.08)  !important; }
+html.light .hover\:bg-red-900\/40:hover   { background-color: rgba(220,38,38,0.12)  !important; }
+html.light .hover\:bg-red-900\/50:hover   { background-color: rgba(220,38,38,0.14)  !important; }
+html.light .hover\:bg-red-800\/50:hover   { background-color: rgba(185,28,28,0.14)  !important; }
+html.light .hover\:bg-red-700\/60:hover   { background-color: rgba(185,28,28,0.16)  !important; }
+html.light .hover\:bg-red-600\/30:hover   { background-color: rgba(220,38,38,0.12)  !important; }
+html.light .hover\:bg-red-500\/10:hover   { background-color: rgba(239,68,68,0.07)  !important; }
+html.light .hover\:bg-red-500\/20:hover   { background-color: rgba(239,68,68,0.10)  !important; }
+html.light .hover\:bg-blue-500\/10:hover  { background-color: rgba(59,130,246,0.08) !important; }
+html.light .hover\:bg-blue-600\/30:hover  { background-color: rgba(37,99,235,0.12)  !important; }
+html.light .hover\:bg-green-500\/10:hover { background-color: rgba(34,197,94,0.08)  !important; }
+html.light .hover\:bg-yellow-500\/10:hover{ background-color: rgba(234,179,8,0.08)  !important; }
+
+/* ── Accent borders ───────────────────────────────────────────────────── */
+html.light .border-blue-800  { border-color: rgba(37,99,235,0.35)  !important; }
+html.light .border-red-800   { border-color: rgba(220,38,38,0.35)  !important; }
+html.light .border-green-700 { border-color: rgba(22,163,74,0.35)  !important; }
+html.light .border-yellow-700{ border-color: rgba(202,138,4,0.35)  !important; }
+
+/* ── Light mode box shadows ───────────────────────────────────────────── */
+html.light .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04) !important;
+}
+html.light .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05) !important;
+}
+html.light .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05) !important;
+}

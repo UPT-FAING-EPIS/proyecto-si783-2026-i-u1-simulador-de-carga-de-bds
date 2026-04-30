@@ -1,0 +1,86 @@
+{
+  "name": "simulador-bds",
+  "productName": "Simulador DB",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Simulador multi-motor de bases de datos (SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB, Redis)",
+  "author": "Simulador DB",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env ELECTRON_DEV=1 electron .\"",
+    "electron:build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false tsc && vite build && electron-builder",
+    "electron:build:win": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --win --publish never",
+    "electron:build:mac": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --mac --publish never",
+    "electron:build:linux": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --linux --publish never"
+  },
+  "build": {
+    "appId": "com.simuladorbds.app",
+    "productName": "Simulador DB",
+    "copyright": "Copyright © 2025 Simulador DB",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*"
+    ],
+    "icon": "build/icon.png",
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] }
+      ],
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] }
+      ],
+      "category": "Development"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Simulador DB"
+    }
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "alasql": "^4.2.6",
+    "file-saver": "^2.0.5",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "xlsx": "^0.18.5",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^41.3.0",
+    "electron-builder": "^26.8.1",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "wait-on": "^9.0.5"
+  }
+}
