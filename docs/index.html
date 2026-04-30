@@ -265,6 +265,56 @@
       .bento-grid { grid-template-columns: 1fr; }
       .bento-card.wide { grid-column: span 1; }
     }
+
+    /* ── Custom cursor ── */
+    @media (pointer: fine) {
+      * { cursor: none !important; }
+    }
+    .cur-dot {
+      position: fixed; width: 8px; height: 8px;
+      background: #fff; border-radius: 50%;
+      pointer-events: none; z-index: 99999;
+      transform: translate(-50%,-50%) scale(1);
+      transition: transform 0.15s ease, opacity 0.3s;
+      mix-blend-mode: difference;
+      will-change: left, top;
+    }
+    .cur-ring {
+      position: fixed; width: 38px; height: 38px;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 50%; pointer-events: none; z-index: 99998;
+      transform: translate(-50%,-50%);
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
+                  height 0.35s cubic-bezier(0.16,1,0.3,1),
+                  border-color 0.3s, background 0.3s, opacity 0.3s;
+      will-change: left, top;
+    }
+    .cur-dot.hovering { transform: translate(-50%,-50%) scale(0); }
+    .cur-ring.hovering { width: 58px; height: 58px; border-color: rgba(99,102,241,0.85); background: rgba(99,102,241,0.07); }
+    .cur-dot.clicking { transform: translate(-50%,-50%) scale(2.5); opacity: 0.4; }
+    .cur-ring.clicking { width: 28px; height: 28px; }
+
+    /* ── Click ripple ── */
+    @keyframes click-ripple {
+      0%  { width: 0; height: 0; opacity: 0.45; }
+      100%{ width: 140px; height: 140px; opacity: 0; }
+    }
+    .click-ripple {
+      position: fixed; border-radius: 50%;
+      background: rgba(99,102,241,0.25);
+      transform: translate(-50%,-50%);
+      pointer-events: none; z-index: 99990;
+      animation: click-ripple 0.65s ease-out forwards;
+    }
+
+    /* ── Mouse spotlight ── */
+    .mouse-spotlight {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+
+    /* ── Bento card tilt (transition reset) ── */
+    .bento-card { transition: transform 0.06s linear, border-color 0.3s, background 0.3s; }
+    .bento-card.tilt-reset { transition: transform 0.7s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, background 0.3s; }
   </style>
 </head>
 <body>
@@ -684,10 +734,112 @@
 </footer>
 
 <script>
+  // ── Scroll reveal ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Only run cursor/mouse effects on non-touch devices ──
+  if (window.matchMedia('(pointer: fine)').matches) {
+
+    // ── Mouse spotlight ──
+    const spotlight = document.createElement('div');
+    spotlight.className = 'mouse-spotlight';
+    document.body.insertBefore(spotlight, document.body.firstChild);
+
+    // ── Custom cursor elements ──
+    const dot  = document.createElement('div'); dot.className  = 'cur-dot';
+    const ring = document.createElement('div'); ring.className = 'cur-ring';
+    document.body.appendChild(dot);
+    document.body.appendChild(ring);
+
+    let mx = -200, my = -200, rx = -200, ry = -200;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px';
+      dot.style.top  = my + 'px';
+      spotlight.style.background =
+        `radial-gradient(650px circle at ${mx}px ${my}px, rgba(99,102,241,0.07) 0%, rgba(59,130,246,0.04) 35%, transparent 65%)`;
+    });
+
+    // Ring follows with smooth lag
+    (function loop() {
+      rx += (mx - rx) * 0.11;
+      ry += (my - ry) * 0.11;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    // Cursor states on interactive elements
+    const interactives = document.querySelectorAll('a, button, .bento-card, .engine-badge, [class*="dl-btn"], .badge');
+    interactives.forEach(el => {
+      el.addEventListener('mouseenter', () => { dot.classList.add('hovering');  ring.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { dot.classList.remove('hovering'); ring.classList.remove('hovering'); });
+    });
+
+    // Click effect
+    document.addEventListener('mousedown', () => { dot.classList.add('clicking'); ring.classList.add('clicking'); });
+    document.addEventListener('mouseup',   () => { dot.classList.remove('clicking'); ring.classList.remove('clicking'); });
+    document.addEventListener('click', e => {
+      const r = document.createElement('div');
+      r.className = 'click-ripple';
+      r.style.left = e.clientX + 'px';
+      r.style.top  = e.clientY + 'px';
+      document.body.appendChild(r);
+      setTimeout(() => r.remove(), 700);
+    });
+
+    document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
+
+    // ── Bento card 3D tilt ──
+    document.querySelectorAll('.bento-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        card.classList.remove('tilt-reset');
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform = `perspective(700px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) scale(1.025)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.classList.add('tilt-reset');
+        card.style.transform = '';
+      });
+    });
+
+    // ── Magnetic buttons ──
+    document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .dl-btn-primary').forEach(btn => {
+      let origTransition = btn.style.transition;
+      btn.addEventListener('mousemove', e => {
+        btn.style.transition = 'transform 0.08s ease, box-shadow 0.25s, background 0.25s';
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width  / 2) * 0.28;
+        const y = (e.clientY - r.top  - r.height / 2) * 0.28;
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, background 0.25s';
+        btn.style.transform = '';
+      });
+    });
+
+    // ── Engine badge tilt ──
+    document.querySelectorAll('.engine-badge').forEach(badge => {
+      badge.addEventListener('mousemove', e => {
+        const r = badge.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        badge.style.transform = `translateY(-3px) rotateY(${x * 18}deg)`;
+        badge.style.transition = 'transform 0.08s ease, background 0.25s, border-color 0.25s';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1), background 0.25s, border-color 0.25s';
+        badge.style.transform = '';
+      });
+    });
+  }
 </script>
 </body>
 </html>
