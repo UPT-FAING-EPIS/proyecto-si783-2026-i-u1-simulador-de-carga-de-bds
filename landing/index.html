@@ -326,8 +326,14 @@
       animation: code-ripple 0.65s ease-out forwards;
     }
 
-    /* ── Hero title loop chars ── */
-    .lc { display: inline-block; opacity: 0; }
+    /* ── Hero typewriter cursor ── */
+    .type-cursor {
+      display: inline-block; width: 2.5px; height: 0.82em;
+      background: #60a5fa; vertical-align: -0.08em; border-radius: 1px;
+      box-shadow: 0 0 10px rgba(96,165,250,0.95), 0 0 22px rgba(96,165,250,0.45);
+      animation: tc-blink 0.72s step-end infinite;
+    }
+    @keyframes tc-blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
     /* ── Mouse spotlight ── */
     .mouse-spotlight { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
@@ -754,126 +760,66 @@
 </footer>
 
 <script>
-  // ── Hero title — perpetual loop ──
+  // ── Hero title — typewriter loop ──
   (function() {
     const h1 = document.querySelector('section h1');
     if (!h1) return;
     h1.classList.remove('reveal', 'reveal-delay-1');
     h1.style.opacity = '1'; h1.style.transform = 'none'; h1.style.transition = 'none';
 
-    const SYMS  = '!<>[]{}/=+*^#@%$01';
-    const GRAD  = 'en 7 motores';
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    function buildLine(text) {
-      const wrap = document.createElement('span');
-      const chars = [];
-      for (const ch of text) {
-        if (ch === ' ') {
-          const sp = document.createElement('span');
-          sp.style.cssText = 'display:inline-block;width:0.3em';
-          wrap.appendChild(sp);
-        } else {
-          const s = document.createElement('span');
-          s.className = 'lc'; s.textContent = ch;
-          chars.push(s); wrap.appendChild(s);
-        }
-      }
-      return { wrap, chars };
-    }
-
-    const L1 = buildLine('Aprende SQL');
-    const L3 = buildLine('de BD');
-    const gradEl = document.createElement('span');
-    gradEl.className = 'grad-text';
-    gradEl.style.cssText = 'opacity:0;display:inline-block';
-    gradEl.textContent = GRAD;
+    const hl1 = document.createElement('span');
+    const hl2 = document.createElement('span'); hl2.className = 'grad-text';
+    const hl3 = document.createElement('span');
+    const cur  = document.createElement('span'); cur.className = 'type-cursor';
 
     h1.innerHTML = '';
-    h1.append(L1.wrap, document.createElement('br'),
-              gradEl,  document.createElement('br'), L3.wrap);
+    h1.append(hl1, document.createElement('br'), hl2, document.createElement('br'), hl3);
 
-    const eIn  = { duration: 500, easing: 'cubic-bezier(0.34,1.56,0.64,1)', fill: 'forwards' };
-    const eOut = { duration: 260, easing: 'cubic-bezier(0.55,0,1,0.45)',    fill: 'forwards' };
+    // Keywords that flash blue on arrival
+    const KW = new Set(['S','Q','L','7','B','D']);
 
-    async function enterChars(chars) {
-      for (const c of chars) {
-        c.getAnimations().forEach(a => a.cancel());
-        c.animate([
-          { opacity: 0, transform: 'scale(0.3) translateY(-22px)', filter: 'blur(8px)'  },
-          { opacity: 1, transform: 'scale(1)   translateY(0)',      filter: 'blur(0px)' }
-        ], eIn);
-        await sleep(50);
+    async function type(container, text, grad) {
+      container.appendChild(cur);
+      for (const ch of text) {
+        const sp = document.createElement('span');
+        sp.textContent = ch;
+        if (!grad && KW.has(ch)) {
+          sp.style.cssText = 'color:#60a5fa;text-shadow:0 0 14px rgba(96,165,250,0.9)';
+          container.insertBefore(sp, cur);
+          await sleep(50 + Math.random() * 70);
+          setTimeout(() => {
+            sp.style.transition = 'color 0.6s, text-shadow 0.6s';
+            sp.style.color = ''; sp.style.textShadow = '';
+          }, 140);
+        } else {
+          container.insertBefore(sp, cur);
+          await sleep(48 + Math.random() * 72);
+        }
       }
+      await sleep(90);
     }
 
-    async function exitChars(chars) {
-      for (const c of [...chars].reverse()) {
-        c.getAnimations().forEach(a => a.cancel());
-        c.animate([
-          { opacity: 1, transform: 'translateY(0) scale(1)',       filter: 'blur(0px)' },
-          { opacity: 0, transform: 'translateY(-26px) scale(0.6)', filter: 'blur(6px)' }
-        ], eOut);
-        await sleep(36);
+    async function del(container) {
+      container.appendChild(cur);
+      const spans = [...container.querySelectorAll('span:not(.type-cursor)')];
+      for (let i = spans.length - 1; i >= 0; i--) {
+        spans[i].remove();
+        await sleep(16);
       }
-      await sleep(280);
-    }
-
-    function scrambleIn(el, text) {
-      el.style.opacity = '1';
-      return new Promise(res => {
-        let f = 0;
-        (function tick() {
-          const locked = Math.floor(f / 2.2);
-          let out = '';
-          for (let i = 0; i < text.length; i++) {
-            if (text[i] === ' ') { out += ' '; continue; }
-            if (i < locked)           out += text[i];
-            else if (i <= locked + 5) out += SYMS[Math.floor(Math.random() * SYMS.length)];
-            else                      out += ' ';
-          }
-          el.textContent = out; f++;
-          if (locked < text.length) requestAnimationFrame(tick);
-          else { el.textContent = text; res(); }
-        })();
-      });
-    }
-
-    function scrambleOut(el, text) {
-      const dur = text.replace(/ /g, '').length * 3;
-      return new Promise(res => {
-        let f = 0;
-        (function tick() {
-          let out = '';
-          for (let i = 0; i < text.length; i++) {
-            if (text[i] === ' ') { out += ' '; continue; }
-            out += Math.random() < f / dur
-              ? SYMS[Math.floor(Math.random() * SYMS.length)]
-              : text[i];
-          }
-          el.textContent = out; f++;
-          if (f <= dur) requestAnimationFrame(tick);
-          else { el.style.opacity = '0'; el.textContent = text; res(); }
-        })();
-      });
     }
 
     async function loop() {
       while (true) {
-        enterChars(L1.chars);
-        await sleep(260);
-        scrambleIn(gradEl, GRAD);
-        await sleep(180);
-        enterChars(L3.chars);
-        await sleep(3800);
-        exitChars(L1.chars);
-        scrambleOut(gradEl, GRAD);
-        await sleep(80);
-        exitChars(L3.chars);
-        await sleep(420);
+        await type(hl1, 'Aprende SQL',  false);
+        await type(hl2, 'en 7 motores', true);
+        await type(hl3, 'de BD',        false);
+        await sleep(2800);
+        await del(hl3); await del(hl2); await del(hl1);
+        await sleep(480);
       }
     }
-
     loop();
   })();
 
