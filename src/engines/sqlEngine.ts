@@ -552,7 +552,10 @@ export async function executeSQL(
   if (simulateErrors && Math.random() * 100 < errorProbability)
     throw new Error(`Simulated error: connection timeout after ${networkLatency}ms`)
 
-  const clean = query.trim().replace(/;+\s*$/, '')
+  // Preprocess: strip GO, CREATE DATABASE, USE, SQL Server specifics so all
+  // tables land in alasql's default namespace where getAllTableInfos() can see them.
+  const { processed } = preprocessSQL(query)
+  const clean = processed.trim().replace(/;+\s*$/, '')
   if (!clean) throw new Error('La consulta está vacía')
 
   let raw: unknown

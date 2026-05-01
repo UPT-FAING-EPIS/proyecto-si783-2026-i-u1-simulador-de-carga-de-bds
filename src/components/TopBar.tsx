@@ -4,7 +4,7 @@ import {
   Moon, Sun, HelpCircle, Settings, LogOut, ChevronDown,
 } from 'lucide-react'
 import { useStore, getActiveTab } from '../store/useStore'
-import { executeSQL, executeMongoQuery, executeRedisCommand, initializeDatabase, importTableFromSQL } from '../engines/sqlEngine'
+import { executeSQL, executeMongoQuery, executeRedisCommand, initializeDatabase, preprocessSQL } from '../engines/sqlEngine'
 import DatabaseManagerModal from './DatabaseManagerModal'
 import ExportModal from './modals/ExportModal'
 import HelpModal from './modals/HelpModal'
@@ -60,20 +60,19 @@ export default function TopBar({ session, onLogout }: TopBarProps) {
       if (/^\s*(CREATE|DROP|ALTER|INSERT|UPDATE|DELETE)\s/i.test(tab.query))
         store.incrementDbVersion()
 
-      // Auto-register database + tables from CREATE DATABASE / USE / CREATE TABLE
+      // Auto-register database + tables — parse only, no re-execution
       if (/CREATE\s+DATABASE|CREATE\s+TABLE/i.test(tab.query)) {
-        const DB_COLORS = ['#6366f1','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']
-        const parsed    = importTableFromSQL(tab.query)
-
-        // Prefer USE match, fall back to CREATE DATABASE name, then active DB
+        const DB_COLORS  = ['#6366f1','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899']
+        const { processed, dbName: parsedDbName } = preprocessSQL(tab.query)
         const createDbMatch = tab.query.match(/CREATE\s+DATABASE\s+(\w+)/i)
-        const dbName = parsed.dbName ?? (createDbMatch ? createDbMatch[1] : null) ?? store.activeDbName
+        const dbName = parsedDbName ?? (createDbMatch ? createDbMatch[1] : null) ?? store.activeDbName
 
         if (dbName) {
-          const tables    = parsed.tablesReferenced.length > 0 ? parsed.tablesReferenced : parsed.tablesCreated
-          const existing  = store.databases.find(d => d.name === dbName)?.tables ?? []
-          const colorIdx  = store.databases.findIndex(d => d.name === dbName)
-          const color     = colorIdx >= 0 ? store.databases[colorIdx].color : DB_COLORS[store.databases.length % DB_COLORS.length]
+          const tables   = [...processed.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?/gi)]
+                            .map(m => m[1]).filter((v, i, a) => a.indexOf(v) === i)
+          const existing = store.databases.find(d => d.name === dbName)?.tables ?? []
+          const colorIdx = store.databases.findIndex(d => d.name === dbName)
+          const color    = colorIdx >= 0 ? store.databases[colorIdx].color : DB_COLORS[store.databases.length % DB_COLORS.length]
           store.registerDatabase(dbName, [...new Set([...existing, ...tables])], color)
         }
       }
