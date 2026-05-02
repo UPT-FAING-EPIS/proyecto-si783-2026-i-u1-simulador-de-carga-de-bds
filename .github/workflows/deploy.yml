@@ -42,6 +42,11 @@ jobs:
         env:
           GITHUB_ACTIONS: "true"
 
+      - name: Integrate landing page
+        run: |
+          mv dist/index.html dist/app.html
+          cp docs/index.html dist/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
