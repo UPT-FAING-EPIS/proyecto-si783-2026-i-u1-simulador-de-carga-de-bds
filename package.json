@@ -2,7 +2,7 @@
   "name": "simulador-bds",
   "productName": "Simulador DB",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "description": "Simulador multi-motor de bases de datos (SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB, Redis)",
   "author": "Simulador DB",
