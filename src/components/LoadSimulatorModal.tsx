@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import {
   X, Play, Square, Zap, AlertTriangle, Activity,
-  Users, Clock, TrendingUp, Database,
+  Users, Clock, TrendingUp, Database, Download,
 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { ENGINE_CONFIGS } from '../types'
@@ -236,20 +236,73 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
   }
 
   function buildScript(type: QueryType, tick: number, userCount: number) {
-    const rowIdx = (userCount % 500) + 1
+    const rowIdx    = (userCount % 500) + 1
     const productId = (tick % 7) + 1
-    const engineHint = engineCfg.name
 
-    switch (type) {
-      case 'SELECT':
-        return `SELECT * FROM orders WHERE user_id = ${rowIdx} ORDER BY created_at DESC LIMIT 25; -- ${engineHint}`
-      case 'INSERT':
-        return `INSERT INTO audit_log (user_id, action, created_at) VALUES (${rowIdx}, 'login', NOW()); -- ${engineHint}`
-      case 'UPDATE':
-        return `UPDATE inventory SET stock = stock - 1 WHERE product_id = ${productId}; -- ${engineHint}`
-      case 'DELETE':
-        return `DELETE FROM sessions WHERE last_seen < NOW() - INTERVAL 30 DAY; -- ${engineHint}`
+    // MongoDB
+    if (engine === 'mongodb') {
+      switch (type) {
+        case 'SELECT': return `db.orders.find({ user_id: ${rowIdx} }).sort({ created_at: -1 }).limit(25)`
+        case 'INSERT': return `db.audit_log.insertOne({ user_id: ${rowIdx}, action: "login", created_at: new Date() })`
+        case 'UPDATE': return `db.inventory.updateOne({ product_id: ${productId} }, { $inc: { stock: -1 } })`
+        case 'DELETE': return `db.sessions.deleteMany({ last_seen: { $lt: new Date(Date.now() - 30*86400000) } })`
+      }
     }
+
+    // Redis
+    if (engine === 'redis') {
+      switch (type) {
+        case 'SELECT': return `GET session:${rowIdx}`
+        case 'INSERT': return `SETEX session:${rowIdx} 86400 "active"`
+        case 'UPDATE': return `HINCRBY inventory:${productId} stock -1`
+        case 'DELETE': return `DEL session:${rowIdx}`
+      }
+    }
+
+    // SQL engines — cada uno con su dialecto correcto
+    switch (engine) {
+      case 'oracle':
+        switch (type) {
+          case 'SELECT': return `SELECT * FROM orders WHERE user_id = ${rowIdx} ORDER BY created_at DESC FETCH FIRST 25 ROWS ONLY;`
+          case 'INSERT': return `INSERT INTO audit_log (user_id, action, created_at) VALUES (${rowIdx}, 'login', SYSDATE);`
+          case 'UPDATE': return `UPDATE inventory SET stock = stock - 1 WHERE product_id = ${productId};`
+          case 'DELETE': return `DELETE FROM sessions WHERE last_seen < SYSDATE - 30;`
+        }
+
+      case 'sqlserver':
+        switch (type) {
+          case 'SELECT': return `SELECT TOP 25 * FROM orders WHERE user_id = ${rowIdx} ORDER BY created_at DESC;`
+          case 'INSERT': return `INSERT INTO audit_log (user_id, action, created_at) VALUES (${rowIdx}, 'login', GETDATE());`
+          case 'UPDATE': return `UPDATE inventory SET stock = stock - 1 WHERE product_id = ${productId};`
+          case 'DELETE': return `DELETE FROM sessions WHERE last_seen < DATEADD(day, -30, GETDATE());`
+        }
+
+      case 'postgresql':
+        switch (type) {
+          case 'SELECT': return `SELECT * FROM orders WHERE user_id = ${rowIdx} ORDER BY created_at DESC LIMIT 25;`
+          case 'INSERT': return `INSERT INTO audit_log (user_id, action, created_at) VALUES (${rowIdx}, 'login', NOW()) ON CONFLICT DO NOTHING;`
+          case 'UPDATE': return `UPDATE inventory SET stock = stock - 1 WHERE product_id = ${productId};`
+          case 'DELETE': return `DELETE FROM sessions WHERE last_seen < NOW() - INTERVAL '30 days';`
+        }
+
+      case 'sqlite':
+        switch (type) {
+          case 'SELECT': return `SELECT * FROM orders WHERE user_id = ${rowIdx} ORDER BY created_at DESC LIMIT 25;`
+          case 'INSERT': return `INSERT INTO audit_log (user_id, action, created_at) VALUES (${rowIdx}, 'login', datetime('now'));`
+          case 'UPDATE': return `UPDATE inventory SET stock = stock - 1 WHERE product_id = ${productId};`
+          case 'DELETE': return `DELETE FROM sessions WHERE last_seen < datetime('now', '-30 days');`
+        }
+
+      default: // mysql
+        switch (type) {
+          case 'SELECT': return `SELECT * FROM orders WHERE user_id = ${rowIdx} ORDER BY created_at DESC LIMIT 25;`
+          case 'INSERT': return `INSERT INTO audit_log (user_id, action, created_at) VALUES (${rowIdx}, 'login', NOW());`
+          case 'UPDATE': return `UPDATE inventory SET stock = stock - 1 WHERE product_id = ${productId};`
+          case 'DELETE': return `DELETE FROM sessions WHERE last_seen < NOW() - INTERVAL 30 DAY;`
+        }
+    }
+
+    return ''
   }
 
   function createLogEntry(type: QueryType, tick: number, currentUsers: number, tps: number, latency: number, errored: boolean): LoadScriptLog {
@@ -356,6 +409,237 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
       .join('\n')
     const stamp = new Date().toISOString().replace(/[:.]/g, '-')
     downloadFile(`sim-carga-logs-${stamp}.csv`, csv, 'text/csv;charset=utf-8')
+  }
+
+  // ── HTML Report ─────────────────────────────────────────────────────────────
+  function generateHtmlReport() {
+    const stamp      = new Date().toLocaleString('es-PE')
+    const reportDate = new Date().toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    const activeQTs  = (Object.entries(queryTypes) as [string, boolean][]).filter(([, v]) => v).map(([k]) => k).join(', ')
+
+    function sparkline(data: number[], color: string): string {
+      if (data.length < 2) return `<div style="height:60px;background:#f1f5f9;border-radius:6px"></div>`
+      const W = 480, H = 60
+      const max = Math.max(...data, 1)
+      const pts = data.map((v, i) => `${(i / (data.length - 1)) * W},${H - (v / max) * H}`).join(' ')
+      const fill = `0,${H} ${pts} ${W},${H}`
+      const gid  = `g${color.replace('#', '')}`
+      return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${color}" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+        </linearGradient></defs>
+        <polygon points="${fill}" fill="url(#${gid})"/>
+        <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`
+    }
+
+    const avgLatency = latencyData.length > 0
+      ? (latencyData.reduce((a, b) => a + b, 0) / latencyData.length)
+      : metrics.latency
+
+    const analysis: string[] = []
+    if (metrics.peakTps >= 400)      analysis.push('<li><strong style="color:#16a34a">✅ Alto rendimiento:</strong> El sistema alcanzó un pico de TPS elevado, demostrando buena capacidad bajo carga.</li>')
+    else if (metrics.peakTps >= 150) analysis.push('<li><strong style="color:#d97706">⚠️ Rendimiento moderado:</strong> El TPS fue aceptable. Considera optimizar índices o aumentar el pool de conexiones.</li>')
+    else                             analysis.push('<li><strong style="color:#dc2626">🔴 Rendimiento bajo:</strong> El pico de TPS fue reducido. Revisar configuración del servidor y consultas lentas.</li>')
+
+    if (avgLatency < 100)      analysis.push('<li><strong style="color:#16a34a">✅ Latencia excelente:</strong> El tiempo de respuesta promedio se mantuvo por debajo de 100ms.</li>')
+    else if (avgLatency < 300) analysis.push(`<li><strong style="color:#d97706">⚠️ Latencia aceptable:</strong> Promedio de ${avgLatency.toFixed(0)}ms. Monitorear en escenarios de mayor carga.</li>`)
+    else                       analysis.push(`<li><strong style="color:#dc2626">🔴 Latencia alta:</strong> Promedio de ${avgLatency.toFixed(0)}ms. Posible cuello de botella en red o servidor.</li>`)
+
+    if (metrics.totalErrors === 0)   analysis.push('<li><strong style="color:#16a34a">✅ Sin errores:</strong> El sistema fue completamente estable durante toda la prueba.</li>')
+    else if (metrics.totalErrors < 10) analysis.push(`<li><strong style="color:#d97706">⚠️ Errores menores:</strong> Se registraron ${metrics.totalErrors} errores. Investigar causas antes de subir la carga.</li>`)
+    else                             analysis.push(`<li><strong style="color:#dc2626">🔴 Inestabilidad detectada:</strong> ${metrics.totalErrors} errores totales. El sistema muestra saturación bajo esta carga.</li>`)
+
+    if (metrics.connections >= store.simulation.connectionLimit * 0.9)
+      analysis.push('<li><strong style="color:#dc2626">🔴 Pool de conexiones saturado:</strong> Las conexiones activas alcanzaron el límite configurado. Aumentar el pool o reducir la carga.</li>')
+    else
+      analysis.push('<li><strong style="color:#16a34a">✅ Conexiones estables:</strong> El pool de conexiones se mantuvo dentro de los límites configurados.</li>')
+
+    const logsHtml = scriptLogs.slice(-20).reverse().map(log => {
+      const typeColor: Record<string, string> = { SELECT: '#2563eb', INSERT: '#16a34a', UPDATE: '#d97706', DELETE: '#dc2626' }
+      const tc = typeColor[log.type] ?? '#64748b'
+      return `<tr>
+        <td>${log.timestamp}</td>
+        <td><span style="background:${tc}1a;color:${tc};border:1px solid ${tc}40;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700">${log.type}</span></td>
+        <td><span style="background:${log.status === 'OK' ? '#dcfce7' : '#fee2e2'};color:${log.status === 'OK' ? '#16a34a' : '#dc2626'};padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700">${log.status}</span></td>
+        <td>${log.users}</td>
+        <td>${log.tps}</td>
+        <td>${log.latency.toFixed(0)}ms</td>
+        <td style="font-family:monospace;font-size:10px">${log.script.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>
+      </tr>`
+    }).join('')
+
+    const overallColor = metrics.totalErrors === 0 ? '#16a34a' : metrics.totalErrors < 10 ? '#d97706' : '#dc2626'
+    const overallLabel = metrics.totalErrors === 0 ? '✓ Prueba exitosa' : metrics.totalErrors < 10 ? '⚠ Con advertencias' : '✗ Con errores'
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reporte de Carga — ${engineCfg.name} — ${stamp}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px;line-height:1.5}
+    .page{max-width:960px;margin:0 auto;padding:32px 20px}
+    /* Header */
+    .header{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:28px 32px;border-radius:16px;margin-bottom:20px}
+    .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-icon{width:44px;height:44px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+    .brand-text h1{font-size:18px;font-weight:700}
+    .brand-text p{color:#94a3b8;font-size:11px;margin-top:2px}
+    .status-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid}
+    .meta-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+    .meta-item .label{color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+    .meta-item .value{color:#e2e8f0;font-weight:600;font-size:13px;margin-top:2px}
+    /* Cards */
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .card .val{font-size:30px;font-weight:700;line-height:1}
+    .card .lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+    .card .sub{font-size:10px;color:#94a3b8;margin-top:3px}
+    /* Charts */
+    .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+    .chart-box{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .chart-title{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+    .chart-peak{font-size:22px;font-weight:700;margin-bottom:8px}
+    /* Sections */
+    .section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .sec-head{padding:11px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;align-items:center;gap:8px}
+    .sec-head h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#475569}
+    .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+    .sec-body{padding:16px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    /* KV */
+    .kv{width:100%;border-collapse:collapse}
+    .kv tr:not(:last-child) td{border-bottom:1px solid #f1f5f9}
+    .kv td{padding:6px 0;font-size:12px}
+    .kv td:first-child{color:#64748b}
+    .kv td:last-child{font-weight:600;text-align:right}
+    /* Table */
+    .tbl{width:100%;border-collapse:collapse;font-size:11px}
+    .tbl th{padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#64748b;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:600}
+    .tbl td{padding:7px 10px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:top}
+    .tbl tr:last-child td{border-bottom:none}
+    /* Analysis */
+    .analysis ul{list-style:none;padding:0}
+    .analysis li{padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#334155;line-height:1.5}
+    .analysis li:last-child{border-bottom:none}
+    /* Footer */
+    .footer{text-align:center;padding:16px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;margin-top:4px}
+    @media print{body{background:#fff}.page{padding:12px}.section{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">🗄️</div>
+        <div class="brand-text">
+          <h1>Reporte de Prueba de Carga</h1>
+          <p>Simulador DB · Multi-Engine Database Simulator</p>
+        </div>
+      </div>
+      <span class="status-pill" style="color:${overallColor};border-color:${overallColor};background:${overallColor}18">${overallLabel}</span>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item"><div class="label">Motor</div><div class="value">${engineCfg.emoji} ${engineCfg.name}</div></div>
+      <div class="meta-item"><div class="label">Fecha</div><div class="value">${reportDate}</div></div>
+      <div class="meta-item"><div class="label">Duración</div><div class="value">${duration}s</div></div>
+      <div class="meta-item"><div class="label">Usuarios máx.</div><div class="value">${maxUsers}</div></div>
+      <div class="meta-item"><div class="label">Rampa</div><div class="value">${rampUp}s</div></div>
+      <div class="meta-item"><div class="label">Consultas</div><div class="value">${activeQTs}</div></div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="val" style="color:#10b981">${metrics.peakTps}</div><div class="lbl">Pico TPS</div><div class="sub">transacciones / seg</div></div>
+    <div class="card"><div class="val" style="color:#3b82f6">${metrics.latency.toFixed(0)}ms</div><div class="lbl">Latencia final</div><div class="sub">tiempo de respuesta</div></div>
+    <div class="card"><div class="val" style="color:#f59e0b">${metrics.currentUsers}</div><div class="lbl">Usuarios activos</div><div class="sub">de ${maxUsers} configurados</div></div>
+    <div class="card"><div class="val" style="color:${metrics.totalErrors === 0 ? '#10b981' : '#ef4444'}">${metrics.totalErrors}</div><div class="lbl">Errores totales</div><div class="sub">durante la prueba</div></div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-box">
+      <div class="chart-title">TPS — Transacciones por segundo</div>
+      <div class="chart-peak" style="color:#10b981">${metrics.peakTps} <span style="font-size:13px;font-weight:400;color:#64748b">pico</span></div>
+      ${sparkline(tpsData, '#10b981')}
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Latencia (ms)</div>
+      <div class="chart-peak" style="color:#3b82f6">${metrics.latency.toFixed(0)}ms <span style="font-size:13px;font-weight:400;color:#64748b">final</span></div>
+      ${sparkline(latencyData, '#3b82f6')}
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="section">
+      <div class="sec-head"><span class="dot" style="background:#3b82f6"></span><h2>Configuración de la prueba</h2></div>
+      <div class="sec-body">
+        <table class="kv">
+          <tr><td>Motor de base de datos</td><td>${engineCfg.emoji} ${engineCfg.name}</td></tr>
+          <tr><td>Duración total</td><td>${duration} segundos</td></tr>
+          <tr><td>Usuarios virtuales máx.</td><td>${maxUsers}</td></tr>
+          <tr><td>Tiempo de rampa (ramp-up)</td><td>${rampUp} segundos</td></tr>
+          <tr><td>Tipos de consulta activos</td><td>${activeQTs}</td></tr>
+          <tr><td>Latencia de red simulada</td><td>${store.simulation.networkLatency} ms</td></tr>
+          <tr><td>Límite de conexiones</td><td>${store.simulation.connectionLimit}</td></tr>
+          <tr><td>Simulación de errores</td><td>${store.simulation.simulateErrors ? `Sí (${store.simulation.errorProbability}%)` : 'No'}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-head"><span class="dot" style="background:#10b981"></span><h2>Métricas finales</h2></div>
+      <div class="sec-body">
+        <table class="kv">
+          <tr><td>TPS al finalizar</td><td>${metrics.tps}</td></tr>
+          <tr><td>Pico de TPS alcanzado</td><td>${metrics.peakTps}</td></tr>
+          <tr><td>Latencia al finalizar</td><td>${metrics.latency.toFixed(1)} ms</td></tr>
+          <tr><td>Latencia promedio</td><td>${avgLatency.toFixed(1)} ms</td></tr>
+          <tr><td>Uso de CPU estimado</td><td>${metrics.cpuUsage.toFixed(1)}%</td></tr>
+          <tr><td>Conexiones activas</td><td>${metrics.connections} / ${store.simulation.connectionLimit}</td></tr>
+          <tr><td>Errores último segundo</td><td>${metrics.errorCount}</td></tr>
+          <tr><td>Errores totales</td><td>${metrics.totalErrors}</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section analysis" style="margin-bottom:16px">
+    <div class="sec-head"><span class="dot" style="background:#8b5cf6"></span><h2>Análisis automático de resultados</h2></div>
+    <div class="sec-body"><ul>${analysis.join('')}</ul></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head"><span class="dot" style="background:#f59e0b"></span><h2>Muestra de scripts ejecutados (últimos ${Math.min(scriptLogs.length, 20)})</h2></div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>Hora</th><th>Tipo</th><th>Estado</th><th>Usuarios</th><th>TPS</th><th>Latencia</th><th>Script ejecutado</th></tr></thead>
+        <tbody>${logsHtml}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    Generado por <strong>Simulador DB v1.6.0</strong> &nbsp;·&nbsp; ${stamp} &nbsp;·&nbsp; Motor: ${engineCfg.emoji} ${engineCfg.name}
+    &nbsp;·&nbsp; <em>Para exportar como PDF: Ctrl+P → Guardar como PDF</em>
+  </div>
+
+</div>
+</body>
+</html>`
+
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+    const url  = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href     = url
+    link.download = `reporte-carga-${engine}-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.html`
+    link.click()
+    URL.revokeObjectURL(url)
   }
 
   // ── Stop ────────────────────────────────────────────────────────────────────
@@ -532,13 +816,22 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
             </button>
           )}
           {status === 'completed' && (
-            <button
-              onClick={resetSimulation}
-              className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-slate-200 bg-surface-700 border border-surface-600 hover:bg-surface-600 transition-all shrink-0"
-            >
-              <Play size={11} />
-              Nueva prueba
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={generateHtmlReport}
+                className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/30 border border-emerald-800/40 transition-all"
+              >
+                <Download size={11} />
+                Exportar Reporte
+              </button>
+              <button
+                onClick={resetSimulation}
+                className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-slate-200 bg-surface-700 border border-surface-600 hover:bg-surface-600 transition-all"
+              >
+                <Play size={11} />
+                Nueva prueba
+              </button>
+            </div>
           )}
           <button
             onClick={onClose}

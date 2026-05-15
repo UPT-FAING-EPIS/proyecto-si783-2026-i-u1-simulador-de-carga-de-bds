@@ -49,7 +49,7 @@ export default function UserDropdown({ onClose, onOpenModal, session }: Props) {
           </div>
           <div className="overflow-hidden">
             <div className="text-sm font-bold text-white truncate">{session?.username ?? 'Usuario'}</div>
-            <div className="text-[10px] text-slate-400 truncate">{session?.role ?? 'Demo'} · v1.0</div>
+            <div className="text-[10px] text-slate-400 truncate">{session?.role ?? 'Demo'} · v1.6.0</div>
           </div>
         </div>
       </div>

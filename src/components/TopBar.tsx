@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Database, Upload, Download, Play, Square, Trash2,
-  Moon, Sun, HelpCircle, Settings, LogOut, ChevronDown, Activity, Users, FileText,
+  Moon, Sun, HelpCircle, Settings, LogOut, ChevronDown, Activity, Users, FileText, GitCompare,
 } from 'lucide-react'
 import { useStore, getActiveTab } from '../store/useStore'
 import { executeSQL, executeMongoQuery, executeRedisCommand, initializeDatabase, preprocessSQL } from '../engines/sqlEngine'
@@ -16,11 +16,12 @@ import AboutModal from './modals/AboutModal'
 import UserDropdown from './modals/UserDropdown'
 import { EnvButton } from './modals/EnvModal'
 import LoadSimulatorModal from './LoadSimulatorModal'
+import SyntaxComparatorModal from './modals/SyntaxComparatorModal'
 import OnlineUsersPanel from './OnlineUsersPanel'
 import { subscribeToCount } from '../lib/presence'
 import { isConfigured } from '../lib/firebase'
 
-type Modal = 'import' | 'export' | 'help' | 'settings' | 'user' | 'stats' | 'history' | 'logs' | 'about' | 'load' | 'online' | null
+type Modal = 'import' | 'export' | 'help' | 'settings' | 'user' | 'stats' | 'history' | 'logs' | 'about' | 'load' | 'online' | 'compare' | null
 
 interface TopBarProps {
   session?: { username: string; role: string; color: string }
@@ -161,7 +162,7 @@ export default function TopBar({ session, onLogout }: TopBarProps) {
                 Simulador <span className="text-blue-400">DB</span>
               </span>
               <span className="text-[9px] font-semibold px-1.5 py-px rounded-full bg-blue-600/20 text-blue-400 border border-blue-600/30">
-                v1.0
+                v1.6.0
               </span>
             </div>
             <span className="text-[10px] text-slate-500 tracking-wide">Multi-Engine Simulator</span>
@@ -253,6 +254,21 @@ export default function TopBar({ session, onLogout }: TopBarProps) {
         >
           <Activity size={13} />
           <span className="hidden md:inline">Sim. Carga</span>
+        </button>
+
+        {/* ── Syntax Comparator ────────────────────────────────────────────── */}
+        <button
+          title="Comparador de Sintaxis — el mismo script en los 7 motores"
+          onClick={() => open('compare')}
+          className={[
+            'flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium transition-all select-none',
+            modal === 'compare'
+              ? 'text-violet-300 bg-violet-900/30 border border-violet-800/50'
+              : 'text-slate-400 hover:text-violet-300 hover:bg-violet-900/20 border border-transparent',
+          ].join(' ')}
+        >
+          <GitCompare size={13} />
+          <span className="hidden md:inline">Comparar</span>
         </button>
 
         <div className="flex-1" />
@@ -381,6 +397,7 @@ export default function TopBar({ session, onLogout }: TopBarProps) {
       {modal === 'logs'     && <QueryLogsModal onClose={close} />}
       {modal === 'about'    && <AboutModal onClose={close} />}
       {modal === 'load'     && <LoadSimulatorModal onClose={close} />}
+      {modal === 'compare'  && <SyntaxComparatorModal onClose={close} />}
       {/* OnlineUsersPanel se renderiza inline dentro del botón relativo */}
     </>
   )

@@ -53,7 +53,7 @@ export default function AboutModal({ onClose }: Props) {
               <h3 className="text-base font-bold text-white">Simulador de Bases de Datos</h3>
               <p className="text-xs text-slate-400 mt-0.5">Multi-Engine Database Simulator</p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-[10px] bg-blue-900/40 text-blue-300 border border-blue-700/40 px-2 py-0.5 rounded-full font-mono">v1.1.0</span>
+                <span className="text-[10px] bg-blue-900/40 text-blue-300 border border-blue-700/40 px-2 py-0.5 rounded-full font-mono">v1.6.0</span>
                 <span className="text-[10px] text-slate-500">7 motores soportados</span>
               </div>
             </div>

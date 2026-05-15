@@ -214,7 +214,7 @@ export default function SettingsModal({ onClose }: Props) {
                   </button>
                 </Row>
                 <Row label="Versión" hint="Simulador de Bases de Datos">
-                  <span className="text-sm font-mono text-slate-400">v1.0.0</span>
+                  <span className="text-sm font-mono text-slate-400">v1.6.0</span>
                 </Row>
               </div>
             )}

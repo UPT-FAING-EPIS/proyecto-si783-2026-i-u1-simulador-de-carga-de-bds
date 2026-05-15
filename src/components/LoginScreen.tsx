@@ -424,7 +424,7 @@ export default function LoginScreen({ onLogin }: Props) {
 
         {/* Footer */}
         <p className="text-center text-[10px] text-slate-600 mt-4">
-          v1.1.0 · Multi-Engine Database Simulator · 2026
+          v1.6.0 · Multi-Engine Database Simulator · 2026
         </p>
       </div>
 

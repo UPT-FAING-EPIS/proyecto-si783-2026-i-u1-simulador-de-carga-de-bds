@@ -334,7 +334,7 @@ export default function WelcomeScreen({ session, onEnter }: Props) {
             background: 'rgba(7,11,20,0.5)',
           }}>
             <span style={{ fontSize: 9, color: '#334155', fontFamily: 'monospace', letterSpacing: '0.08em' }}>
-              v1.1.0 · 2026 · Multi-Engine Database Simulator
+              v1.6.0 · 2026 · Multi-Engine Database Simulator
             </span>
             <div style={{ display: 'flex', gap: 6 }}>
               {['SQL','MongoDB','Redis'].map(e => (
