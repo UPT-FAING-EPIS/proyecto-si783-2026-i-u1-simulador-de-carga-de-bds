@@ -480,105 +480,194 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Reporte de Carga — ${engineCfg.name} — ${stamp}</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px;line-height:1.5}
-    .page{max-width:960px;margin:0 auto;padding:32px 20px}
-    /* Header */
-    .header{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:#fff;padding:28px 32px;border-radius:16px;margin-bottom:20px}
-    .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand-icon{width:44px;height:44px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
-    .brand-text h1{font-size:18px;font-weight:700}
-    .brand-text p{color:#94a3b8;font-size:11px;margin-top:2px}
-    .status-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid}
-    .meta-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
-    .meta-item .label{color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
-    .meta-item .value{color:#e2e8f0;font-weight:600;font-size:13px;margin-top:2px}
-    /* Cards */
-    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-    .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-    .card .val{font-size:30px;font-weight:700;line-height:1}
-    .card .lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
-    .card .sub{font-size:10px;color:#94a3b8;margin-top:3px}
-    /* Charts */
-    .charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-    .chart-box{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-    .chart-title{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-    .chart-peak{font-size:22px;font-weight:700;margin-bottom:8px}
-    /* Sections */
-    .section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-    .sec-head{padding:11px 16px;border-bottom:1px solid #f1f5f9;background:#f8fafc;display:flex;align-items:center;gap:8px}
-    .sec-head h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#475569}
-    .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
-    .sec-body{padding:16px}
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-    /* KV */
+    body{font-family:'Inter',system-ui,sans-serif;background:#f8fafc;color:#0f172a;font-size:13px;line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .page{max-width:980px;margin:0 auto;padding:0 0 40px}
+
+    /* ── Cover ── */
+    .cover{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);color:#fff;padding:40px 48px 36px;position:relative;overflow:hidden;page-break-after:avoid}
+    .cover::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.18),transparent 70%)}
+    .cover::after{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 70%)}
+    .cover-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;position:relative;z-index:1}
+    .cover-brand{display:flex;align-items:center;gap:16px}
+    .cover-icon{width:52px;height:52px;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 8px 24px rgba(99,102,241,.4)}
+    .cover-title{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+    .cover-sub{font-size:11px;color:#94a3b8;margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
+    .status-badge{padding:7px 18px;border-radius:24px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid;white-space:nowrap}
+    .cover-meta{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative;z-index:1;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+    .meta-cell{padding:14px 16px;border-right:1px solid rgba(255,255,255,.08)}
+    .meta-cell:last-child{border-right:none}
+    .meta-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:4px}
+    .meta-val{font-size:13px;font-weight:600;color:#e2e8f0}
+
+    /* ── KPI Strip ── */
+    .kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0;border-left:none;border-right:none}
+    .kpi{background:#fff;padding:24px 20px 20px;text-align:center;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;position:relative;overflow:hidden}
+    .kpi:last-child{border-right:none}
+    .kpi-accent{position:absolute;top:0;left:0;right:0;height:3px}
+    .kpi-val{font-size:36px;font-weight:800;line-height:1;letter-spacing:-.02em;margin-top:6px}
+    .kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-top:6px}
+    .kpi-sub{font-size:10px;color:#94a3b8;margin-top:3px}
+
+    /* ── Section ── */
+    .section{background:#fff;border:1px solid #e2e8f0;overflow:hidden;margin-bottom:0;border-top:none}
+    .section:first-of-type,.section-first{border-top:1px solid #e2e8f0}
+    .sec-hd{padding:13px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9;background:linear-gradient(90deg,#f8fafc,#fff)}
+    .sec-hd h2{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#475569}
+    .sec-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+    .sec-body{padding:20px}
+
+    /* ── Charts ── */
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:none}
+    .chart-cell{padding:20px;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+    .chart-cell:nth-child(2){border-right:none}
+    .chart-cell:nth-child(3){border-bottom:none}
+    .chart-cell:nth-child(4){border-right:none;border-bottom:none}
+    .chart-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:4px}
+    .chart-peak-val{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1;margin-bottom:12px}
+
+    /* ── Two col ── */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:none}
+    .col-left{border-right:1px solid #e2e8f0}
+
+    /* ── KV table ── */
     .kv{width:100%;border-collapse:collapse}
-    .kv tr:not(:last-child) td{border-bottom:1px solid #f1f5f9}
-    .kv td{padding:6px 0;font-size:12px}
-    .kv td:first-child{color:#64748b}
-    .kv td:last-child{font-weight:600;text-align:right}
-    /* Table */
+    .kv tr{border-bottom:1px solid #f8fafc}
+    .kv tr:last-child{border-bottom:none}
+    .kv tr:hover td{background:#f8fafc}
+    .kv td{padding:8px 0;font-size:12px;vertical-align:middle}
+    .kv td:first-child{color:#64748b;width:56%}
+    .kv td:last-child{font-weight:600;text-align:right;color:#1e293b}
+
+    /* ── Analysis ── */
+    .analysis-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f8fafc}
+    .analysis-item:last-child{border-bottom:none}
+    .analysis-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px}
+    .analysis-text{flex:1;font-size:12px;color:#334155;line-height:1.6}
+    .analysis-text strong{display:block;font-size:12px;font-weight:700;margin-bottom:2px}
+
+    /* ── Logs table ── */
     .tbl{width:100%;border-collapse:collapse;font-size:11px}
-    .tbl th{padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#64748b;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:600}
-    .tbl td{padding:7px 10px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:top}
+    .tbl thead tr{background:#f8fafc}
+    .tbl th{padding:9px 12px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#64748b;border-bottom:2px solid #e2e8f0;font-weight:700;white-space:nowrap}
+    .tbl td{padding:8px 12px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:top}
     .tbl tr:last-child td{border-bottom:none}
-    /* Analysis */
-    .analysis ul{list-style:none;padding:0}
-    .analysis li{padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#334155;line-height:1.5}
-    .analysis li:last-child{border-bottom:none}
-    /* Footer */
-    .footer{text-align:center;padding:16px;color:#94a3b8;font-size:11px;border-top:1px solid #e2e8f0;margin-top:4px}
-    @media print{body{background:#fff}.page{padding:12px}.section{break-inside:avoid}}
+    .tbl tr:nth-child(even) td{background:#fafafa}
+    .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid}
+    .mono{font-family:'Courier New',monospace;font-size:10px;line-height:1.5;color:#1e293b}
+
+    /* ── Footer ── */
+    .report-footer{padding:20px 48px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;background:#f8fafc}
+    .footer-left{font-size:10px;color:#94a3b8}
+    .footer-right{font-size:10px;color:#94a3b8;text-align:right}
+
+    /* ── Print ── */
+    @media print{
+      body{background:#fff}
+      .page{padding:0}
+      .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .kpi-accent{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .badge{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .analysis-icon{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .sec-hd{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .kpi-val{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .charts-grid{break-inside:avoid}
+      .analysis-item{break-inside:avoid}
+      @page{margin:0;size:A4}
+    }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <div class="header">
-    <div class="header-top">
-      <div class="brand">
-        <div class="brand-icon">🗄️</div>
-        <div class="brand-text">
-          <h1>Reporte de Prueba de Carga</h1>
-          <p>Simulador DB · Multi-Engine Database Simulator</p>
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-top">
+      <div class="cover-brand">
+        <div class="cover-icon">🗄️</div>
+        <div>
+          <div class="cover-title">Reporte de Prueba de Carga</div>
+          <div class="cover-sub">Simulador DB &nbsp;·&nbsp; Multi-Engine Database Simulator &nbsp;·&nbsp; v1.6.0</div>
         </div>
       </div>
-      <span class="status-pill" style="color:${overallColor};border-color:${overallColor};background:${overallColor}18">${overallLabel}</span>
+      <span class="status-badge" style="color:${overallColor};border-color:${overallColor};background:${overallColor}22">${overallLabel}</span>
     </div>
-    <div class="meta-grid">
-      <div class="meta-item"><div class="label">Motor</div><div class="value">${engineCfg.emoji} ${engineCfg.name}</div></div>
-      <div class="meta-item"><div class="label">Fecha</div><div class="value">${reportDate}</div></div>
-      <div class="meta-item"><div class="label">Duración</div><div class="value">${duration}s</div></div>
-      <div class="meta-item"><div class="label">Usuarios máx.</div><div class="value">${maxUsers}</div></div>
-      <div class="meta-item"><div class="label">Rampa</div><div class="value">${rampUp}s</div></div>
-      <div class="meta-item"><div class="label">Consultas</div><div class="value">${activeQTs}</div></div>
-    </div>
-  </div>
-
-  <div class="cards">
-    <div class="card"><div class="val" style="color:#10b981">${metrics.peakTps}</div><div class="lbl">Pico TPS</div><div class="sub">transacciones / seg</div></div>
-    <div class="card"><div class="val" style="color:#3b82f6">${metrics.latency.toFixed(0)}ms</div><div class="lbl">Latencia final</div><div class="sub">tiempo de respuesta</div></div>
-    <div class="card"><div class="val" style="color:#f59e0b">${metrics.currentUsers}</div><div class="lbl">Usuarios activos</div><div class="sub">de ${maxUsers} configurados</div></div>
-    <div class="card"><div class="val" style="color:${metrics.totalErrors === 0 ? '#10b981' : '#ef4444'}">${metrics.totalErrors}</div><div class="lbl">Errores totales</div><div class="sub">durante la prueba</div></div>
-  </div>
-
-  <div class="charts">
-    <div class="chart-box">
-      <div class="chart-title">TPS — Transacciones por segundo</div>
-      <div class="chart-peak" style="color:#10b981">${metrics.peakTps} <span style="font-size:13px;font-weight:400;color:#64748b">pico</span></div>
-      ${sparkline(tpsData, '#10b981')}
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Latencia (ms)</div>
-      <div class="chart-peak" style="color:#3b82f6">${metrics.latency.toFixed(0)}ms <span style="font-size:13px;font-weight:400;color:#64748b">final</span></div>
-      ${sparkline(latencyData, '#3b82f6')}
+    <div class="cover-meta">
+      <div class="meta-cell"><div class="meta-lbl">Motor</div><div class="meta-val">${engineCfg.emoji} ${engineCfg.name}</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Fecha</div><div class="meta-val">${reportDate}</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Duración</div><div class="meta-val">${duration} s</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Usuarios máx.</div><div class="meta-val">${maxUsers}</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Rampa</div><div class="meta-val">${rampUp} s</div></div>
+      <div class="meta-cell"><div class="meta-lbl">Consultas</div><div class="meta-val">${activeQTs}</div></div>
     </div>
   </div>
 
-  <div class="two-col">
-    <div class="section">
-      <div class="sec-head"><span class="dot" style="background:#3b82f6"></span><h2>Configuración de la prueba</h2></div>
+  <!-- KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-accent" style="background:linear-gradient(90deg,#10b981,#059669)"></div>
+      <div class="kpi-val" style="color:#059669">${metrics.peakTps}</div>
+      <div class="kpi-lbl">Pico TPS</div>
+      <div class="kpi-sub">transacciones / segundo</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-accent" style="background:linear-gradient(90deg,#3b82f6,#2563eb)"></div>
+      <div class="kpi-val" style="color:#2563eb">${metrics.latency.toFixed(0)}<span style="font-size:18px">ms</span></div>
+      <div class="kpi-lbl">Latencia Final</div>
+      <div class="kpi-sub">promedio: ${avgLatency.toFixed(0)}ms</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-accent" style="background:linear-gradient(90deg,#f59e0b,#d97706)"></div>
+      <div class="kpi-val" style="color:#d97706">${metrics.currentUsers}</div>
+      <div class="kpi-lbl">Usuarios Activos</div>
+      <div class="kpi-sub">de ${maxUsers} configurados</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-accent" style="background:linear-gradient(90deg,${metrics.totalErrors === 0 ? '#10b981,#059669' : '#ef4444,#dc2626'})"></div>
+      <div class="kpi-val" style="color:${metrics.totalErrors === 0 ? '#059669' : '#dc2626'}">${metrics.totalErrors}</div>
+      <div class="kpi-lbl">Errores Totales</div>
+      <div class="kpi-sub">durante toda la prueba</div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="section section-first" style="border-top:1px solid #e2e8f0">
+    <div class="sec-hd">
+      <div class="sec-icon" style="background:#dbeafe;color:#2563eb">📈</div>
+      <h2>Evolución del Rendimiento</h2>
+    </div>
+    <div class="charts-grid" style="border-top:none">
+      <div class="chart-cell">
+        <div class="chart-label">TPS — Transacciones por segundo</div>
+        <div class="chart-peak-val" style="color:#059669">${metrics.peakTps} <span style="font-size:14px;font-weight:500;color:#94a3b8">pico</span></div>
+        ${sparkline(tpsData, '#10b981')}
+      </div>
+      <div class="chart-cell">
+        <div class="chart-label">Latencia de respuesta (ms)</div>
+        <div class="chart-peak-val" style="color:#2563eb">${metrics.latency.toFixed(0)}<span style="font-size:14px">ms</span> <span style="font-size:14px;font-weight:500;color:#94a3b8">final</span></div>
+        ${sparkline(latencyData, '#3b82f6')}
+      </div>
+      <div class="chart-cell">
+        <div class="chart-label">Uso estimado de CPU (%)</div>
+        <div class="chart-peak-val" style="color:${metrics.cpuUsage >= 90 ? '#dc2626' : metrics.cpuUsage >= 70 ? '#d97706' : '#059669'}">${metrics.cpuUsage.toFixed(0)}<span style="font-size:14px">%</span></div>
+        ${sparkline(cpuData, metrics.cpuUsage >= 90 ? '#ef4444' : '#f59e0b')}
+      </div>
+      <div class="chart-cell">
+        <div class="chart-label">Conexiones activas</div>
+        <div class="chart-peak-val" style="color:${metrics.connections >= store.simulation.connectionLimit ? '#dc2626' : '#7c3aed'}">${metrics.connections} <span style="font-size:14px;font-weight:500;color:#94a3b8">/ ${store.simulation.connectionLimit}</span></div>
+        ${sparkline(connData, '#8b5cf6')}
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG + METRICS -->
+  <div class="section two-col" style="border-top:none">
+    <div class="col-left">
+      <div class="sec-hd">
+        <div class="sec-icon" style="background:#dbeafe;color:#2563eb">⚙️</div>
+        <h2>Configuración de la prueba</h2>
+      </div>
       <div class="sec-body">
         <table class="kv">
           <tr><td>Motor de base de datos</td><td>${engineCfg.emoji} ${engineCfg.name}</td></tr>
@@ -592,16 +681,19 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
         </table>
       </div>
     </div>
-    <div class="section">
-      <div class="sec-head"><span class="dot" style="background:#10b981"></span><h2>Métricas finales</h2></div>
+    <div>
+      <div class="sec-hd">
+        <div class="sec-icon" style="background:#dcfce7;color:#16a34a">📊</div>
+        <h2>Métricas finales</h2>
+      </div>
       <div class="sec-body">
         <table class="kv">
           <tr><td>TPS al finalizar</td><td>${metrics.tps}</td></tr>
           <tr><td>Pico de TPS alcanzado</td><td>${metrics.peakTps}</td></tr>
           <tr><td>Latencia al finalizar</td><td>${metrics.latency.toFixed(1)} ms</td></tr>
           <tr><td>Latencia promedio</td><td>${avgLatency.toFixed(1)} ms</td></tr>
-          <tr><td>Uso de CPU estimado</td><td>${metrics.cpuUsage.toFixed(1)}%</td></tr>
-          <tr><td>Conexiones activas</td><td>${metrics.connections} / ${store.simulation.connectionLimit}</td></tr>
+          <tr><td>Uso de CPU estimado</td><td>${metrics.cpuUsage.toFixed(1)} %</td></tr>
+          <tr><td>Conexiones activas (pico)</td><td>${metrics.connections} / ${store.simulation.connectionLimit}</td></tr>
           <tr><td>Errores último segundo</td><td>${metrics.errorCount}</td></tr>
           <tr><td>Errores totales</td><td>${metrics.totalErrors}</td></tr>
         </table>
@@ -609,37 +701,81 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
     </div>
   </div>
 
-  <div class="section analysis" style="margin-bottom:16px">
-    <div class="sec-head"><span class="dot" style="background:#8b5cf6"></span><h2>Análisis automático de resultados</h2></div>
-    <div class="sec-body"><ul>${analysis.join('')}</ul></div>
+  <!-- ANALYSIS -->
+  <div class="section" style="border-top:none">
+    <div class="sec-hd">
+      <div class="sec-icon" style="background:#ede9fe;color:#7c3aed">🔍</div>
+      <h2>Análisis Automático de Resultados</h2>
+    </div>
+    <div class="sec-body">
+      ${analysis.map(a => {
+        const isGood = a.includes('#16a34a')
+        const isWarn = a.includes('#d97706')
+        const bg     = isGood ? '#f0fdf4' : isWarn ? '#fffbeb' : '#fef2f2'
+        const border = isGood ? '#bbf7d0' : isWarn ? '#fde68a' : '#fecaca'
+        const icon   = isGood ? '✅' : isWarn ? '⚠️' : '🔴'
+        const clean  = a.replace(/<li>/, '').replace(/<\/li>/, '').replace(/<strong[^>]*>/g,'<strong>').replace(/<\/strong>/g,'</strong>')
+        return `<div class="analysis-item">
+          <div class="analysis-icon" style="background:${bg};border:1px solid ${border}">${icon}</div>
+          <div class="analysis-text">${clean}</div>
+        </div>`
+      }).join('')}
+    </div>
   </div>
 
-  <div class="section">
-    <div class="sec-head"><span class="dot" style="background:#f59e0b"></span><h2>Muestra de scripts ejecutados (últimos ${Math.min(scriptLogs.length, 20)})</h2></div>
+  <!-- LOGS -->
+  <div class="section" style="border-top:none">
+    <div class="sec-hd">
+      <div class="sec-icon" style="background:#fef9c3;color:#ca8a04">📋</div>
+      <h2>Muestra de Scripts Ejecutados — últimos ${Math.min(scriptLogs.length, 20)}</h2>
+    </div>
     <div style="overflow-x:auto">
       <table class="tbl">
-        <thead><tr><th>Hora</th><th>Tipo</th><th>Estado</th><th>Usuarios</th><th>TPS</th><th>Latencia</th><th>Script ejecutado</th></tr></thead>
-        <tbody>${logsHtml}</tbody>
+        <thead>
+          <tr><th>Hora</th><th>Tipo</th><th>Estado</th><th>Usuarios</th><th>TPS</th><th>Latencia</th><th>Script ejecutado</th></tr>
+        </thead>
+        <tbody>
+          ${scriptLogs.slice(-20).reverse().map(log => {
+            const typeColor: Record<string, string> = { SELECT:'#2563eb', INSERT:'#16a34a', UPDATE:'#d97706', DELETE:'#dc2626' }
+            const tc = typeColor[log.type] ?? '#64748b'
+            return `<tr>
+              <td style="white-space:nowrap;color:#64748b">${log.timestamp}</td>
+              <td><span class="badge" style="color:${tc};border-color:${tc}33;background:${tc}0d">${log.type}</span></td>
+              <td><span class="badge" style="color:${log.status==='OK'?'#16a34a':'#dc2626'};border-color:${log.status==='OK'?'#bbf7d0':'#fecaca'};background:${log.status==='OK'?'#f0fdf4':'#fef2f2'}">${log.status}</span></td>
+              <td style="text-align:center">${log.users}</td>
+              <td style="text-align:center">${log.tps}</td>
+              <td style="text-align:center;font-weight:600">${log.latency.toFixed(0)}ms</td>
+              <td><div class="mono">${log.script.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></td>
+            </tr>`
+          }).join('')}
+        </tbody>
       </table>
     </div>
   </div>
 
-  <div class="footer">
-    Generado por <strong>Simulador DB v1.6.0</strong> &nbsp;·&nbsp; ${stamp} &nbsp;·&nbsp; Motor: ${engineCfg.emoji} ${engineCfg.name}
-    &nbsp;·&nbsp; <em>Para exportar como PDF: Ctrl+P → Guardar como PDF</em>
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <div class="footer-left">
+      <strong style="color:#475569">Simulador DB v1.6.0</strong> &nbsp;·&nbsp; Multi-Engine Database Simulator<br>
+      Generado el ${stamp}
+    </div>
+    <div class="footer-right">
+      Motor: ${engineCfg.emoji} ${engineCfg.name} &nbsp;·&nbsp; Duración: ${duration}s &nbsp;·&nbsp; Usuarios: ${maxUsers}<br>
+      <span style="color:${overallColor};font-weight:600">${overallLabel}</span>
+    </div>
   </div>
 
 </div>
 </body>
 </html>`
 
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
-    const url  = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href     = url
-    link.download = `reporte-carga-${engine}-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.html`
-    link.click()
-    URL.revokeObjectURL(url)
+    const win = window.open('', '_blank', 'width=1000,height=800')
+    if (!win) return
+    win.document.open()
+    win.document.write(html)
+    win.document.close()
+    win.focus()
+    setTimeout(() => win.print(), 800)
   }
 
   // ── Stop ────────────────────────────────────────────────────────────────────
@@ -822,7 +958,7 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
                 className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-medium text-emerald-300 bg-emerald-900/20 hover:bg-emerald-900/30 border border-emerald-800/40 transition-all"
               >
                 <Download size={11} />
-                Exportar Reporte
+                Exportar PDF
               </button>
               <button
                 onClick={resetSimulation}

@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read":  true,
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "usernames": {
+      ".read":  true,
+      ".write": "auth !== null"
+    },
+    "presence": {
+      ".read":  true,
+      ".write": true
+    },
+    "activeSessions": {
+      ".read":  true,
+      ".write": true
+    }
+  }
+}

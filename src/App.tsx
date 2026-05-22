@@ -10,7 +10,9 @@ import SchemaExplorer from './components/SchemaExplorer'
 import LoginScreen, { SESSION_KEY } from './components/LoginScreen'
 import WelcomeScreen from './components/WelcomeScreen'
 import { initializeDatabase } from './engines/sqlEngine'
-import { registerPresence, unregisterPresence } from './lib/presence'
+import { registerPresence, unregisterPresence, updatePresenceEngine } from './lib/presence'
+import { clearActiveSession } from './lib/auth'
+import { isConfigured } from './lib/firebase'
 
 // ─── Resize hook ──────────────────────────────────────────────────────────────
 
@@ -70,7 +72,7 @@ function Handle({ dir, onMouseDown }: {
 
 // ─── Session types ────────────────────────────────────────────────────────────
 
-interface Session { username: string; role: string; color: string }
+interface Session { username: string; role: string; color: string; uid?: string }
 
 function loadSession(): Session | null {
   try {
@@ -101,6 +103,12 @@ export default function App() {
     const t = setTimeout(() => html.classList.remove('switching-theme'), 280)
     return () => clearTimeout(t)
   }, [store.darkMode])
+
+  useEffect(() => {
+    if (!session || !welcomed) return
+    const activeTab = store.tabs.find(t => t.id === store.activeTabId)
+    if (activeTab) updatePresenceEngine(activeTab.engine)
+  }, [store.activeTabId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (session && !dbInitRef.current) {
@@ -151,11 +159,14 @@ export default function App() {
   // ── Main app (fade in)
   return (
     <div
-      className="flex flex-col h-screen bg-surface-900 overflow-hidden transition-opacity duration-500"
+      className="flex flex-col h-screen bg-surface-900 transition-opacity duration-500"
       style={{ opacity: appVisible ? 1 : 0 }}
     >
       <TopBar session={session} onLogout={() => {
         unregisterPresence()
+        if (session?.uid && isConfigured) {
+          clearActiveSession(session.uid).catch(() => {})
+        }
         localStorage.removeItem(SESSION_KEY)
         setSession(null)
         setAppVisible(false)

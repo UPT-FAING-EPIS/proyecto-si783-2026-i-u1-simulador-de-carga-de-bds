@@ -146,7 +146,7 @@ export default function TopBar({ session, onLogout }: TopBarProps) {
 
   return (
     <>
-      <header className="flex items-center h-[52px] px-3 bg-surface-800 border-b border-surface-600 shrink-0 z-10">
+      <header className="flex items-center h-[52px] px-3 bg-surface-800 border-b border-surface-600 shrink-0 relative z-30">
 
         {/* ── Brand ────────────────────────────────────────────────────────── */}
         <div className="flex items-center gap-2.5 mr-1 select-none">
@@ -276,43 +276,47 @@ export default function TopBar({ session, onLogout }: TopBarProps) {
         {/* ── Right tools ──────────────────────────────────────────────────── */}
         <div className="flex items-center gap-0.5">
 
-          {/* Online users indicator */}
-          <div className="relative">
-            <button
-              title={isConfigured ? 'Usuarios conectados en tiempo real' : 'Configura Firebase para ver usuarios reales'}
-              onClick={() => setModal(m => m === 'online' ? null : 'online')}
-              className={[
-                'flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-xs font-medium transition-all select-none',
-                modal === 'online'
-                  ? 'bg-emerald-900/30 border border-emerald-800/40 text-emerald-300'
-                  : isConfigured
-                    ? 'text-slate-400 hover:text-emerald-300 hover:bg-emerald-900/20 border border-transparent'
-                    : 'text-slate-600 hover:text-slate-400 hover:bg-surface-600 border border-transparent',
-              ].join(' ')}
-            >
-              {isConfigured ? (
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-              ) : (
-                <span className="w-2 h-2 rounded-full bg-slate-600 shrink-0" />
-              )}
-              <Users size={12} />
-              <span className="tabular-nums font-semibold">
-                {isConfigured ? onlineCount.toLocaleString('es') : '—'}
-              </span>
-            </button>
+          {/* Online users indicator — solo visible para Administrador */}
+          {session?.role === 'Administrador' && (
+            <>
+              <div className="relative">
+                <button
+                  title={isConfigured ? 'Usuarios conectados en tiempo real' : 'Configura Firebase para ver usuarios reales'}
+                  onClick={() => setModal(m => m === 'online' ? null : 'online')}
+                  className={[
+                    'flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-xs font-medium transition-all select-none',
+                    modal === 'online'
+                      ? 'bg-emerald-900/30 border border-emerald-800/40 text-emerald-300'
+                      : isConfigured
+                        ? 'text-slate-400 hover:text-emerald-300 hover:bg-emerald-900/20 border border-transparent'
+                        : 'text-slate-600 hover:text-slate-400 hover:bg-surface-600 border border-transparent',
+                  ].join(' ')}
+                >
+                  {isConfigured ? (
+                    <span className="relative flex h-2 w-2 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-slate-600 shrink-0" />
+                  )}
+                  <Users size={12} />
+                  <span className="tabular-nums font-semibold">
+                    {isConfigured ? onlineCount.toLocaleString('es') : '—'}
+                  </span>
+                </button>
 
-            {modal === 'online' && (
-              <OnlineUsersPanel
-                onClose={close}
-                session={session}
-              />
-            )}
-          </div>
+                {modal === 'online' && (
+                  <OnlineUsersPanel
+                    onClose={close}
+                    session={session}
+                  />
+                )}
+              </div>
 
-          <Sep />
+              <Sep />
+            </>
+          )}
 
           {/* Theme */}
           <IconBtn
