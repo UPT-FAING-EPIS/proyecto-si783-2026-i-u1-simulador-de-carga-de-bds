@@ -596,7 +596,7 @@ export default function LoginScreen({ onLogin }: Props) {
 
           </div>
         </div>
-        <p className="text-center text-[10px] text-slate-600 mt-4">v1.6.0 · Multi-Engine Database Simulator · 2026</p>
+        <p className="text-center text-[10px] text-slate-600 mt-4">v1.8.0 · Multi-Engine Database Simulator · 2026</p>
       </div>
 
       <style>{`
