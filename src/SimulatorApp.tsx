@@ -49,6 +49,7 @@ export default function SimulatorApp() {
       standalone
       userName={userName ?? undefined}
       onActivityChange={handleActivityChange}
+      onBack={() => setUserName(null)}
     />
   )
 }

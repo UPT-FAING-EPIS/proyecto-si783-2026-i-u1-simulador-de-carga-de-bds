@@ -211,11 +211,13 @@ export default function LoadSimulatorModal({
   standalone = false,
   onActivityChange,
   userName,
+  onBack,
 }: {
   onClose: () => void
   standalone?: boolean
   onActivityChange?: (data: ModalActivityUpdate) => void
   userName?: string
+  onBack?: () => void
 }) {
   const store = useStore()
 
@@ -960,6 +962,15 @@ export default function LoadSimulatorModal({
                     {userName.charAt(0).toUpperCase()}
                   </span>
                   {userName}
+                  {onBack && status === 'idle' && (
+                    <button
+                      onClick={onBack}
+                      className="ml-0.5 w-3.5 h-3.5 flex items-center justify-center rounded-full hover:bg-surface-500 text-slate-500 hover:text-white transition-colors"
+                      title="Cambiar usuario"
+                    >
+                      <X size={9} />
+                    </button>
+                  )}
                 </span>
               )}
               {status === 'running' && (
