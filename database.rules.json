@@ -1,9 +1,12 @@
 {
   "rules": {
     "users": {
+      ".read": true,
       "$uid": {
-        ".read":  true,
-        ".write": "$uid === auth.uid"
+        ".write": "$uid === auth.uid",
+        "role": {
+          ".write": "auth !== null"
+        }
       }
     },
     "usernames": {
@@ -15,6 +18,10 @@
       ".write": true
     },
     "activeSessions": {
+      ".read":  true,
+      ".write": true
+    },
+    "simulator_web": {
       ".read":  true,
       ".write": true
     }
