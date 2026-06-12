@@ -195,7 +195,26 @@ const EMPTY_METRICS: LoadMetrics = {
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
-export default function LoadSimulatorModal({ onClose }: { onClose: () => void }) {
+export interface ModalActivityUpdate {
+  engine:       string
+  queryTypes:   { SELECT: boolean; INSERT: boolean; UPDATE: boolean; DELETE: boolean }
+  status:       'idle' | 'running' | 'completed'
+  tps:          number
+  currentUsers: number
+  maxUsers:     number
+  cpuUsage:     number
+  latency:      number
+}
+
+export default function LoadSimulatorModal({
+  onClose,
+  standalone = false,
+  onActivityChange,
+}: {
+  onClose: () => void
+  standalone?: boolean
+  onActivityChange?: (data: ModalActivityUpdate) => void
+}) {
   const store = useStore()
 
   // ── Config ──────────────────────────────────────────────────────────────────
@@ -784,8 +803,14 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
       clearInterval(intervalRef.current)
       intervalRef.current = null
     }
-    setStatus(prev => prev === 'running' ? 'completed' : prev)
-  }, [])
+    setStatus(prev => {
+      if (prev === 'running') {
+        onActivityChange?.({ engine: 'mysql', queryTypes: { SELECT: false, INSERT: false, UPDATE: false, DELETE: false }, status: 'completed', tps: 0, currentUsers: 0, maxUsers: 0, cpuUsage: 0, latency: 0 })
+        return 'completed'
+      }
+      return prev
+    })
+  }, [onActivityChange])
 
   // ── Reset to idle ──────────────────────────────────────────────────────────
   const resetSimulation = useCallback(() => {
@@ -886,8 +911,13 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
       setCpuData(prev     => [...prev.slice(-59), cpuUsage])
       setConnData(prev    => [...prev.slice(-59), connections])
       setScriptLogs(prev  => [...prev.slice(-39), ...tickLogs].slice(-40))
+
+      onActivityChange?.({
+        engine, queryTypes, status: 'running',
+        tps, currentUsers, maxUsers, cpuUsage, latency,
+      })
     }, 500)
-  }, [duration, maxUsers, rampUp, stop, store.simulation, queryTypes, engineCfg])
+  }, [duration, maxUsers, rampUp, stop, store.simulation, queryTypes, engineCfg, onActivityChange])
 
   // ── Cleanup on unmount ──────────────────────────────────────────────────────
   useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current) }, [])
@@ -909,9 +939,9 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-5xl bg-surface-900 border border-surface-600 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-        style={{ maxHeight: '92vh' }}>
+    <div className={standalone ? 'flex h-screen bg-surface-900' : 'fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4'}>
+      <div className={standalone ? 'flex-1 flex flex-col overflow-hidden' : 'w-full max-w-5xl bg-surface-900 border border-surface-600 rounded-2xl shadow-2xl flex flex-col overflow-hidden'}
+        style={standalone ? undefined : { maxHeight: '92vh' }}>
 
         {/* ── Header ─────────────────────────────────────────────────────────── */}
         <div className="flex items-center gap-3 px-5 py-3.5 bg-surface-800 border-b border-surface-600 shrink-0">
@@ -969,12 +999,14 @@ export default function LoadSimulatorModal({ onClose }: { onClose: () => void })
               </button>
             </div>
           )}
-          <button
-            onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-white hover:bg-surface-600 transition-all ml-1 shrink-0"
-          >
-            <X size={14} />
-          </button>
+          {!standalone && (
+            <button
+              onClick={onClose}
+              className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-white hover:bg-surface-600 transition-all ml-1 shrink-0"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
 
         {/* ── Progress bar ───────────────────────────────────────────────────── */}

@@ -27,9 +27,9 @@ function startStaticServer(distPath) {
   return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
       const urlPath = req.url.split('?')[0]
-      let filePath = path.join(distPath, urlPath === '/' ? 'index.html' : urlPath)
+      let filePath = path.join(distPath, urlPath === '/' ? 'app.html' : urlPath)
       if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-        filePath = path.join(distPath, 'index.html')
+        filePath = path.join(distPath, 'app.html')
       }
       const ext = path.extname(filePath).toLowerCase()
       fs.readFile(filePath, (err, data) => {
