@@ -293,49 +293,108 @@
     .nav-mobile-menu a:last-child { border-bottom: none; }
 
     /* ── Responsive classes ── */
-    .hero-section { min-height: 100vh; display: flex; align-items: center; padding: 100px 32px 60px; position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; gap: 60px; }
-    .hero-left { flex: 1; max-width: 540px; }
+    .hero-section {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 100px 32px 60px; position: relative; z-index: 1;
+      max-width: 1280px; margin: 0 auto; gap: 60px;
+      box-sizing: border-box; width: 100%;
+    }
+    .hero-left { flex: 1; max-width: 540px; min-width: 0; }
     .hero-right { flex: 1.1; min-width: 0; }
     .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
-    .hero-stats { display: flex; gap: 28px; }
-    .hero-stats-sep { width: 1px; background: rgba(255,255,255,0.07); }
+    .hero-stats { display: flex; gap: 28px; align-items: flex-start; }
+    .hero-stats-sep { width: 1px; background: rgba(255,255,255,0.07); align-self: stretch; }
     .download-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
 
     @media (max-width: 900px) {
       .hero-section { gap: 36px; }
+      .hero-right { flex: 1; }
     }
 
     @media (max-width: 768px) {
+      /* Nav */
       nav { padding: 0 16px; height: 56px; }
       .nav-links { display: none !important; }
-      .nav-cta { display: none; }
-      .nav-hamburger { display: flex; }
+      .nav-cta { display: none !important; }
+      .nav-hamburger { display: flex !important; }
       .nav-mobile-menu { top: 56px; }
 
-      .hero-section { flex-direction: column !important; padding: 80px 20px 48px !important; gap: 48px !important; text-align: center; }
-      .hero-left { max-width: 100% !important; display: flex; flex-direction: column; align-items: center; }
-      .hero-left p { text-align: center !important; max-width: 100% !important; }
-      .hero-btns { justify-content: center; }
-      .hero-stats { gap: 16px; flex-wrap: wrap; justify-content: center; }
-      .hero-stats-sep { display: none; }
-      .hero-right { width: 100%; max-width: 480px; margin: 0 auto; }
+      /* Hero layout — column, block children (no flex-align shrink bug) */
+      .hero-section {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 80px 20px 48px !important;
+        gap: 40px !important;
+      }
+      .hero-left {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        text-align: center;
+      }
+      .hero-left h1 {
+        font-size: clamp(34px, 8.5vw, 52px) !important;
+        letter-spacing: -1.5px !important;
+      }
+      .hero-left p {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        font-size: 15px !important;
+      }
 
-      .bento-grid { grid-template-columns: 1fr !important; gap: 12px; }
+      /* Buttons — full width stacked */
+      .hero-btns {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin-bottom: 32px !important;
+      }
+      .hero-btns a {
+        width: 100% !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+      }
+
+      /* Stats — 2×2 grid */
+      .hero-stats {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 16px !important;
+        width: 100% !important;
+        justify-items: center;
+      }
+      .hero-stats-sep { display: none !important; }
+      .hero-stats > div { text-align: center; }
+
+      /* Mockup */
+      .hero-right { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
+
+      /* Features bento */
+      .bento-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
       .bento-card.wide { grid-column: span 1 !important; }
       .bento-card.tall { grid-row: span 1 !important; }
       .bento-card { padding: 20px !important; }
 
-      .download-grid { grid-template-columns: 1fr !important; max-width: 380px; margin-left: auto !important; margin-right: auto !important; }
+      /* Download */
+      .download-grid { grid-template-columns: 1fr !important; max-width: 380px !important; margin-left: auto !important; margin-right: auto !important; }
 
-      section[id="features"] { padding: 60px 16px !important; }
-      section[id="howto"] { padding: 60px 16px 80px !important; }
-      section[id="download"] { padding: 60px 16px 80px !important; }
-      footer { padding: 32px 16px !important; }
+      /* Sections padding */
+      section[id="features"] { padding: 60px 20px !important; }
+      section[id="engines"]  { padding: 60px 20px !important; }
+      section[id="howto"]    { padding: 60px 20px 80px !important; }
+      section[id="download"] { padding: 60px 20px 80px !important; }
+      footer { padding: 32px 20px !important; }
     }
 
     @media (max-width: 480px) {
       .hero-section { padding: 72px 16px 40px !important; }
-      .hero-right { display: none; }
+      .hero-right { display: none !important; }
+      .hero-left h1 { font-size: clamp(30px, 8vw, 42px) !important; }
+      .hero-left p { font-size: 14px !important; }
     }
 
     /* ── Custom cursor — neon code arrow ── */
