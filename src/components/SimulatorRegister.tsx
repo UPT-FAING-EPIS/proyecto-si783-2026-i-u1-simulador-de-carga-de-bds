@@ -115,7 +115,7 @@ export default function SimulatorRegister({ onRegister }: Props) {
         <div className="flex items-center justify-center gap-2 mt-5">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <p className="text-xs text-slate-500">
-            Actividad visible en tiempo real para el docente
+            Actividad visible en tiempo real para el administrador
           </p>
         </div>
       </div>
