@@ -29,22 +29,45 @@ export default function AdminLogin({ onAuth }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-surface-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-surface-900 flex items-center justify-center p-4 relative overflow-hidden">
 
+      {/* Background glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 65%)' }} />
+      </div>
+
+      <div className="w-full max-w-sm relative z-10">
+
+        {/* Back button */}
+        <div className="mb-6">
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 bg-surface-800 border border-surface-600 hover:bg-surface-700 hover:text-white hover:border-surface-500 transition-all group"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:-translate-x-0.5 transition-transform">
+              <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+            </svg>
+            Volver al inicio
+          </a>
+        </div>
+
+        {/* Logo + title */}
         <div className="flex flex-col items-center gap-4 mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-xl shadow-violet-900/40">
-            <Shield size={30} className="text-white" />
+          <div className="w-18 h-18 rounded-3xl flex items-center justify-center shadow-2xl"
+            style={{ width: 72, height: 72, background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}>
+            <Shield size={32} className="text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white">Panel Docente</h1>
-            <p className="text-slate-400 text-sm mt-1">Monitoreo en tiempo real</p>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">Centro de Control</h1>
+            <p className="text-slate-400 text-sm mt-1.5">Monitoreo en tiempo real</p>
           </div>
         </div>
 
-        <div className="bg-surface-800 border border-surface-600 rounded-2xl p-6 shadow-2xl flex flex-col gap-4">
+        {/* Card */}
+        <div className="bg-surface-800 border border-surface-600 rounded-2xl p-7 shadow-2xl flex flex-col gap-4">
           <p className="text-sm text-slate-400 text-center">
-            Acceso exclusivo para docentes autorizados
+            Acceso exclusivo para cuentas autorizadas
           </p>
 
           {error && (
