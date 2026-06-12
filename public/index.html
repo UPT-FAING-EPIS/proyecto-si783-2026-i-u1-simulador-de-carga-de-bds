@@ -292,7 +292,7 @@
     .nav-mobile-menu a:hover { color: #f8fafc; background: rgba(255,255,255,0.04); }
     .nav-mobile-menu a:last-child { border-bottom: none; }
 
-    /* ── Responsive classes ── */
+    /* ── Responsive base classes ── */
     .hero-section {
       min-height: 100vh; display: flex; align-items: center;
       padding: 100px 32px 60px; position: relative; z-index: 1;
@@ -311,90 +311,156 @@
       .hero-right { flex: 1; }
     }
 
+    /* ══════════════════════════════════════════
+       TABLET / MOBILE  ≤ 768px
+    ══════════════════════════════════════════ */
     @media (max-width: 768px) {
-      /* Nav */
-      nav { padding: 0 16px; height: 56px; }
-      .nav-links { display: none !important; }
-      .nav-cta { display: none !important; }
-      .nav-hamburger { display: flex !important; }
-      .nav-mobile-menu { top: 56px; }
 
-      /* Hero layout — column, block children (no flex-align shrink bug) */
+      /* — Global — */
+      html, body { overflow-x: hidden !important; }
+
+      /* — Nav — */
+      nav { padding: 0 16px !important; height: 56px !important; }
+      .nav-links { display: none !important; }
+      .nav-cta   { display: none !important; }
+      .nav-hamburger { display: flex !important; }
+      .nav-mobile-menu { top: 56px !important; }
+
+      /* — Hero — */
       .hero-section {
         flex-direction: column !important;
         align-items: flex-start !important;
         padding: 80px 20px 48px !important;
         gap: 40px !important;
       }
+      /* display:block fixes the flex shrink-to-content bug */
       .hero-left {
-        width: 100% !important;
-        max-width: 100% !important;
-        display: block !important;
-        text-align: center;
+        width: 100% !important; max-width: 100% !important;
+        display: block !important; text-align: center;
       }
       .hero-left h1 {
         font-size: clamp(34px, 8.5vw, 52px) !important;
         letter-spacing: -1.5px !important;
       }
+      /* width:100% (not just max-width) prevents text overflow */
       .hero-left p {
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 100% !important; max-width: 100% !important;
         text-align: center !important;
         box-sizing: border-box !important;
         font-size: 15px !important;
       }
-
-      /* Buttons — full width stacked */
+      /* Full-width stacked CTA buttons */
       .hero-btns {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 10px !important;
-        width: 100% !important;
-        margin-bottom: 32px !important;
+        flex-direction: column !important; align-items: stretch !important;
+        gap: 10px !important; width: 100% !important; margin-bottom: 32px !important;
       }
       .hero-btns a {
-        width: 100% !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-        text-align: center !important;
+        width: 100% !important; justify-content: center !important;
+        box-sizing: border-box !important; text-align: center !important;
+        display: flex !important;
       }
-
-      /* Stats — 2×2 grid */
+      /* Stats: 2×2 grid instead of overflow-prone flex row */
       .hero-stats {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 16px !important;
-        width: 100% !important;
-        justify-items: center;
+        display: grid !important; grid-template-columns: 1fr 1fr !important;
+        gap: 16px !important; width: 100% !important; justify-items: center;
       }
       .hero-stats-sep { display: none !important; }
       .hero-stats > div { text-align: center; }
+      /* Mockup: full width on 481–768px range */
+      .hero-right {
+        width: 100% !important; max-width: 100% !important; margin: 0 !important;
+        min-width: 0 !important;
+      }
+      /* Scale down the perspective-tilt mockup so it doesn't overflow */
+      .mockup-wrap { max-width: 100%; overflow: hidden; }
+      .mockup-tilt { transform: none !important; border-radius: 12px; }
+      .mockup-titlebar { overflow-x: auto; }
+      .mockup-tabs { gap: 2px; }
+      .mockup-tab { padding: 4px 8px; font-size: 10px; }
 
-      /* Mockup */
-      .hero-right { width: 100% !important; max-width: 100% !important; margin: 0 !important; }
+      /* — Engines strip — */
+      #engines { padding: 0 0 48px !important; }
+      #engines > div:nth-child(2) { padding: 0 16px !important; gap: 8px !important; }
 
-      /* Features bento */
-      .bento-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+      /* — Features — */
+      section#features {
+        padding: 48px 16px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      section#features h2 {
+        font-size: clamp(26px, 6.5vw, 40px) !important;
+        letter-spacing: -1px !important;
+        line-height: 1.2 !important;
+      }
+      /* description paragraph (inline max-width:480px) */
+      section#features > div > p {
+        max-width: 100% !important;
+        font-size: 15px !important;
+      }
+      .bento-grid  { grid-template-columns: 1fr !important; gap: 12px !important; }
       .bento-card.wide { grid-column: span 1 !important; }
-      .bento-card.tall { grid-row: span 1 !important; }
-      .bento-card { padding: 20px !important; }
+      .bento-card.tall { grid-row:   span 1 !important; }
+      .bento-card  { padding: 20px !important; }
+      /* Stats row inside features history card */
+      .bento-card > div[style*="display:flex; gap:16px"] {
+        flex-direction: column !important; gap: 10px !important;
+      }
 
-      /* Download */
-      .download-grid { grid-template-columns: 1fr !important; max-width: 380px !important; margin-left: auto !important; margin-right: auto !important; }
+      /* — How it works — */
+      section#howto {
+        padding: 48px 16px 64px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      section#howto h2 {
+        font-size: clamp(26px, 6.5vw, 40px) !important;
+        letter-spacing: -1px !important;
+      }
+      /* Step rows: tighten gap */
+      section#howto > div + div > div[style*="display:flex"] {
+        gap: 16px !important; padding: 20px 0 !important;
+      }
 
-      /* Sections padding */
-      section[id="features"] { padding: 60px 20px !important; }
-      section[id="engines"]  { padding: 60px 20px !important; }
-      section[id="howto"]    { padding: 60px 20px 80px !important; }
-      section[id="download"] { padding: 60px 20px 80px !important; }
-      footer { padding: 32px 20px !important; }
+      /* — Download — */
+      section#download {
+        padding: 48px 16px 64px !important;
+        box-sizing: border-box !important;
+      }
+      section#download h2 {
+        font-size: clamp(28px, 7vw, 52px) !important;
+        letter-spacing: -1.5px !important;
+      }
+      /* description paragraph (inline max-width:440px) */
+      section#download p { max-width: 100% !important; }
+      .download-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 360px !important;
+        margin-left: auto !important; margin-right: auto !important;
+      }
+
+      /* — Footer — */
+      footer { padding: 32px 16px !important; }
+      /* links row: wrap and reduce gap */
+      footer > div > div:nth-child(2) {
+        flex-wrap: wrap !important;
+        gap: 12px 20px !important;
+        justify-content: center !important;
+      }
     }
 
+    /* ══════════════════════════════════════════
+       SMALL MOBILE  ≤ 480px
+    ══════════════════════════════════════════ */
     @media (max-width: 480px) {
       .hero-section { padding: 72px 16px 40px !important; }
+      /* hide mockup on very small screens — text is primary */
       .hero-right { display: none !important; }
-      .hero-left h1 { font-size: clamp(30px, 8vw, 42px) !important; }
-      .hero-left p { font-size: 14px !important; }
+      .hero-left h1 { font-size: clamp(30px, 8vw, 40px) !important; }
+      .hero-left p  { font-size: 14px !important; line-height: 1.65 !important; }
+      section#features, section#howto, section#download {
+        padding-left: 14px !important; padding-right: 14px !important;
+      }
     }
 
     /* ── Custom cursor — neon code arrow ── */
@@ -726,7 +792,7 @@
 </section>
 
 <!-- ══════════════ ENGINES MARQUEE ══════════════ -->
-<div style="position:relative;z-index:1; padding:0 0 80px; overflow:hidden;">
+<div id="engines" style="position:relative;z-index:1; padding:0 0 80px; overflow:hidden;">
   <div style="text-align:center; font-size:12px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:#334155; margin-bottom:24px;">
     7 motores integrados
   </div>
