@@ -1048,6 +1048,19 @@ export default function LoadSimulatorModal({
           {/* ── Config panel (idle / completed) ──────────────────────────────── */}
           {status !== 'running' && (
             <div className="w-60 border-r border-surface-600 flex flex-col shrink-0 overflow-y-auto bg-surface-800/40">
+              {standalone && onBack && status === 'idle' && (
+                <div className="px-4 pt-4 pb-0">
+                  <button
+                    onClick={onBack}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 bg-surface-700 border border-surface-600 hover:bg-surface-600 hover:text-white hover:border-surface-500 transition-all group"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:-translate-x-0.5 transition-transform">
+                      <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+                    </svg>
+                    Cambiar usuario
+                  </button>
+                </div>
+              )}
               <div className="p-4 flex flex-col gap-3">
                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Configuración</p>
 
