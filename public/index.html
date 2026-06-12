@@ -266,10 +266,76 @@
     .dl-btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; }
     .dl-btn-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; }
 
+    /* ── Hamburger ── */
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 6px; background: none; border: none; z-index: 101;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px; background: #94a3b8; border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-mobile-menu {
+      display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 100;
+      flex-direction: column; background: rgba(5,8,16,0.97); backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.08); padding: 8px 0 12px;
+    }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a {
+      padding: 13px 24px; font-size: 15px; color: #94a3b8; text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.04); transition: color 0.2s, background 0.2s;
+    }
+    .nav-mobile-menu a:hover { color: #f8fafc; background: rgba(255,255,255,0.04); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+
+    /* ── Responsive classes ── */
+    .hero-section { min-height: 100vh; display: flex; align-items: center; padding: 100px 32px 60px; position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; gap: 60px; }
+    .hero-left { flex: 1; max-width: 540px; }
+    .hero-right { flex: 1.1; min-width: 0; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+    .hero-stats { display: flex; gap: 28px; }
+    .hero-stats-sep { width: 1px; background: rgba(255,255,255,0.07); }
+    .download-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
+
+    @media (max-width: 900px) {
+      .hero-section { gap: 36px; }
+    }
+
     @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .bento-grid { grid-template-columns: 1fr; }
-      .bento-card.wide { grid-column: span 1; }
+      nav { padding: 0 16px; height: 56px; }
+      .nav-links { display: none !important; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-mobile-menu { top: 56px; }
+
+      .hero-section { flex-direction: column !important; padding: 80px 20px 48px !important; gap: 48px !important; text-align: center; }
+      .hero-left { max-width: 100% !important; display: flex; flex-direction: column; align-items: center; }
+      .hero-left p { text-align: center !important; max-width: 100% !important; }
+      .hero-btns { justify-content: center; }
+      .hero-stats { gap: 16px; flex-wrap: wrap; justify-content: center; }
+      .hero-stats-sep { display: none; }
+      .hero-right { width: 100%; max-width: 480px; margin: 0 auto; }
+
+      .bento-grid { grid-template-columns: 1fr !important; gap: 12px; }
+      .bento-card.wide { grid-column: span 1 !important; }
+      .bento-card.tall { grid-row: span 1 !important; }
+      .bento-card { padding: 20px !important; }
+
+      .download-grid { grid-template-columns: 1fr !important; max-width: 380px; margin-left: auto !important; margin-right: auto !important; }
+
+      section[id="features"] { padding: 60px 16px !important; }
+      section[id="howto"] { padding: 60px 16px 80px !important; }
+      section[id="download"] { padding: 60px 16px 80px !important; }
+      footer { padding: 32px 16px !important; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section { padding: 72px 16px 40px !important; }
+      .hero-right { display: none; }
     }
 
     /* ── Custom cursor — neon code arrow ── */
@@ -454,13 +520,31 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     Descargar gratis
   </a>
+
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
+<div class="nav-mobile-menu" id="navMobileMenu">
+  <a href="#features">Características</a>
+  <a href="#engines">Motores</a>
+  <a href="#howto">Cómo funciona</a>
+  <a href="#download">Descargar</a>
+  <a href="/admin" style="color:#a78bfa;">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;margin-right:5px;vertical-align:-1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Centro de Control
+  </a>
+  <a href="#download" style="margin:8px 16px 0;padding:12px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:700;text-align:center;border:none;">
+    Descargar gratis
+  </a>
+</div>
+
 <!-- ══════════════ HERO ══════════════ -->
-<section style="min-height:100vh; display:flex; align-items:center; padding:100px 32px 60px; position:relative; z-index:1; max-width:1280px; margin:0 auto; gap:60px;">
+<section class="hero-section">
 
   <!-- Left: Text -->
-  <div style="flex:1; max-width:540px;">
+  <div class="hero-left">
     <div class="badge reveal" style="margin-bottom:28px;">
       <span class="badge-dot"></span>
       Herramienta educativa — 100% gratuita
@@ -476,7 +560,7 @@
       SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis — todo en una sola aplicación. Sin instalar servidores. Sin configuraciones.
     </p>
 
-    <div class="reveal reveal-delay-3" style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:44px;">
+    <div class="hero-btns reveal reveal-delay-3">
       <a href="https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/releases/download/v1.8.0/Simulador.DB.Setup.1.8.0.exe" class="btn-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Descargar para Windows
@@ -493,22 +577,22 @@
     </div>
 
     <!-- Mini stats -->
-    <div class="reveal reveal-delay-4" style="display:flex; gap:28px;">
+    <div class="hero-stats reveal reveal-delay-4">
       <div>
         <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;">7</div>
         <div style="font-size:12px; color:#475569;">Motores de BD</div>
       </div>
-      <div style="width:1px; background:rgba(255,255,255,0.07);"></div>
+      <div class="hero-stats-sep"></div>
       <div>
         <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;" class="grad-text-green">100%</div>
         <div style="font-size:12px; color:#475569;">Gratuito</div>
       </div>
-      <div style="width:1px; background:rgba(255,255,255,0.07);"></div>
+      <div class="hero-stats-sep"></div>
       <div>
         <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;">0</div>
         <div style="font-size:12px; color:#475569;">Config. requerida</div>
       </div>
-      <div style="width:1px; background:rgba(255,255,255,0.07);"></div>
+      <div class="hero-stats-sep"></div>
       <div>
         <div style="font-size:24px; font-weight:900;" class="grad-text-blue">∞</div>
         <div style="font-size:12px; color:#475569;">Consultas</div>
@@ -517,7 +601,7 @@
   </div>
 
   <!-- Right: App mockup -->
-  <div style="flex:1.1; min-width:0;" class="reveal reveal-delay-2">
+  <div class="hero-right reveal reveal-delay-2">
     <div class="mockup-wrap">
       <div class="mockup-glow"></div>
       <div class="mockup-tilt">
@@ -773,7 +857,7 @@
     </div>
 
     <!-- OS Cards -->
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;" class="reveal reveal-delay-1">
+    <div class="download-grid reveal reveal-delay-1">
 
       <!-- Windows -->
       <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
@@ -910,6 +994,23 @@
       }
     }
     loop();
+  })();
+
+  // ── Hamburger menu ──
+  (function() {
+    const btn = document.getElementById('navHamburger');
+    const menu = document.getElementById('navMobileMenu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      btn.classList.toggle('open', open);
+    });
+    menu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+      });
+    });
   })();
 
   // ── Scroll reveal ──
