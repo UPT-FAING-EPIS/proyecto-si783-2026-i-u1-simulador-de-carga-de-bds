@@ -69,6 +69,8 @@ export interface EngineConfig {
   defaultDatabase: string
   defaultConnection: string
   defaultQuery: string
+  /** Multiplicador de capacidad relativa usado por el simulador de carga (1 = referencia) */
+  perfFactor: number
 }
 
 export type ExplainStepType = 'scan' | 'join' | 'filter' | 'aggregate' | 'sort' | 'limit' | 'projection' | 'dml' | 'info'
@@ -102,6 +104,7 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'localhost',
     defaultQuery: '',
+    perfFactor: 1.0,
   },
   mysql: {
     type: 'mysql',
@@ -111,6 +114,7 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'localhost:3306',
     defaultQuery: '',
+    perfFactor: 1.1,
   },
   postgresql: {
     type: 'postgresql',
@@ -120,6 +124,7 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'localhost:5432',
     defaultQuery: '',
+    perfFactor: 1.15,
   },
   mongodb: {
     type: 'mongodb',
@@ -129,6 +134,7 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'localhost:27017',
     defaultQuery: '',
+    perfFactor: 1.3,
   },
   oracle: {
     type: 'oracle',
@@ -138,6 +144,7 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'localhost:1521',
     defaultQuery: '',
+    perfFactor: 1.05,
   },
   sqlite: {
     type: 'sqlite',
@@ -147,6 +154,7 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'tienda.db',
     defaultQuery: '',
+    perfFactor: 0.6,
   },
   redis: {
     type: 'redis',
@@ -156,5 +164,6 @@ export const ENGINE_CONFIGS: Record<EngineType, EngineConfig> = {
     defaultDatabase: '',
     defaultConnection: 'localhost:6379',
     defaultQuery: '',
+    perfFactor: 1.8,
   },
 }
