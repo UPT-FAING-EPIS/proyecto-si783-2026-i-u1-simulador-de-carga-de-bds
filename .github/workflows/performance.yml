@@ -1,0 +1,51 @@
+name: Database Load Performance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  performance:
+    name: Performance threshold check
+    runs-on: ubuntu-latest
+
+    env:
+      PERF_ENGINE: sqlserver
+      PERF_TOTAL_QUERIES: 240
+      PERF_CONCURRENCY: 24
+      PERF_MAX_AVG_LATENCY_MS: 120
+      PERF_MAX_P95_LATENCY_MS: 180
+      PERF_MAX_ERROR_RATE: 0.03
+      PERF_MIN_TPS: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run database load simulation
+        run: npm run test:performance
+
+      - name: Upload performance report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: reports/

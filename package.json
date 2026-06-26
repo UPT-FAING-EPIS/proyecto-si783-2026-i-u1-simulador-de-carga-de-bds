@@ -11,6 +11,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "test:performance": "node scripts/performance-test.mjs",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env ELECTRON_DEV=1 electron .\"",
     "electron:build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false tsc && vite build && electron-builder",
     "electron:build:win": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false tsc && vite build && npx electron-builder --win --publish never",
