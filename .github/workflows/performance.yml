@@ -9,31 +9,13 @@ on:
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
-  performance:
-    name: Performance threshold check (${{ matrix.engine }})
+  build:
+    name: Build project
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        engine:
-          - sqlserver
-          - mysql
-          - postgresql
-          - oracle
-          - sqlite
-          - mongodb
-          - redis
-
-    env:
-      PERF_ENGINE: ${{ matrix.engine }}
-      PERF_TOTAL_QUERIES: 240
-      PERF_CONCURRENCY: 24
-      PERF_MAX_AVG_LATENCY_MS: 120
-      PERF_MAX_P95_LATENCY_MS: 180
-      PERF_MAX_ERROR_RATE: 0.03
-      PERF_MIN_TPS: 120
 
     steps:
       - name: Checkout repository
@@ -51,14 +33,47 @@ jobs:
       - name: Build project
         run: npm run build
 
+  performance:
+    name: Performance threshold check (${{ matrix.engine }}, ${{ matrix.scenario }})
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        engine:
+          - sqlserver
+          - mysql
+          - postgresql
+          - oracle
+          - sqlite
+          - mongodb
+          - redis
+        scenario:
+          - light
+          - medium
+          - heavy
+
+    env:
+      PERF_ENGINE: ${{ matrix.engine }}
+      PERF_SCENARIO: ${{ matrix.scenario }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Run database load simulation
-        run: npm run test:performance
+        run: node scripts/performance-test.mjs
 
       - name: Upload performance report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.engine }}-report
+          name: ${{ matrix.engine }}-${{ matrix.scenario }}-report
           path: reports/
 
   summary:
@@ -79,6 +94,43 @@ jobs:
 
       - name: Generate consolidated summary
         run: node scripts/performance-summary.mjs reports/engines
+
+      - name: Comment summary on pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const marker = '<!-- database-load-performance-summary -->'
+            const summary = fs.readFileSync('reports/performance-summary.md', 'utf8')
+            const body = `${marker}\n${summary}`
+            const { owner, repo } = context.repo
+            const issue_number = context.issue.number
+            const comments = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            })
+            const existing = comments.data.find(comment =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            )
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              })
+            }
 
       - name: Upload consolidated report
         if: always()

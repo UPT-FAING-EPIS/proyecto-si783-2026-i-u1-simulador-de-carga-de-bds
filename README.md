@@ -86,18 +86,19 @@ npm run electron:build # build distribuible
 
 ### Validacion CI/CD de rendimiento
 
-El repositorio incluye el workflow `Database Load Performance`, ejecutado en cada `push`, `pull_request` y de forma manual desde GitHub Actions. El pipeline instala dependencias, compila el proyecto y ejecuta una prueba de carga automatica sobre los 7 motores soportados.
+El repositorio incluye el workflow `Database Load Performance`, ejecutado en cada `push`, `pull_request` y de forma manual desde GitHub Actions. El pipeline instala dependencias, compila el proyecto una sola vez y ejecuta pruebas de carga automaticas sobre los 7 motores soportados.
 
-La validacion mide:
+La validacion combina cada motor con tres escenarios:
 
-| Metrica | Criterio |
+| Escenario | Consultas | Concurrencia |
 |---|---|
-| Latencia promedio | Debe ser menor o igual a 120 ms |
-| Latencia p95 | Debe ser menor o igual a 180 ms |
-| TPS | Debe ser mayor o igual a 120 |
-| Tasa de errores | Debe ser menor o igual a 3% |
+| `light` | 120 | 12 |
+| `medium` | 240 | 24 |
+| `heavy` | 600 | 60 |
 
-Cada motor genera un artifact independiente (`sqlserver-report`, `mysql-report`, `postgresql-report`, etc.) y el job final `Consolidated performance summary` publica una tabla unica ordenada por TPS con version del simulador, fecha, branch, commit, duracion total y ranking automatico de rendimiento.
+Cada prueba mide latencia promedio, latencia p95, TPS, tasa de errores y duracion total. Los umbrales se calculan por motor y escenario para que Redis, SQLite, motores SQL y motores NoSQL tengan criterios acordes a su perfil simulado.
+
+Cada combinacion genera un artifact independiente (`sqlserver-light-report`, `mysql-heavy-report`, `redis-medium-report`, etc.) y el job final `Consolidated performance summary` publica una tabla unica ordenada por TPS con version del simulador, fecha, branch, commit, duracion total y ranking automatico de rendimiento. En Pull Requests, el resumen consolidado se publica tambien como comentario automatico.
 
 Para ejecutar la prueba localmente:
 

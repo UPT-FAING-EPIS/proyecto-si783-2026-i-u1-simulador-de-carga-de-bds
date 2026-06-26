@@ -234,26 +234,36 @@ El flujo realiza:
 4. Compilacion con `npm run build`.
 5. Ejecucion de `npm run test:performance`.
 6. Prueba de los motores `sqlserver`, `mysql`, `postgresql`, `oracle`, `sqlite`, `mongodb` y `redis`.
-7. Generacion de reportes individuales por motor.
-8. Generacion de un resumen consolidado con ranking automatico.
+7. Ejecucion de escenarios `light`, `medium` y `heavy`.
+8. Aplicacion de umbrales especificos por motor y escenario.
+9. Generacion de reportes individuales por combinacion motor/escenario.
+10. Generacion de un resumen consolidado con ranking automatico.
+
+Escenarios configurados:
+
+| Escenario | Consultas | Concurrencia |
+|---|---:|---:|
+| `light` | 120 | 12 |
+| `medium` | 240 | 24 |
+| `heavy` | 600 | 60 |
 
 Los artifacts generados son:
 
 | Artifact | Contenido |
 |---|---|
-| `sqlserver-report`, `mysql-report`, etc. | Reporte individual del motor evaluado. |
-| `performance-summary` | Tabla consolidada con todos los motores, fecha, version, branch, commit, duracion total, TPS, latencia y tasa de errores. |
+| `sqlserver-light-report`, `mysql-heavy-report`, etc. | Reporte individual de una combinacion motor/escenario. |
+| `performance-summary` | Tabla consolidada con todos los motores y escenarios, fecha, version, branch, commit, duracion total, TPS, latencia y tasa de errores. |
 
 Criterios de aceptacion:
 
 | Metrica | Umbral |
 |---|---|
-| Latencia promedio | Menor o igual a 120 ms. |
-| Latencia p95 | Menor o igual a 180 ms. |
-| TPS | Mayor o igual a 120. |
-| Tasa de errores | Menor o igual a 3%. |
+| Latencia promedio | Definida por motor y ajustada por escenario. |
+| Latencia p95 | Definida por motor y ajustada por escenario. |
+| TPS | Definido por motor y ajustado por escenario. |
+| Tasa de errores | Definida por motor. |
 
-Si algun motor supera los umbrales, el workflow falla y GitHub marca la ejecucion como no aprobada.
+Si alguna combinacion motor/escenario supera los umbrales, el workflow falla y GitHub marca la ejecucion como no aprobada. En Pull Requests, el resumen consolidado se publica como comentario automatico para facilitar la revision.
 
 ## 12. Verificacion de instalacion
 

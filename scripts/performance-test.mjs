@@ -7,14 +7,50 @@ const REPORT_JSON = `${REPORT_DIR}/performance-report.json`
 const REPORT_MD = `${REPORT_DIR}/performance-report.md`
 const packageInfo = readPackageInfo()
 
+const scenarioPresets = {
+  light: {
+    name: 'Light',
+    totalQueries: 120,
+    concurrency: 12,
+    thresholdFactor: { latency: 0.85, p95: 0.85, tps: 0.65 },
+  },
+  medium: {
+    name: 'Medium',
+    totalQueries: 240,
+    concurrency: 24,
+    thresholdFactor: { latency: 1, p95: 1, tps: 1 },
+  },
+  heavy: {
+    name: 'Heavy',
+    totalQueries: 600,
+    concurrency: 60,
+    thresholdFactor: { latency: 1.5, p95: 1.55, tps: 1.2 },
+  },
+}
+
+const engineThresholds = {
+  sqlserver: { maxAvgLatencyMs: 120, maxP95LatencyMs: 180, minTps: 120, maxErrorRate: 0.03 },
+  mysql: { maxAvgLatencyMs: 115, maxP95LatencyMs: 175, minTps: 130, maxErrorRate: 0.03 },
+  postgresql: { maxAvgLatencyMs: 115, maxP95LatencyMs: 175, minTps: 135, maxErrorRate: 0.03 },
+  oracle: { maxAvgLatencyMs: 120, maxP95LatencyMs: 180, minTps: 120, maxErrorRate: 0.03 },
+  sqlite: { maxAvgLatencyMs: 170, maxP95LatencyMs: 240, minTps: 80, maxErrorRate: 0.04 },
+  mongodb: { maxAvgLatencyMs: 105, maxP95LatencyMs: 160, minTps: 150, maxErrorRate: 0.03 },
+  redis: { maxAvgLatencyMs: 90, maxP95LatencyMs: 140, minTps: 200, maxErrorRate: 0.025 },
+}
+
+const selectedScenario = envString('PERF_SCENARIO', 'medium')
+const scenario = scenarioPresets[selectedScenario]
+
+if (!scenario) {
+  const supported = Object.keys(scenarioPresets).join(', ')
+  throw new Error(`Escenario no soportado: ${selectedScenario}. Escenarios disponibles: ${supported}`)
+}
+
 const config = {
   engine: envString('PERF_ENGINE', 'sqlserver'),
-  totalQueries: envNumber('PERF_TOTAL_QUERIES', 240),
-  concurrency: envNumber('PERF_CONCURRENCY', 24),
-  maxAvgLatencyMs: envNumber('PERF_MAX_AVG_LATENCY_MS', 120),
-  maxP95LatencyMs: envNumber('PERF_MAX_P95_LATENCY_MS', 180),
-  maxErrorRate: envNumber('PERF_MAX_ERROR_RATE', 0.03),
-  minTps: envNumber('PERF_MIN_TPS', 120),
+  scenario: selectedScenario,
+  totalQueries: envNumber('PERF_TOTAL_QUERIES', scenario.totalQueries),
+  concurrency: envNumber('PERF_CONCURRENCY', scenario.concurrency),
 }
 
 const profiles = loadEngineProfiles()
@@ -25,10 +61,12 @@ if (!profile) {
   throw new Error(`Motor no soportado: ${config.engine}. Motores disponibles: ${supported}`)
 }
 
-const seed = hash(`${config.engine}:${config.totalQueries}:${config.concurrency}`)
+const thresholds = resolveThresholds(config.engine, scenario)
+const settings = { ...config, thresholds }
+const seed = hash(`${config.engine}:${config.scenario}:${config.totalQueries}:${config.concurrency}`)
 const random = createRandom(seed)
-const result = await runLoadSimulation(profile, config, random)
-const report = buildReport(profile, config, result)
+const result = await runLoadSimulation(profile, settings, random)
+const report = buildReport(profile, settings, result)
 
 mkdirSync(REPORT_DIR, { recursive: true })
 writeFileSync(REPORT_JSON, `${JSON.stringify(report, null, 2)}\n`)
@@ -51,6 +89,22 @@ function envString(name, fallback) {
 function envNumber(name, fallback) {
   const value = Number(process.env[name])
   return Number.isFinite(value) && value > 0 ? value : fallback
+}
+
+function resolveThresholds(engine, scenarioConfig) {
+  const base = engineThresholds[engine] ?? engineThresholds.sqlserver
+  return {
+    maxAvgLatencyMs: envNumber(
+      'PERF_MAX_AVG_LATENCY_MS',
+      Math.round(base.maxAvgLatencyMs * scenarioConfig.thresholdFactor.latency),
+    ),
+    maxP95LatencyMs: envNumber(
+      'PERF_MAX_P95_LATENCY_MS',
+      Math.round(base.maxP95LatencyMs * scenarioConfig.thresholdFactor.p95),
+    ),
+    maxErrorRate: envNumber('PERF_MAX_ERROR_RATE', base.maxErrorRate),
+    minTps: envNumber('PERF_MIN_TPS', Math.round(base.minTps * scenarioConfig.thresholdFactor.tps)),
+  }
 }
 
 function loadEngineProfiles() {
@@ -139,20 +193,20 @@ async function executeSimulatedQuery(profile, settings, random, index) {
 function buildReport(profile, settings, result) {
   const failures = []
 
-  if (result.avgLatencyMs > settings.maxAvgLatencyMs) {
-    failures.push(`latencia promedio ${format(result.avgLatencyMs)}ms > ${settings.maxAvgLatencyMs}ms`)
+  if (result.avgLatencyMs > settings.thresholds.maxAvgLatencyMs) {
+    failures.push(`latencia promedio ${format(result.avgLatencyMs)}ms > ${settings.thresholds.maxAvgLatencyMs}ms`)
   }
 
-  if (result.p95LatencyMs > settings.maxP95LatencyMs) {
-    failures.push(`p95 ${format(result.p95LatencyMs)}ms > ${settings.maxP95LatencyMs}ms`)
+  if (result.p95LatencyMs > settings.thresholds.maxP95LatencyMs) {
+    failures.push(`p95 ${format(result.p95LatencyMs)}ms > ${settings.thresholds.maxP95LatencyMs}ms`)
   }
 
-  if (result.errorRate > settings.maxErrorRate) {
-    failures.push(`tasa de errores ${formatPercent(result.errorRate)} > ${formatPercent(settings.maxErrorRate)}`)
+  if (result.errorRate > settings.thresholds.maxErrorRate) {
+    failures.push(`tasa de errores ${formatPercent(result.errorRate)} > ${formatPercent(settings.thresholds.maxErrorRate)}`)
   }
 
-  if (result.tps < settings.minTps) {
-    failures.push(`TPS ${format(result.tps)} < ${settings.minTps}`)
+  if (result.tps < settings.thresholds.minTps) {
+    failures.push(`TPS ${format(result.tps)} < ${settings.thresholds.minTps}`)
   }
 
   return {
@@ -195,14 +249,15 @@ function renderMarkdown(report) {
 | Metric | Value | Threshold |
 |---|---:|---:|
 | Engine | ${report.engine.name} | - |
+| Scenario | ${report.settings.scenario} | - |
 | Total queries | ${report.metrics.totalQueries} | - |
 | Concurrency | ${report.settings.concurrency} | - |
 | Total duration | ${format(report.metrics.durationMs)} ms | - |
-| Average latency | ${format(report.metrics.avgLatencyMs)} ms | <= ${report.settings.maxAvgLatencyMs} ms |
-| P95 latency | ${format(report.metrics.p95LatencyMs)} ms | <= ${report.settings.maxP95LatencyMs} ms |
+| Average latency | ${format(report.metrics.avgLatencyMs)} ms | <= ${report.settings.thresholds.maxAvgLatencyMs} ms |
+| P95 latency | ${format(report.metrics.p95LatencyMs)} ms | <= ${report.settings.thresholds.maxP95LatencyMs} ms |
 | Max latency | ${format(report.metrics.maxLatencyMs)} ms | - |
-| TPS | ${format(report.metrics.tps)} | >= ${report.settings.minTps} |
-| Error rate | ${formatPercent(report.metrics.errorRate)} | <= ${formatPercent(report.settings.maxErrorRate)} |
+| TPS | ${format(report.metrics.tps)} | >= ${report.settings.thresholds.minTps} |
+| Error rate | ${formatPercent(report.metrics.errorRate)} | <= ${formatPercent(report.settings.thresholds.maxErrorRate)} |
 
 ${report.failures.length > 0 ? `## Failures\n\n${report.failures.map(item => `- ${item}`).join('\n')}\n` : 'No threshold violations detected.\n'}
 `
@@ -212,6 +267,7 @@ function renderConsoleSummary(report) {
   return [
     `Performance status: ${report.passed ? 'PASS' : 'FAIL'}`,
     `Engine: ${report.engine.name}`,
+    `Scenario: ${report.settings.scenario}`,
     `Version: ${report.simulatorVersion}`,
     `Branch: ${report.branch}`,
     `Commit: ${shortCommit(report.commit)}`,

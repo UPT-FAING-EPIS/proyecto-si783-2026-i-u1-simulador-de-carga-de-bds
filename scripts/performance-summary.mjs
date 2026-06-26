@@ -53,11 +53,12 @@ function findReportFiles(dir) {
 function buildSummary(reports) {
   const passed = reports.every(report => report.passed)
   const failures = reports.flatMap(report =>
-    report.failures.map(failure => `${report.engine.name}: ${failure}`)
+    report.failures.map(failure => `${report.engine.name} (${report.settings.scenario}): ${failure}`)
   )
   const engines = reports.map(report => ({
     key: report.engine.key,
     name: report.engine.name,
+    scenario: report.settings.scenario,
     status: report.passed ? 'PASS' : 'FAIL',
     totalQueries: report.metrics.totalQueries,
     concurrency: report.settings.concurrency,
@@ -78,7 +79,9 @@ function buildSummary(reports) {
     passed,
     engines,
     totals: {
-      engines: engines.length,
+      engines: new Set(engines.map(engine => engine.key)).size,
+      scenarios: new Set(engines.map(engine => engine.scenario)).size,
+      checks: engines.length,
       totalQueries: sum(engines, 'totalQueries'),
       totalDurationMs: sum(engines, 'durationMs'),
       avgLatencyMs: average(engines.map(engine => engine.avgLatencyMs)),
@@ -103,6 +106,7 @@ function renderMarkdown(summary) {
   const status = summary.passed ? 'PASS' : 'FAIL'
   const rows = summary.engines.map(engine => [
     engine.name,
+    engine.scenario,
     engine.status,
     `${format(engine.avgLatencyMs)} ms`,
     `${format(engine.p95LatencyMs)} ms`,
@@ -123,13 +127,15 @@ function renderMarkdown(summary) {
 | Branch | ${summary.branch} |
 | Commit | ${shortCommit(summary.commit)} |
 
-| Engine | Status | Avg latency | P95 latency | Max latency | TPS | Error rate | Queries |
-|---|---:|---:|---:|---:|---:|---:|---:|
+| Engine | Scenario | Status | Avg latency | P95 latency | Max latency | TPS | Error rate | Queries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
 ${rows.map(row => `| ${row.join(' | ')} |`).join('\n')}
 
 ## Highlights
 
 - Engines tested: ${summary.totals.engines}
+- Scenarios tested: ${summary.totals.scenarios}
+- Total checks: ${summary.totals.checks}
 - Total queries: ${summary.totals.totalQueries}
 - Total measured duration: ${format(summary.totals.totalDurationMs)} ms
 - Average latency across engines: ${format(summary.totals.avgLatencyMs)} ms
@@ -137,11 +143,11 @@ ${rows.map(row => `| ${row.join(' | ')} |`).join('\n')}
 
 ## Ranking
 
-- Fastest engine by latency: ${summary.best.latency.name} (${format(summary.best.latency.avgLatencyMs)} ms)
-- Highest throughput: ${summary.best.tps.name} (${format(summary.best.tps.tps)} TPS)
-- Most stable engine: ${summary.best.stability.name} (${formatPercent(summary.best.stability.errorRate)} errors)
-- Slowest engine by latency: ${summary.worst.latency.name} (${format(summary.worst.latency.avgLatencyMs)} ms)
-- Lowest throughput: ${summary.worst.tps.name} (${format(summary.worst.tps.tps)} TPS)
+- Fastest check by latency: ${summary.best.latency.name} / ${summary.best.latency.scenario} (${format(summary.best.latency.avgLatencyMs)} ms)
+- Highest throughput: ${summary.best.tps.name} / ${summary.best.tps.scenario} (${format(summary.best.tps.tps)} TPS)
+- Most stable check: ${summary.best.stability.name} / ${summary.best.stability.scenario} (${formatPercent(summary.best.stability.errorRate)} errors)
+- Slowest check by latency: ${summary.worst.latency.name} / ${summary.worst.latency.scenario} (${format(summary.worst.latency.avgLatencyMs)} ms)
+- Lowest throughput: ${summary.worst.tps.name} / ${summary.worst.tps.scenario} (${format(summary.worst.tps.tps)} TPS)
 
 ${summary.failures.length > 0 ? `## Failures\n\n${summary.failures.map(item => `- ${item}`).join('\n')}\n` : 'No threshold violations detected.\n'}
 `
@@ -151,6 +157,8 @@ function renderConsoleSummary(summary) {
   return [
     `Consolidated performance status: ${summary.passed ? 'PASS' : 'FAIL'}`,
     `Engines tested: ${summary.totals.engines}`,
+    `Scenarios tested: ${summary.totals.scenarios}`,
+    `Total checks: ${summary.totals.checks}`,
     `Total queries: ${summary.totals.totalQueries}`,
     `Version: ${summary.simulatorVersion}`,
     `Branch: ${summary.branch}`,
