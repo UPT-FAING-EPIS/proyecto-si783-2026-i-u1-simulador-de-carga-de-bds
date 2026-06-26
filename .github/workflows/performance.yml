@@ -58,7 +58,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: performance-report-${{ matrix.engine }}
+          name: ${{ matrix.engine }}-report
           path: reports/
 
   summary:
@@ -74,7 +74,7 @@ jobs:
       - name: Download performance reports
         uses: actions/download-artifact@v4
         with:
-          pattern: performance-report-*
+          pattern: '*-report'
           path: reports/engines
 
       - name: Generate consolidated summary

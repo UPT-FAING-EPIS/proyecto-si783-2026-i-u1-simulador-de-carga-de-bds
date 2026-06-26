@@ -1,5 +1,8 @@
 # Simulador de Bases de Datos
 
+[![Database Load Performance](https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/actions/workflows/performance.yml/badge.svg)](https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/actions/workflows/performance.yml)
+[![Deploy Landing Page](https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/actions/workflows/pages.yml/badge.svg)](https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/actions/workflows/pages.yml)
+
 Un IDE web/desktop multi-motor para aprender y practicar SQL y NoSQL **sin instalar nada**. Ejecuta consultas contra SQL Server, MySQL, PostgreSQL, Oracle, SQLite, MongoDB y Redis directamente en el navegador.
 
 ---
@@ -79,6 +82,27 @@ npm run dev
 npm install
 npm run electron:dev   # desarrollo
 npm run electron:build # build distribuible
+```
+
+### Validacion CI/CD de rendimiento
+
+El repositorio incluye el workflow `Database Load Performance`, ejecutado en cada `push`, `pull_request` y de forma manual desde GitHub Actions. El pipeline instala dependencias, compila el proyecto y ejecuta una prueba de carga automatica sobre los 7 motores soportados.
+
+La validacion mide:
+
+| Metrica | Criterio |
+|---|---|
+| Latencia promedio | Debe ser menor o igual a 120 ms |
+| Latencia p95 | Debe ser menor o igual a 180 ms |
+| TPS | Debe ser mayor o igual a 120 |
+| Tasa de errores | Debe ser menor o igual a 3% |
+
+Cada motor genera un artifact independiente (`sqlserver-report`, `mysql-report`, `postgresql-report`, etc.) y el job final `Consolidated performance summary` publica una tabla unica ordenada por TPS con version del simulador, fecha, branch, commit, duracion total y ranking automatico de rendimiento.
+
+Para ejecutar la prueba localmente:
+
+```bash
+npm run test:performance
 ```
 
 ---

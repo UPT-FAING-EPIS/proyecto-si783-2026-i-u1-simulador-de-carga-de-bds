@@ -5,6 +5,7 @@ import { performance } from 'node:perf_hooks'
 const REPORT_DIR = 'reports'
 const REPORT_JSON = `${REPORT_DIR}/performance-report.json`
 const REPORT_MD = `${REPORT_DIR}/performance-report.md`
+const packageInfo = readPackageInfo()
 
 const config = {
   engine: envString('PERF_ENGINE', 'sqlserver'),
@@ -156,6 +157,10 @@ function buildReport(profile, settings, result) {
 
   return {
     generatedAt: new Date().toISOString(),
+    simulatorVersion: packageInfo.version,
+    repository: envString('GITHUB_REPOSITORY', 'local'),
+    branch: envString('GITHUB_REF_NAME', 'local'),
+    commit: envString('GITHUB_SHA', 'local'),
     engine: profile,
     settings,
     metrics: {
@@ -180,11 +185,19 @@ function renderMarkdown(report) {
 
 **Status:** ${status}
 
+| Field | Value |
+|---|---:|
+| Generated at | ${report.generatedAt} |
+| Simulator version | ${report.simulatorVersion} |
+| Branch | ${report.branch} |
+| Commit | ${shortCommit(report.commit)} |
+
 | Metric | Value | Threshold |
 |---|---:|---:|
 | Engine | ${report.engine.name} | - |
 | Total queries | ${report.metrics.totalQueries} | - |
 | Concurrency | ${report.settings.concurrency} | - |
+| Total duration | ${format(report.metrics.durationMs)} ms | - |
 | Average latency | ${format(report.metrics.avgLatencyMs)} ms | <= ${report.settings.maxAvgLatencyMs} ms |
 | P95 latency | ${format(report.metrics.p95LatencyMs)} ms | <= ${report.settings.maxP95LatencyMs} ms |
 | Max latency | ${format(report.metrics.maxLatencyMs)} ms | - |
@@ -199,8 +212,12 @@ function renderConsoleSummary(report) {
   return [
     `Performance status: ${report.passed ? 'PASS' : 'FAIL'}`,
     `Engine: ${report.engine.name}`,
+    `Version: ${report.simulatorVersion}`,
+    `Branch: ${report.branch}`,
+    `Commit: ${shortCommit(report.commit)}`,
     `Queries: ${report.metrics.totalQueries}`,
     `Concurrency: ${report.settings.concurrency}`,
+    `Duration: ${format(report.metrics.durationMs)}ms`,
     `Average latency: ${format(report.metrics.avgLatencyMs)}ms`,
     `P95 latency: ${format(report.metrics.p95LatencyMs)}ms`,
     `TPS: ${format(report.metrics.tps)}`,
@@ -246,4 +263,16 @@ function createRandom(seed) {
     state = Math.imul(1664525, state) + 1013904223
     return (state >>> 0) / 4294967296
   }
+}
+
+function readPackageInfo() {
+  try {
+    return JSON.parse(readFileSync(resolve('package.json'), 'utf8'))
+  } catch {
+    return { version: 'unknown' }
+  }
+}
+
+function shortCommit(commit) {
+  return commit === 'local' ? commit : commit.slice(0, 7)
 }
