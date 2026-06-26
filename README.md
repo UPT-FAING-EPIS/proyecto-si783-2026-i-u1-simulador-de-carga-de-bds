@@ -98,7 +98,7 @@ La validacion combina cada motor con tres escenarios:
 
 Cada prueba mide latencia promedio, latencia p95, TPS, tasa de errores y duracion total. Los umbrales se calculan por motor y escenario para que Redis, SQLite, motores SQL y motores NoSQL tengan criterios acordes a su perfil simulado.
 
-Cada combinacion genera un artifact independiente (`sqlserver-light-report`, `mysql-heavy-report`, `redis-medium-report`, etc.) y el job final `Consolidated performance summary` publica una tabla unica ordenada por TPS con version del simulador, fecha, branch, commit, duracion total y ranking automatico de rendimiento. En Pull Requests, el resumen consolidado se publica tambien como comentario automatico.
+Cada combinacion genera un artifact independiente (`sqlserver-light-report`, `mysql-heavy-report`, `redis-medium-report`, etc.) y el job final `Consolidated performance summary` publica una tabla unica ordenada por TPS con version del simulador, fecha, branch, commit, duracion total, conclusion automatica, resumen por motor y ranking automatico de rendimiento. El artifact `performance-summary` incluye reportes en Markdown, JSON y CSV para revision tecnica o analisis en hojas de calculo. En Pull Requests, el resumen consolidado se publica tambien como comentario automatico.
 
 Para ejecutar la prueba localmente:
 

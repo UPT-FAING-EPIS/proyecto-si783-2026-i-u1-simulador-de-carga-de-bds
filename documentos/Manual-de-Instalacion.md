@@ -252,7 +252,7 @@ Los artifacts generados son:
 | Artifact | Contenido |
 |---|---|
 | `sqlserver-light-report`, `mysql-heavy-report`, etc. | Reporte individual de una combinacion motor/escenario. |
-| `performance-summary` | Tabla consolidada con todos los motores y escenarios, fecha, version, branch, commit, duracion total, TPS, latencia y tasa de errores. |
+| `performance-summary` | Reportes Markdown, JSON y CSV con todos los motores y escenarios, fecha, version, branch, commit, duracion total, TPS, latencia, tasa de errores, conclusion automatica, resumen por motor y ranking. |
 
 Criterios de aceptacion:
 
