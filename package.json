@@ -11,6 +11,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "build:vscode": "npm run build && node scripts/build-vscode-ext.mjs",
     "test:performance": "node scripts/performance-test.mjs",
     "electron:dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env ELECTRON_DEV=1 electron .\"",
     "electron:build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false tsc && vite build && electron-builder",
