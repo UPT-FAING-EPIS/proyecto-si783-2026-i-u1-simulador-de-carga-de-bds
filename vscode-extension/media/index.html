@@ -1,0 +1,1354 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador DB — Practica SQL y NoSQL gratis en tu computadora</title>
+  <meta name="description" content="Herramienta educativa gratuita para practicar SQL y NoSQL en 7 motores — SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis — sin instalar servidores." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Simulador DB — Practica SQL y NoSQL gratis" />
+  <meta property="og:description" content="7 motores de bases de datos en una sola app. SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis. Gratis, sin registro." />
+  <meta property="og:image"       content="https://jhonyvargas.github.io/simulador-bds/og-preview.png" />
+  <meta property="og:url"         content="https://jhonyvargas.github.io/simulador-bds" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Simulador DB — Practica SQL y NoSQL gratis" />
+  <meta name="twitter:description" content="7 motores de bases de datos en una sola app. Gratis, sin registro." />
+  <meta name="twitter:image"       content="https://jhonyvargas.github.io/simulador-bds/og-preview.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231d4ed8'/><ellipse cx='16' cy='10' rx='9' ry='3' fill='white' opacity='.9'/><path d='M7 10v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4' stroke='white' stroke-width='1.5' fill='none' opacity='.9'/><path d='M7 14v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4' stroke='white' stroke-width='1.5' fill='none' opacity='.9'/></svg>" />
+  <!-- styles.css is for the React app — landing page uses only the <style> block below -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #050810; color: #e2e8f0; overflow-x: hidden; margin: 0; }
+
+    /* ── Aurora background ── */
+    .aurora-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .aurora-bg::before {
+      content: '';
+      position: absolute; width: 900px; height: 900px;
+      top: -200px; left: -200px;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, transparent 70%);
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+    .aurora-bg::after {
+      content: '';
+      position: absolute; width: 700px; height: 700px;
+      bottom: -150px; right: -100px;
+      background: radial-gradient(ellipse, rgba(59,130,246,0.14) 0%, transparent 70%);
+      animation: drift2 15s ease-in-out infinite alternate;
+    }
+    .aurora-mid {
+      position: absolute; width: 600px; height: 600px;
+      top: 40%; left: 50%; transform: translate(-50%,-50%);
+      background: radial-gradient(ellipse, rgba(16,185,129,0.06) 0%, transparent 70%);
+      animation: drift3 18s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(120px,80px) scale(1.15)} }
+    @keyframes drift2 { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(-100px,-60px) scale(1.2)} }
+    @keyframes drift3 { 0%{transform:translate(-50%,-50%) scale(1)} 100%{transform:translate(-45%,-55%) scale(1.1)} }
+
+    /* ── Grid noise texture ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 40L40 0M-5 5L5-5M35 45L45 35' stroke='rgba(255,255,255,0.015)' stroke-width='1'/%3E%3C/svg%3E");
+    }
+
+    /* ── Gradient text ── */
+    .grad-text {
+      background: linear-gradient(135deg, #fff 0%, #bfdbfe 20%, #a5b4fc 45%, #c084fc 70%, #60a5fa 100%);
+      background-size: 250% 250%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: grad-sweep 4s ease-in-out infinite;
+    }
+    @keyframes grad-sweep {
+      0%,100% { background-position: 0% 50%; }
+      50%     { background-position: 100% 50%; }
+    }
+    .grad-text-green {
+      background: linear-gradient(135deg, #34d399, #10b981);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .grad-text-blue {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(5,8,16,0.7); backdrop-filter: blur(20px) saturate(180%);
+      transition: background 0.3s;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(59,130,246,0.4);
+    }
+    .nav-logo-text { font-size: 15px; font-weight: 700; color: #f8fafc; letter-spacing: -0.3px; }
+    .nav-logo-text span { color: #60a5fa; }
+    .nav-badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 14px; color: #94a3b8; text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #f8fafc; }
+    .nav-cta {
+      display: flex; align-items: center; gap-8px; padding: 9px 20px; border-radius: 10px;
+      background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: all 0.2s; box-shadow: 0 0 20px rgba(34,197,94,0.25);
+    }
+    .nav-cta:hover { box-shadow: 0 0 30px rgba(34,197,94,0.4); transform: translateY(-1px); }
+
+    /* ── Glass card ── */
+    .glass {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .glass:hover { border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.04); }
+
+    /* ── Reveal animation ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── Badge pill ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 14px; border-radius: 100px;
+      background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+      font-size: 13px; font-weight: 500; color: #a5b4fc;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 8px #6366f1; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ── CTA Button ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px; padding: 14px 28px; border-radius: 12px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: white; font-weight: 700; font-size: 15px; text-decoration: none;
+      box-shadow: 0 0 30px rgba(34,197,94,0.3), 0 4px 20px rgba(0,0,0,0.3);
+      transition: all 0.25s; border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(34,197,94,0.45), 0 8px 30px rgba(0,0,0,0.3); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 9px; padding: 14px 28px; border-radius: 12px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+      color: #cbd5e1; font-weight: 600; font-size: 15px; text-decoration: none;
+      transition: all 0.25s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: #fff; }
+
+    /* ── App Mockup ── */
+    .mockup-wrap {
+      position: relative;
+      perspective: 1200px;
+    }
+    .mockup-tilt {
+      transform: rotateY(-8deg) rotateX(4deg) scale(0.96);
+      transform-origin: center center;
+      transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 100px rgba(59,130,246,0.12);
+    }
+    .mockup-wrap:hover .mockup-tilt { transform: rotateY(-4deg) rotateX(2deg) scale(0.98); }
+    .mockup-glow {
+      position: absolute; inset: -40px; z-index: -1;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(59,130,246,0.15), transparent);
+      pointer-events: none;
+    }
+    .mockup-titlebar {
+      background: #161b2e; padding: 11px 16px; display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .dot-red   { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+    .dot-yellow{ width: 11px; height: 11px; border-radius: 50%; background: #ffbd2e; }
+    .dot-green { width: 11px; height: 11px; border-radius: 50%; background: #28c840; }
+    .mockup-tabs { display: flex; gap: 4px; margin-left: 12px; }
+    .mockup-tab { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; color: #64748b; font-family: 'Inter', sans-serif; }
+    .mockup-tab.active { background: rgba(59,130,246,0.2); color: #93c5fd; }
+    .mockup-body { display: flex; background: #0d1117; }
+    .mockup-sidebar { width: 130px; background: #111827; padding: 12px 8px; border-right: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+    .sidebar-db { font-size: 10px; color: #94a3b8; padding: 4px 8px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .sidebar-item { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 6px; font-size: 10px; color: #cbd5e1; }
+    .sidebar-item.active { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .sidebar-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .sidebar-count { margin-left: auto; font-size: 9px; color: #475569; }
+    .mockup-editor { flex: 1; padding: 14px; min-width: 0; }
+    .mockup-code { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; line-height: 1.7; white-space: pre; overflow: hidden; }
+    .c-kw  { color: #c084fc; } /* keyword */
+    .c-fn  { color: #60a5fa; } /* function/clause */
+    .c-tbl { color: #34d399; } /* table name */
+    .c-col { color: #e2e8f0; } /* column */
+    .c-op  { color: #fb923c; } /* operator */
+    .c-str { color: #fbbf24; } /* string/number */
+    .c-cm  { color: #475569; } /* comment */
+    .mockup-results { background: #0d1117; border-top: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+    .results-header { display: flex; gap: 12px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .results-tab { font-size: 10px; color: #60a5fa; font-weight: 600; padding: 3px 8px; background: rgba(59,130,246,0.12); border-radius: 4px; }
+    .results-table-mini { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+    .results-table-mini th { background: #161b2e; padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 8.5px; letter-spacing: 0.06em; }
+    .results-table-mini td { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #cbd5e1; font-family: 'JetBrains Mono', monospace; }
+    .results-table-mini tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+
+    /* ── Stats row ── */
+    .stat-card { text-align: center; padding: 24px 32px; }
+    .stat-value { font-size: 42px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 13px; color: #64748b; font-weight: 500; }
+    .stat-sep { width: 1px; background: rgba(255,255,255,0.07); margin: 16px 0; }
+
+    /* ── Bento grid ── */
+    .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .bento-card { padding: 28px; border-radius: 20px; position: relative; overflow: hidden; }
+    .bento-card.wide { grid-column: span 2; }
+    .bento-card.tall { grid-row: span 2; }
+    .bento-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+    .bento-title { font-size: 17px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; letter-spacing: -0.3px; }
+    .bento-desc { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+    /* Bento card accent borders on hover */
+    .bento-card::before { content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+    .bento-card:hover::before { opacity: 1; }
+
+    /* ── Engine badges ── */
+    .engine-badge {
+      display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 12px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.25s; cursor: default;
+    }
+    .engine-badge:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); transform: translateY(-2px); }
+    .engine-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .engine-name { font-size: 14px; font-weight: 600; color: #cbd5e1; }
+    .engine-type { font-size: 11px; color: #475569; margin-left: auto; }
+
+    /* ── OS download cards ── */
+    .os-card {
+      padding: 24px; border-radius: 18px; text-align: center; cursor: pointer;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.25s; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .os-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .os-card-name { font-size: 16px; font-weight: 700; color: #f8fafc; }
+    .os-card-sub { font-size: 12px; color: #475569; }
+
+    /* ── Steps ── */
+    .step-line { width: 1px; height: 60px; background: linear-gradient(to bottom, rgba(99,102,241,0.4), transparent); margin: 0 auto; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #050810; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+
+    /* ── Download btn ── */
+    .dl-btn {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 11px; border-radius: 10px; font-size: 12px; font-weight: 600;
+      transition: all 0.2s; text-decoration: none; width: 100%;
+    }
+    .dl-btn-primary { background: #2563eb; color: white; }
+    .dl-btn-primary:hover { background: #1d4ed8; }
+    .dl-btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; }
+    .dl-btn-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; }
+
+    /* ── Hamburger ── */
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 6px; background: none; border: none; z-index: 101;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px; background: #94a3b8; border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-mobile-menu {
+      display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 100;
+      flex-direction: column; background: rgba(5,8,16,0.97); backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.08); padding: 8px 0 12px;
+    }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a {
+      padding: 13px 24px; font-size: 15px; color: #94a3b8; text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.04); transition: color 0.2s, background 0.2s;
+    }
+    .nav-mobile-menu a:hover { color: #f8fafc; background: rgba(255,255,255,0.04); }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+
+    /* ── Responsive base classes ── */
+    .hero-section {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 100px 32px 60px; position: relative; z-index: 1;
+      max-width: 1280px; margin: 0 auto; gap: 60px;
+      box-sizing: border-box; width: 100%;
+    }
+    .hero-left { flex: 1; max-width: 540px; min-width: 0; }
+    .hero-right { flex: 1.1; min-width: 0; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+    .hero-stats { display: flex; gap: 28px; align-items: flex-start; }
+    .hero-stats-sep { width: 1px; background: rgba(255,255,255,0.07); align-self: stretch; }
+    .download-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
+
+    @media (max-width: 900px) {
+      .hero-section { gap: 36px; }
+      .hero-right { flex: 1; }
+    }
+
+    /* ══════════════════════════════════════════
+       TABLET / MOBILE  ≤ 768px
+    ══════════════════════════════════════════ */
+    @media (max-width: 768px) {
+
+      /* — Global — */
+      html, body { overflow-x: hidden !important; }
+
+      /* — Nav — */
+      nav { padding: 0 16px !important; height: 56px !important; }
+      .nav-links { display: none !important; }
+      .nav-cta   { display: none !important; }
+      .nav-hamburger { display: flex !important; }
+      .nav-mobile-menu { top: 56px !important; }
+
+      /* — Hero — */
+      .hero-section {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 80px 20px 48px !important;
+        gap: 40px !important;
+      }
+      /* display:block fixes the flex shrink-to-content bug */
+      .hero-left {
+        width: 100% !important; max-width: 100% !important;
+        display: block !important; text-align: center;
+      }
+      .hero-left h1 {
+        font-size: clamp(34px, 8.5vw, 52px) !important;
+        letter-spacing: -1.5px !important;
+      }
+      /* width:100% (not just max-width) prevents text overflow */
+      .hero-left p {
+        width: 100% !important; max-width: 100% !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        font-size: 15px !important;
+      }
+      /* Full-width stacked CTA buttons */
+      .hero-btns {
+        flex-direction: column !important; align-items: stretch !important;
+        gap: 10px !important; width: 100% !important; margin-bottom: 32px !important;
+      }
+      .hero-btns a {
+        width: 100% !important; justify-content: center !important;
+        box-sizing: border-box !important; text-align: center !important;
+        display: flex !important;
+      }
+      /* Stats: 2×2 grid instead of overflow-prone flex row */
+      .hero-stats {
+        display: grid !important; grid-template-columns: 1fr 1fr !important;
+        gap: 16px !important; width: 100% !important; justify-items: center;
+      }
+      .hero-stats-sep { display: none !important; }
+      .hero-stats > div { text-align: center; }
+      /* Mockup: full width on 481–768px range */
+      .hero-right {
+        width: 100% !important; max-width: 100% !important; margin: 0 !important;
+        min-width: 0 !important;
+      }
+      /* Scale down the perspective-tilt mockup so it doesn't overflow */
+      .mockup-wrap { max-width: 100%; overflow: hidden; }
+      .mockup-tilt { transform: none !important; border-radius: 12px; }
+      .mockup-titlebar { overflow-x: auto; }
+      .mockup-tabs { gap: 2px; }
+      .mockup-tab { padding: 4px 8px; font-size: 10px; }
+
+      /* — Engines strip — */
+      #engines { padding: 0 0 48px !important; }
+      #engines > div:nth-child(2) { padding: 0 16px !important; gap: 8px !important; }
+
+      /* — Features — */
+      section#features {
+        padding: 48px 16px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      section#features h2 {
+        font-size: clamp(26px, 6.5vw, 40px) !important;
+        letter-spacing: -1px !important;
+        line-height: 1.2 !important;
+      }
+      /* description paragraph (inline max-width:480px) */
+      section#features > div > p {
+        max-width: 100% !important;
+        font-size: 15px !important;
+      }
+      .bento-grid  { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .bento-card.wide { grid-column: span 1 !important; }
+      .bento-card.tall { grid-row:   span 1 !important; }
+      .bento-card  { padding: 20px !important; }
+      /* Stats row inside features history card */
+      .bento-card > div[style*="display:flex; gap:16px"] {
+        flex-direction: column !important; gap: 10px !important;
+      }
+
+      /* — How it works — */
+      section#howto {
+        padding: 48px 16px 64px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      section#howto h2 {
+        font-size: clamp(26px, 6.5vw, 40px) !important;
+        letter-spacing: -1px !important;
+      }
+      /* Step rows: tighten gap */
+      section#howto > div + div > div[style*="display:flex"] {
+        gap: 16px !important; padding: 20px 0 !important;
+      }
+
+      /* — Download — */
+      section#download {
+        padding: 48px 16px 64px !important;
+        box-sizing: border-box !important;
+      }
+      section#download h2 {
+        font-size: clamp(28px, 7vw, 52px) !important;
+        letter-spacing: -1.5px !important;
+      }
+      /* description paragraph (inline max-width:440px) */
+      section#download p { max-width: 100% !important; }
+      .download-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 360px !important;
+        margin-left: auto !important; margin-right: auto !important;
+      }
+
+      /* — Footer — */
+      footer { padding: 32px 16px !important; }
+      /* links row: wrap and reduce gap */
+      footer > div > div:nth-child(2) {
+        flex-wrap: wrap !important;
+        gap: 12px 20px !important;
+        justify-content: center !important;
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       SMALL MOBILE  ≤ 480px
+    ══════════════════════════════════════════ */
+    @media (max-width: 480px) {
+      .hero-section { padding: 72px 16px 40px !important; }
+      /* hide mockup on very small screens — text is primary */
+      .hero-right { display: none !important; }
+      .hero-left h1 { font-size: clamp(30px, 8vw, 40px) !important; }
+      .hero-left p  { font-size: 14px !important; line-height: 1.65 !important; }
+      section#features, section#howto, section#download {
+        padding-left: 14px !important; padding-right: 14px !important;
+      }
+    }
+
+    /* ── Custom cursor — neon code arrow ── */
+    @media (pointer: fine) { * { cursor: none !important; } }
+
+    .cur-arrow {
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 99999;
+      will-change: transform;
+      filter:
+        drop-shadow(0 0 5px rgba(96,165,250,0.95))
+        drop-shadow(0 0 12px rgba(167,139,250,0.7))
+        drop-shadow(0 0 26px rgba(192,132,252,0.35));
+      animation: cur-breathe 2.8s ease-in-out infinite;
+      transition: opacity 0.3s;
+    }
+    @keyframes cur-breathe {
+      0%,100% {
+        filter:
+          drop-shadow(0 0 5px rgba(96,165,250,0.9))
+          drop-shadow(0 0 12px rgba(167,139,250,0.65))
+          drop-shadow(0 0 24px rgba(192,132,252,0.3));
+      }
+      50% {
+        filter:
+          drop-shadow(0 0 9px rgba(96,165,250,1))
+          drop-shadow(0 0 20px rgba(192,132,252,0.95))
+          drop-shadow(0 0 42px rgba(244,114,182,0.55));
+      }
+    }
+    .cur-arrow.hovering {
+      animation: none;
+      filter:
+        drop-shadow(0 0 10px rgba(96,165,250,1))
+        drop-shadow(0 0 22px rgba(192,132,252,1))
+        drop-shadow(0 0 48px rgba(244,114,182,0.8));
+    }
+    .cur-arrow.clicking {
+      animation: none;
+      filter: drop-shadow(0 0 4px rgba(96,165,250,0.8));
+    }
+
+    /* ── Click ripple ── */
+    @keyframes code-ripple {
+      0%   { width: 0; height: 0; opacity: 0.65; border-radius: 10px; }
+      50%  { border-radius: 50%; }
+      100% { width: 130px; height: 130px; opacity: 0; border-radius: 50%; }
+    }
+    .click-ripple {
+      position: fixed;
+      border: 1.5px solid rgba(167,139,250,0.6);
+      transform: translate(-50%,-50%);
+      pointer-events: none; z-index: 99990;
+      animation: code-ripple 0.65s ease-out forwards;
+    }
+
+    /* ── Hero typewriter cursor ── */
+    .type-cursor {
+      display: inline-block; width: 2.5px; height: 0.82em;
+      background: #60a5fa; vertical-align: -0.08em; border-radius: 1px;
+      box-shadow: 0 0 10px rgba(96,165,250,0.95), 0 0 22px rgba(96,165,250,0.45);
+      animation: tc-blink 0.72s step-end infinite;
+    }
+    @keyframes tc-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Mouse spotlight ── */
+    .mouse-spotlight { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+    /* ── Bento card tilt ── */
+    .bento-card { transition: transform 0.06s linear, border-color 0.3s, background 0.3s; }
+    .bento-card.tilt-reset { transition: transform 0.7s cubic-bezier(0.16,1,0.3,1), border-color 0.3s, background 0.3s; }
+
+    /* ══════════ LIGHT MODE ══════════ */
+    body.light { background: #f0f4f8; color: #1e293b; }
+    body.light::before { opacity: 0.04; }
+
+    /* Aurora — softer in light */
+    body.light .aurora-bg::before {
+      background: radial-gradient(ellipse, rgba(99,102,241,0.10) 0%, transparent 70%);
+    }
+    body.light .aurora-bg::after {
+      background: radial-gradient(ellipse, rgba(59,130,246,0.08) 0%, transparent 70%);
+    }
+    body.light .aurora-mid {
+      background: radial-gradient(ellipse, rgba(16,185,129,0.05) 0%, transparent 70%);
+    }
+
+    /* Nav */
+    body.light nav {
+      background: rgba(255,255,255,0.88);
+      border-bottom-color: rgba(0,0,0,0.07);
+    }
+    body.light .nav-logo-text { color: #0f172a; }
+    body.light .nav-badge { background: rgba(99,102,241,0.1); color: #6366f1; }
+    body.light .nav-links a { color: #475569; }
+    body.light .nav-links a:hover { color: #0f172a; }
+
+    /* Glass cards */
+    body.light .glass {
+      background: rgba(255,255,255,0.75);
+      border-color: rgba(0,0,0,0.07);
+    }
+    body.light .glass:hover {
+      background: rgba(255,255,255,0.92);
+      border-color: rgba(0,0,0,0.12);
+    }
+    body.light .bento-title { color: #0f172a !important; }
+    body.light .bento-desc  { color: #475569 !important; }
+
+    /* Engine badges */
+    body.light .engine-badge {
+      background: rgba(0,0,0,0.04);
+      border-color: rgba(0,0,0,0.07);
+    }
+    body.light .engine-badge:hover {
+      background: rgba(0,0,0,0.07);
+      border-color: rgba(0,0,0,0.13);
+    }
+    body.light .engine-name { color: #1e293b; }
+    body.light .engine-type { color: #64748b; }
+
+    /* Inline text color overrides */
+    body.light h1, body.light h2 { color: #0f172a !important; }
+    body.light p, body.light .bento-desc { color: #475569 !important; }
+    body.light .stat-label { color: #475569 !important; }
+
+    /* Download OS cards */
+    body.light [onmouseover] {
+      background: rgba(255,255,255,0.7) !important;
+      border-color: rgba(0,0,0,0.08) !important;
+    }
+
+    /* Footer */
+    body.light footer {
+      border-top-color: rgba(0,0,0,0.07);
+    }
+    body.light footer a { color: #475569 !important; }
+
+    /* Scrollbar */
+    body.light ::-webkit-scrollbar-track { background: #f0f4f8; }
+    body.light ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+    /* Step lines */
+    body.light .step-line {
+      background: linear-gradient(to bottom, rgba(99,102,241,0.3), transparent);
+    }
+
+    /* Section bg glow */
+    body.light [style*="radial-gradient(ellipse,rgba(99,102,241"] {
+      opacity: 0.5;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Aurora -->
+<div class="aurora-bg"><div class="aurora-mid"></div></div>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+    </div>
+    <span class="nav-logo-text">Simulador <span>DB</span></span>
+    <span class="nav-badge">v1.1</span>
+  </a>
+
+  <div class="nav-links">
+    <a href="#features">Características</a>
+    <a href="#engines">Motores</a>
+    <a href="#howto">Cómo funciona</a>
+    <a href="#download">Descargar</a>
+    <a href="/admin" style="color:#a78bfa;display:flex;align-items:center;gap:5px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Centro de Control
+    </a>
+  </div>
+
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-mobile-menu" id="navMobileMenu">
+  <a href="#features">Características</a>
+  <a href="#engines">Motores</a>
+  <a href="#howto">Cómo funciona</a>
+  <a href="#download">Descargar</a>
+  <a href="/admin" style="color:#a78bfa;">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;margin-right:5px;vertical-align:-1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Centro de Control
+  </a>
+  <a href="#download" style="margin:8px 16px 0;padding:12px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:700;text-align:center;border:none;">
+    Descargar gratis
+  </a>
+</div>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero-section">
+
+  <!-- Left: Text -->
+  <div class="hero-left">
+    <div class="badge reveal" style="margin-bottom:28px;">
+      <span class="badge-dot"></span>
+      Herramienta educativa — 100% gratuita
+    </div>
+
+    <h1 class="reveal reveal-delay-1" style="font-size:clamp(42px,5vw,72px); font-weight:900; line-height:1.05; letter-spacing:-2.5px; margin:0 0 22px; color:#f8fafc;">
+      Aprende SQL<br/>
+      <span class="grad-text">en 7 motores</span><br/>
+      de BD
+    </h1>
+
+    <p class="reveal reveal-delay-2" style="font-size:17px; color:#64748b; line-height:1.7; margin:0 0 36px; max-width:420px;">
+      SQL Server, MySQL, PostgreSQL, SQLite, Oracle, MongoDB y Redis — todo en una sola aplicación. Sin instalar servidores. Sin configuraciones.
+    </p>
+
+    <div class="hero-btns reveal reveal-delay-3">
+      <a href="https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/releases/download/v1.8.0/Simulador.DB.Setup.1.8.0.exe" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar para Windows
+        <span style="font-size:11px;opacity:0.7;font-weight:500;">Gratis</span>
+      </a>
+      <a href="/simulador" class="btn-secondary" style="background:rgba(251,146,60,0.1);border-color:rgba(251,146,60,0.3);color:#fb923c;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Probar en Web
+      </a>
+      <a href="#features" class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ver características
+      </a>
+    </div>
+
+    <!-- Mini stats -->
+    <div class="hero-stats reveal reveal-delay-4">
+      <div>
+        <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;">7</div>
+        <div style="font-size:12px; color:#475569;">Motores de BD</div>
+      </div>
+      <div class="hero-stats-sep"></div>
+      <div>
+        <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;" class="grad-text-green">100%</div>
+        <div style="font-size:12px; color:#475569;">Gratuito</div>
+      </div>
+      <div class="hero-stats-sep"></div>
+      <div>
+        <div style="font-size:24px; font-weight:900; color:#f8fafc; letter-spacing:-1px;">0</div>
+        <div style="font-size:12px; color:#475569;">Config. requerida</div>
+      </div>
+      <div class="hero-stats-sep"></div>
+      <div>
+        <div style="font-size:24px; font-weight:900;" class="grad-text-blue">∞</div>
+        <div style="font-size:12px; color:#475569;">Consultas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: App mockup -->
+  <div class="hero-right reveal reveal-delay-2">
+    <div class="mockup-wrap">
+      <div class="mockup-glow"></div>
+      <div class="mockup-tilt">
+        <!-- Title bar -->
+        <div class="mockup-titlebar">
+          <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+          <div class="mockup-tabs" style="margin-left:16px;">
+            <span class="mockup-tab active">SQL Server</span>
+            <span class="mockup-tab">MySQL</span>
+            <span class="mockup-tab">MongoDB</span>
+            <span class="mockup-tab">+ 4</span>
+          </div>
+          <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+            <div style="width:24px;height:24px;border-radius:6px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="#22c55e"/></svg>
+            </div>
+            <span style="font-size:10px;color:#22c55e;font-weight:600;">Ejecutar</span>
+          </div>
+        </div>
+        <!-- Body -->
+        <div class="mockup-body">
+          <!-- Sidebar -->
+          <div class="mockup-sidebar">
+            <div class="sidebar-db">Base de datos</div>
+            <div class="sidebar-item active">
+              <span class="sidebar-dot" style="background:#6366f1;"></span> FarmaciaDB
+            </div>
+            <div style="padding:6px 8px 3px; font-size:9px; color:#334155; text-transform:uppercase; letter-spacing:0.07em; font-weight:600;">Tablas</div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Categorias <span class="sidebar-count">5</span></div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Medicamentos <span class="sidebar-count">6</span></div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Proveedores <span class="sidebar-count">3</span></div>
+            <div class="sidebar-item"><span class="sidebar-dot" style="background:#64748b;"></span> Ventas <span class="sidebar-count">8</span></div>
+          </div>
+          <!-- Editor -->
+          <div class="mockup-editor">
+            <div class="mockup-code"><span class="c-kw">SELECT</span> m.<span class="c-col">Nombre</span>, m.<span class="c-col">Precio</span>,
+       c.<span class="c-col">Nombre</span> <span class="c-kw">AS</span> <span class="c-tbl">Categoria</span>
+<span class="c-kw">FROM</span> <span class="c-tbl">Medicamentos</span> m
+<span class="c-fn">INNER JOIN</span> <span class="c-tbl">Categorias</span> c
+  <span class="c-kw">ON</span> m.<span class="c-col">IdCategoria</span> <span class="c-op">=</span> c.<span class="c-col">IdCategoria</span>
+<span class="c-kw">WHERE</span> m.<span class="c-col">Stock</span> <span class="c-op">></span> <span class="c-str">0</span>
+<span class="c-kw">ORDER BY</span> m.<span class="c-col">Precio</span> <span class="c-kw">DESC</span><span class="c-op">;</span></div>
+          </div>
+        </div>
+        <!-- Results -->
+        <div class="mockup-results">
+          <div class="results-header">
+            <span class="results-tab">Resultados — 6 filas · 2.4ms</span>
+          </div>
+          <table class="results-table-mini">
+            <thead><tr><th>Nombre</th><th>Precio</th><th>Categoria</th></tr></thead>
+            <tbody>
+              <tr><td>Paracetamol 500mg</td><td>$12.50</td><td>Analgésicos</td></tr>
+              <tr><td>Ibuprofeno 400mg</td><td>$9.80</td><td>Analgésicos</td></tr>
+              <tr><td>Amoxicilina 500mg</td><td>$18.20</td><td>Antibióticos</td></tr>
+              <tr><td>Vitamina C 1g</td><td>$7.40</td><td>Vitaminas</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ENGINES MARQUEE ══════════════ -->
+<div id="engines" style="position:relative;z-index:1; padding:0 0 80px; overflow:hidden;">
+  <div style="text-align:center; font-size:12px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:#334155; margin-bottom:24px;">
+    7 motores integrados
+  </div>
+  <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:10px; max-width:900px; margin:0 auto; padding:0 32px;">
+    <div class="engine-badge reveal"><span class="engine-dot" style="background:#0078d4;box-shadow:0 0 8px #0078d4"></span><span class="engine-name">SQL Server</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-1"><span class="engine-dot" style="background:#f29111;box-shadow:0 0 8px #f29111"></span><span class="engine-name">MySQL</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-2"><span class="engine-dot" style="background:#336791;box-shadow:0 0 8px #336791"></span><span class="engine-name">PostgreSQL</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-3"><span class="engine-dot" style="background:#44b0ff;box-shadow:0 0 8px #44b0ff"></span><span class="engine-name">SQLite</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal reveal-delay-4"><span class="engine-dot" style="background:#c74634;box-shadow:0 0 8px #c74634"></span><span class="engine-name">Oracle</span><span class="engine-type">SQL</span></div>
+    <div class="engine-badge reveal"><span class="engine-dot" style="background:#4db33d;box-shadow:0 0 8px #4db33d"></span><span class="engine-name">MongoDB</span><span class="engine-type">NoSQL</span></div>
+    <div class="engine-badge reveal reveal-delay-1"><span class="engine-dot" style="background:#dc382d;box-shadow:0 0 8px #dc382d"></span><span class="engine-name">Redis</span><span class="engine-type">NoSQL</span></div>
+  </div>
+</div>
+
+<!-- ══════════════ FEATURES BENTO ══════════════ -->
+<section id="features" style="position:relative;z-index:1; padding:80px 32px; max-width:1200px; margin:0 auto;">
+  <div style="text-align:center; margin-bottom:64px;" class="reveal">
+    <div class="badge" style="margin-bottom:20px; background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.25); color:#34d399;">
+      <span class="badge-dot" style="background:#10b981; box-shadow:0 0 8px #10b981;"></span>
+      Por qué elegir Simulador DB
+    </div>
+    <h2 style="font-size:clamp(32px,4vw,52px); font-weight:900; letter-spacing:-2px; color:#f8fafc; margin:0 0 16px;">
+      Todo lo que necesitas,<br/><span class="grad-text">sin complejidad</span>
+    </h2>
+    <p style="font-size:17px; color:#475569; max-width:480px; margin:0 auto; line-height:1.6;">Diseñado para estudiantes y profesionales que quieren practicar sin fricciones.</p>
+  </div>
+
+  <div class="bento-grid">
+    <!-- Card 1: wide — Editor -->
+    <div class="glass bento-card wide reveal" style="background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(99,102,241,0.04));">
+      <div class="bento-icon" style="background:rgba(59,130,246,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div class="bento-title">Editor SQL con resaltado de sintaxis</div>
+      <div class="bento-desc" style="margin-bottom:20px;">Monaco Editor (el mismo de VS Code) con autocompletado, resaltado por motor y formato automático.</div>
+      <div style="background:#0d1117; border-radius:10px; padding:14px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.7; border:1px solid rgba(255,255,255,0.06);">
+        <span class="c-kw">SELECT</span> <span class="c-col">*</span> <span class="c-kw">FROM</span> <span class="c-tbl">Usuarios</span>
+        <span class="c-kw">WHERE</span> <span class="c-col">activo</span> <span class="c-op">=</span> <span class="c-str">true</span>
+        <span class="c-kw">LIMIT</span> <span class="c-str">10</span><span class="c-op">;</span>
+      </div>
+    </div>
+
+    <!-- Card 2: tall — Multi-engine -->
+    <div class="glass bento-card tall reveal reveal-delay-1" style="background:linear-gradient(160deg,rgba(99,102,241,0.08),rgba(139,92,246,0.04));">
+      <div class="bento-icon" style="background:rgba(99,102,241,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+      </div>
+      <div class="bento-title">7 motores de BD</div>
+      <div class="bento-desc">Cambia entre SQL y NoSQL en un clic. Cada motor con su sintaxis y comportamiento real.</div>
+      <div style="margin-top:24px; display:flex; flex-direction:column; gap:8px;">
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(0,120,212,0.12);border:1px solid rgba(0,120,212,0.2);font-size:12px;font-weight:600;color:#7dd3fc;">● SQL Server</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(242,145,17,0.1);border:1px solid rgba(242,145,17,0.2);font-size:12px;font-weight:600;color:#fcd34d;">● MySQL</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(51,103,145,0.12);border:1px solid rgba(51,103,145,0.25);font-size:12px;font-weight:600;color:#93c5fd;">● PostgreSQL</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(77,179,61,0.1);border:1px solid rgba(77,179,61,0.2);font-size:12px;font-weight:600;color:#86efac;">● MongoDB</div>
+        <div style="padding:8px 12px;border-radius:8px;background:rgba(220,56,45,0.1);border:1px solid rgba(220,56,45,0.2);font-size:12px;font-weight:600;color:#fca5a5;">● Redis</div>
+      </div>
+    </div>
+
+    <!-- Card 3 — Simulation -->
+    <div class="glass bento-card reveal reveal-delay-2" style="background:linear-gradient(135deg,rgba(16,185,129,0.07),rgba(5,150,105,0.03));">
+      <div class="bento-icon" style="background:rgba(16,185,129,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="bento-title">Simulación de entorno</div>
+      <div class="bento-desc">Latencia de red, errores aleatorios, niveles de aislamiento — simula condiciones reales de producción.</div>
+    </div>
+
+    <!-- Card 4 — Export -->
+    <div class="glass bento-card reveal reveal-delay-3" style="background:linear-gradient(135deg,rgba(251,191,36,0.07),rgba(245,158,11,0.03));">
+      <div class="bento-icon" style="background:rgba(251,191,36,0.12);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div class="bento-title">Exporta resultados</div>
+      <div class="bento-desc">Descarga tablas en CSV, Excel o JSON con un solo clic. Comparte tus resultados fácilmente.</div>
+      <div style="display:flex; gap:6px; margin-top:16px;">
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.2);">CSV</span>
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(59,130,246,0.12);color:#93c5fd;border:1px solid rgba(59,130,246,0.2);">Excel</span>
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(251,191,36,0.12);color:#fcd34d;border:1px solid rgba(251,191,36,0.2);">JSON</span>
+      </div>
+    </div>
+
+    <!-- Card 5 — History wide -->
+    <div class="glass bento-card wide reveal reveal-delay-1" style="background:linear-gradient(135deg,rgba(168,85,247,0.07),rgba(139,92,246,0.03));">
+      <div class="bento-icon" style="background:rgba(168,85,247,0.15);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M3 3h18v18H3z" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="bento-title">Historial y estadísticas</div>
+      <div class="bento-desc">Guarda automáticamente todas tus consultas. Ve métricas de rendimiento, tiempo de ejecución y uso de memoria por motor.</div>
+      <div style="display:flex; gap:16px; margin-top:20px;">
+        <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#c084fc;letter-spacing:-1px;">50</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;">Consultas guardadas</div>
+        </div>
+        <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#34d399;letter-spacing:-1px;">&lt;5ms</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;">Tiempo promedio</div>
+        </div>
+        <div style="flex:1;padding:12px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#60a5fa;letter-spacing:-1px;">100%</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;">Sin pérdidas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 — Theme -->
+    <div class="glass bento-card reveal reveal-delay-2" style="background:linear-gradient(135deg,rgba(148,163,184,0.06),rgba(100,116,139,0.03));">
+      <div class="bento-icon" style="background:rgba(148,163,184,0.1);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+      </div>
+      <div class="bento-title">Modo oscuro / claro</div>
+      <div class="bento-desc">Cambia el tema según tu preferencia. Se recuerda entre sesiones automáticamente.</div>
+      <div style="display:flex; gap:6px; margin-top:16px;">
+        <div id="btnDark" style="flex:1;height:28px;border-radius:8px;background:#0d1117;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#a5b4fc;cursor:pointer;transition:all .2s">DARK</div>
+        <div id="btnLight" style="flex:1;height:28px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#475569;cursor:pointer;transition:all .2s">LIGHT</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ HOW IT WORKS ══════════════ -->
+<section id="howto" style="position:relative;z-index:1; padding:80px 32px 100px; max-width:800px; margin:0 auto; text-align:center;">
+  <div class="reveal" style="margin-bottom:64px;">
+    <div class="badge" style="margin-bottom:20px;">
+      <span class="badge-dot" style="background:#60a5fa; box-shadow:0 0 8px #60a5fa;"></span>
+      Empieza en minutos
+    </div>
+    <h2 style="font-size:clamp(32px,4vw,52px); font-weight:900; letter-spacing:-2px; color:#f8fafc; margin:0;">
+      Tan simple como<br/><span class="grad-text">1, 2, 3</span>
+    </h2>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:0; position:relative;">
+    <!-- Step 1 -->
+    <div class="reveal" style="display:flex; gap:28px; align-items:flex-start; text-align:left; padding:28px;">
+      <div style="flex-shrink:0;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(99,102,241,0.2));border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#818cf8;">1</div>
+      </div>
+      <div style="padding-top:8px;">
+        <div style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-0.5px;margin-bottom:8px;">Descarga e instala</div>
+        <div style="font-size:15px;color:#475569;line-height:1.6;">Un instalador de ~101 MB para Windows. Sin dependencias, sin configuración de servidores. Abre y listo.</div>
+      </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <!-- Step 2 -->
+    <div class="reveal reveal-delay-1" style="display:flex; gap:28px; align-items:flex-start; text-align:left; padding:28px;">
+      <div style="flex-shrink:0;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(5,150,105,0.2));border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#34d399;">2</div>
+      </div>
+      <div style="padding-top:8px;">
+        <div style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-0.5px;margin-bottom:8px;">Elige tu motor</div>
+        <div style="font-size:15px;color:#475569;line-height:1.6;">Selecciona entre los 7 motores disponibles. Incluye bases de datos de ejemplo listas para consultar (FarmaciaDB, TiendaDB).</div>
+      </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <!-- Step 3 -->
+    <div class="reveal reveal-delay-2" style="display:flex; gap:28px; align-items:flex-start; text-align:left; padding:28px;">
+      <div style="flex-shrink:0;">
+        <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(245,158,11,0.2));border:1px solid rgba(251,191,36,0.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fbbf24;">3</div>
+      </div>
+      <div style="padding-top:8px;">
+        <div style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-0.5px;margin-bottom:8px;">Escribe y ejecuta</div>
+        <div style="font-size:15px;color:#475569;line-height:1.6;">Usa el editor con resaltado de sintaxis y presiona Ctrl+Enter para ejecutar. Los resultados aparecen en milisegundos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ DOWNLOAD ══════════════ -->
+<section id="download" style="position:relative;z-index:1; padding:80px 32px 100px;">
+  <!-- Glow center -->
+  <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(99,102,241,0.12),transparent);pointer-events:none;"></div>
+
+  <div style="max-width:900px; margin:0 auto; text-align:center; position:relative;">
+    <div class="reveal" style="margin-bottom:48px;">
+      <div class="badge" style="margin-bottom:20px; background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.25); color:#4ade80;">
+        <span class="badge-dot" style="background:#22c55e; box-shadow:0 0 8px #22c55e;"></span>
+        Gratuito para siempre — sin límites
+      </div>
+      <h2 style="font-size:clamp(36px,5vw,64px); font-weight:900; letter-spacing:-2.5px; color:#f8fafc; margin:0 0 18px;">
+        Descarga ahora
+      </h2>
+      <p style="font-size:18px; color:#475569; max-width:440px; margin:0 auto;">Sin registro. Sin suscripción. Sin telemetría. Solo la herramienta.</p>
+    </div>
+
+    <!-- OS Cards -->
+    <div class="download-grid reveal reveal-delay-1">
+
+      <!-- Windows -->
+      <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
+        <svg width="44" height="44" viewBox="0 0 24 24"><path d="M3 5.5L11 4v8H3V5.5z" fill="#0078d4"/><path d="M3 18.5L11 20v-8H3v6.5z" fill="#0078d4"/><path d="M12 3.7L21 2v10h-9V3.7z" fill="#0078d4"/><path d="M12 20.3L21 22V12h-9v8.3z" fill="#0078d4"/></svg>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:3px;">Windows</div>
+          <div style="font-size:12px;color:#475569;">Windows 10 / 11 · 64-bit · ~101 MB</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;width:100%;margin-top:4px;">
+          <a href="https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/releases/download/v1.8.0/Simulador.DB.Setup.1.8.0.exe" class="dl-btn dl-btn-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Instalador (.exe)
+          </a>
+          <a href="https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds/releases/download/v1.8.0/Simulador.DB.1.8.0.exe" class="dl-btn dl-btn-ghost">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Portátil (sin instalar)
+          </a>
+        </div>
+      </div>
+
+      <!-- macOS -->
+      <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="#e2e8f0"/></svg>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:3px;">macOS</div>
+          <div style="font-size:12px;color:#475569;">macOS 12 Monterey+ · ~101 MB</div>
+        </div>
+        <a href="#" class="dl-btn dl-btn-ghost" style="margin-top:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Próximamente
+        </a>
+      </div>
+
+      <!-- Linux -->
+      <div style="padding:28px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;gap:14px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.16)';this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M20.581 19.049c-.55-.446-.336-1.431-.932-1.928-.196-.12-.41-.207-.573-.231-.27-.047-.456-.04-.61-.1-.355-.142-.427-.693-.777-.977a6.263 6.263 0 0 0-1.265-.66c-.97-.36-1.255-.31-2.51.09-.72.23-1.286-.195-2.085-.27-.442-.043-.708-.067-.806-.33-.126-.346.202-.734.46-.925.198-.148.47-.261.615-.449.207-.263.15-.5.047-.672-.137-.227-.372-.389-.608-.472-.151-.053-.392-.017-.608-.017-.254 0-.35.15-.531.345-.211.225-.466.476-.643.73-.266.393-.356.768-.404 1.17-.047.397-.058.796-.107 1.18-.047.37-.18.83-.118 1.208.064.383.331.74.607 1.023.222.231.574.452.695.737.123.289-.089.644-.073.978.012.24.139.573.073.832-.07.282-.291.413-.445.59-.203.243-.255.587-.179.868.083.3.285.587.557.77.336.225.7.328.938.664.263.367.283.64.459.943.163.284.5.376.794.473.228.075.5.113.723.11.338-.004.693-.017 1.023-.065.385-.055.72-.17.889-.493.207-.393-.052-.83-.159-1.228-.104-.385-.074-.733.14-1.009.189-.245.489-.36.797-.36.281 0 .585.118.85.204.42.137.745.32 1.112.461.4.153.73.246 1.14.283.28.025.574-.02.783-.21.166-.153.216-.38.17-.59-.046-.208-.195-.367-.366-.476zM12 2C6.486 2 2 6.486 2 12c0 5.515 4.487 10 10 10 5.515 0 10-4.485 10-10 0-5.514-4.486-10-10-10z" fill="#f97316"/></svg>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#f8fafc;margin-bottom:3px;">Linux</div>
+          <div style="font-size:12px;color:#475569;">Ubuntu, Debian, Fedora · ~101 MB</div>
+        </div>
+        <a href="#" class="dl-btn dl-btn-ghost" style="margin-top:4px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Próximamente
+        </a>
+      </div>
+    </div>
+
+    <p style="font-size:13px; color:#334155;" class="reveal reveal-delay-2">
+      v1.8.0 · Sin registro · Sin suscripción · Sin telemetría ·
+      <a href="mailto:juanchoqueperca@gmail.com" style="color:#60a5fa;text-decoration:none;">¿Preguntas?</a>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer style="position:relative;z-index:1; border-top:1px solid rgba(255,255,255,0.05); padding:40px 32px;">
+  <div style="max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; align-items:center; text-align:center;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="nav-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/></svg>
+      </div>
+      <span style="font-size:15px;font-weight:700;color:#f8fafc;">Simulador <span style="color:#60a5fa;">DB</span></span>
+      <span class="nav-badge">v1.8.0</span>
+    </div>
+    <div style="display:flex; gap:32px;">
+      <a href="#features" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'">Características</a>
+      <a href="#engines" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'">Motores</a>
+      <a href="#download" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'">Descargar</a>
+      <a href="https://github.com/JhonyVargas/simulador-bds" style="font-size:13px;color:#475569;text-decoration:none;" onmouseover="this.style.color='#f8fafc'" onmouseout="this.style.color='#475569'" target="_blank">GitHub</a>
+    </div>
+    <div style="font-size:12px; color:#1e293b;">© 2025 Simulador DB · Herramienta educativa gratuita</div>
+  </div>
+</footer>
+
+<script>
+  // ── Hero title — typewriter loop ──
+  (function() {
+    const h1 = document.querySelector('section h1');
+    if (!h1) return;
+    h1.classList.remove('reveal', 'reveal-delay-1');
+    h1.style.opacity = '1'; h1.style.transform = 'none'; h1.style.transition = 'none';
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    const hl1 = document.createElement('span');
+    const hl2 = document.createElement('span'); hl2.className = 'grad-text';
+    const hl3 = document.createElement('span');
+    const cur  = document.createElement('span'); cur.className = 'type-cursor';
+
+    h1.innerHTML = '';
+    h1.append(hl1, document.createElement('br'), hl2, document.createElement('br'), hl3);
+
+    // Keywords that flash blue on arrival
+    const KW = new Set(['S','Q','L','7','B','D']);
+
+    async function type(container, text, grad) {
+      container.appendChild(cur);
+      for (const ch of text) {
+        const sp = document.createElement('span');
+        sp.textContent = ch;
+        if (!grad && KW.has(ch)) {
+          sp.style.cssText = 'color:#60a5fa;text-shadow:0 0 14px rgba(96,165,250,0.9)';
+          container.insertBefore(sp, cur);
+          await sleep(50 + Math.random() * 70);
+          setTimeout(() => {
+            sp.style.transition = 'color 0.6s, text-shadow 0.6s';
+            sp.style.color = ''; sp.style.textShadow = '';
+          }, 140);
+        } else {
+          container.insertBefore(sp, cur);
+          await sleep(48 + Math.random() * 72);
+        }
+      }
+      await sleep(90);
+    }
+
+    async function del(container) {
+      container.appendChild(cur);
+      const spans = [...container.querySelectorAll('span:not(.type-cursor)')];
+      for (let i = spans.length - 1; i >= 0; i--) {
+        spans[i].remove();
+        await sleep(16);
+      }
+    }
+
+    async function loop() {
+      while (true) {
+        await type(hl1, 'Aprende SQL',  false);
+        await type(hl2, 'en 7 motores', true);
+        await type(hl3, 'de BD',        false);
+        await sleep(2800);
+        await del(hl3); await del(hl2); await del(hl1);
+        await sleep(480);
+      }
+    }
+    loop();
+  })();
+
+  // ── Hamburger menu ──
+  (function() {
+    const btn = document.getElementById('navHamburger');
+    const menu = document.getElementById('navMobileMenu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      btn.classList.toggle('open', open);
+    });
+    menu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+      });
+    });
+  })();
+
+  // ── Scroll reveal ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Only run cursor/mouse effects on non-touch devices ──
+  if (window.matchMedia('(pointer: fine)').matches) {
+
+    // ── Mouse spotlight ──
+    const spotlight = document.createElement('div');
+    spotlight.className = 'mouse-spotlight';
+    document.body.insertBefore(spotlight, document.body.firstChild);
+
+    // ── Custom cursor — neon code arrow with </> ──
+    const curArrow = document.createElement('div');
+    curArrow.className = 'cur-arrow';
+    curArrow.innerHTML = `<svg width="40" height="46" viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+          <stop offset="0%"   stop-color="#60a5fa"/>
+          <stop offset="52%"  stop-color="#a78bfa"/>
+          <stop offset="100%" stop-color="#f472b6"/>
+        </linearGradient>
+      </defs>
+      <path d="M 4 2 L 4 25 L 9.5 20 L 13.5 29.5 L 16.5 28 L 12.5 18.5 L 21 18.5 Z"
+            fill="#080c18" stroke="url(#cg)" stroke-width="1.8"
+            stroke-linejoin="round" stroke-linecap="round"/>
+      <text x="11" y="13.5" font-family="JetBrains Mono,monospace" font-size="5"
+            font-weight="700" fill="url(#cg)" text-anchor="middle">&#60;/&#62;</text>
+    </svg>`;
+    document.body.appendChild(curArrow);
+
+    let mx = -200, my = -200;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      // Offset so SVG tip (≈4,2 in viewBox → ≈5.7px,2.9px rendered) aligns with real cursor
+      curArrow.style.transform = `translate(${mx - 6}px, ${my - 3}px)`;
+      spotlight.style.background =
+        `radial-gradient(650px circle at ${mx}px ${my}px, rgba(99,102,241,0.07) 0%, rgba(59,130,246,0.04) 35%, transparent 65%)`;
+    });
+
+    // Cursor states on interactive elements
+    const interactives = document.querySelectorAll('a, button, .bento-card, .engine-badge, [class*="dl-btn"], .badge');
+    interactives.forEach(el => {
+      el.addEventListener('mouseenter', () => curArrow.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => curArrow.classList.remove('hovering'));
+    });
+
+    // Click effect
+    document.addEventListener('mousedown', () => curArrow.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => curArrow.classList.remove('clicking'));
+    document.addEventListener('click', e => {
+      const r = document.createElement('div');
+      r.className = 'click-ripple';
+      r.style.left = e.clientX + 'px';
+      r.style.top  = e.clientY + 'px';
+      document.body.appendChild(r);
+      setTimeout(() => r.remove(), 700);
+    });
+
+    document.addEventListener('mouseleave', () => { curArrow.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { curArrow.style.opacity = '1'; });
+
+    // ── Bento card 3D tilt ──
+    document.querySelectorAll('.bento-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        card.classList.remove('tilt-reset');
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform = `perspective(700px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) scale(1.025)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.classList.add('tilt-reset');
+        card.style.transform = '';
+      });
+    });
+
+    // ── Magnetic buttons ──
+    document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .dl-btn-primary').forEach(btn => {
+      let origTransition = btn.style.transition;
+      btn.addEventListener('mousemove', e => {
+        btn.style.transition = 'transform 0.08s ease, box-shadow 0.25s, background 0.25s';
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width  / 2) * 0.28;
+        const y = (e.clientY - r.top  - r.height / 2) * 0.28;
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, background 0.25s';
+        btn.style.transform = '';
+      });
+    });
+
+    // ── Engine badge tilt ──
+    document.querySelectorAll('.engine-badge').forEach(badge => {
+      badge.addEventListener('mousemove', e => {
+        const r = badge.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        badge.style.transform = `translateY(-3px) rotateY(${x * 18}deg)`;
+        badge.style.transition = 'transform 0.08s ease, background 0.25s, border-color 0.25s';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transition = 'transform 0.55s cubic-bezier(0.16,1,0.3,1), background 0.25s, border-color 0.25s';
+        badge.style.transform = '';
+      });
+    });
+  }
+
+  // ── Responsive layout — JS-driven for guaranteed cross-device support ──
+  // Inline styles from JS override CSS class rules, bypassing cache and specificity issues.
+  (function() {
+    var BP = 768, SM = 480;
+
+    function apply() {
+      var w = window.innerWidth;
+      var m = w <= BP, s = w <= SM;
+
+      // — NAV —
+      var nav      = document.querySelector('nav');
+      var navLinks = document.querySelector('.nav-links');
+      var navCta   = document.querySelector('.nav-cta');
+      var burger   = document.getElementById('navHamburger');
+      if (nav)      { nav.style.padding = m ? '0 16px' : ''; nav.style.height = m ? '56px' : ''; }
+      if (navLinks) navLinks.style.display = m ? 'none' : '';
+      if (navCta)   navCta.style.display   = m ? 'none' : '';
+      if (burger)   burger.style.display   = m ? 'flex' : 'none';
+
+      // — HERO —
+      var sec   = document.querySelector('.hero-section');
+      var left  = document.querySelector('.hero-left');
+      var right = document.querySelector('.hero-right');
+      var btns  = document.querySelector('.hero-btns');
+      var sts   = document.querySelector('.hero-stats');
+      var seps  = document.querySelectorAll('.hero-stats-sep');
+      var h1    = document.querySelector('.hero-left h1');
+      var p     = document.querySelector('.hero-left > p');
+
+      if (sec) {
+        sec.style.flexDirection = m ? 'column'     : '';
+        sec.style.alignItems    = m ? 'flex-start' : '';
+        sec.style.padding       = s ? '72px 16px 40px' : m ? '80px 20px 48px' : '';
+        sec.style.gap           = m ? '40px' : '';
+      }
+      if (left) {
+        left.style.width     = m ? '100%'   : '';
+        left.style.maxWidth  = m ? '100%'   : '';
+        left.style.display   = m ? 'block'  : '';
+        left.style.textAlign = m ? 'center' : '';
+      }
+      if (h1) {
+        h1.style.fontSize      = s ? 'clamp(30px,8vw,40px)' : m ? 'clamp(34px,8.5vw,52px)' : '';
+        h1.style.letterSpacing = m ? '-1.5px' : '';
+      }
+      if (p) {
+        p.style.width     = m ? '100%'   : '';
+        p.style.maxWidth  = m ? '100%'   : '';
+        p.style.textAlign = m ? 'center' : '';
+        p.style.fontSize  = s ? '14px'   : m ? '15px' : '';
+      }
+      if (btns) {
+        btns.style.flexDirection = m ? 'column'  : '';
+        btns.style.alignItems    = m ? 'stretch' : '';
+        btns.style.width         = m ? '100%'    : '';
+        btns.style.gap           = m ? '10px'    : '';
+        btns.querySelectorAll('a').forEach(function(a) {
+          a.style.width          = m ? '100%'       : '';
+          a.style.justifyContent = m ? 'center'     : '';
+          a.style.display        = m ? 'flex'       : '';
+          a.style.boxSizing      = m ? 'border-box' : '';
+        });
+      }
+      if (sts) {
+        sts.style.display             = m ? 'grid'    : '';
+        sts.style.gridTemplateColumns = m ? '1fr 1fr' : '';
+        sts.style.gap                 = m ? '16px'    : '';
+        sts.style.width               = m ? '100%'    : '';
+      }
+      seps.forEach(function(sep) { sep.style.display = m ? 'none' : ''; });
+      if (right) {
+        right.style.display  = s ? 'none' : '';
+        right.style.width    = (m && !s) ? '100%' : '';
+        right.style.maxWidth = (m && !s) ? '100%' : '';
+      }
+    }
+
+    apply();
+    window.addEventListener('resize', apply);
+  })();
+
+  // ── Theme toggle ──
+  (function() {
+    function applyTheme(t) {
+      const isLight = t === 'light';
+      document.body.classList.toggle('light', isLight);
+      localStorage.setItem('sdb-theme', t);
+      const d = document.getElementById('btnDark');
+      const l = document.getElementById('btnLight');
+      if (!d || !l) return;
+      if (isLight) {
+        d.style.cssText = 'flex:1;height:28px;border-radius:8px;background:transparent;border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#64748b;cursor:pointer;transition:all .2s';
+        l.style.cssText = 'flex:1;height:28px;border-radius:8px;background:#0f172a;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#a5b4fc;cursor:pointer;transition:all .2s';
+      } else {
+        d.style.cssText = 'flex:1;height:28px;border-radius:8px;background:#0d1117;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#a5b4fc;cursor:pointer;transition:all .2s';
+        l.style.cssText = 'flex:1;height:28px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#475569;cursor:pointer;transition:all .2s';
+      }
+    }
+    applyTheme(localStorage.getItem('sdb-theme') || 'dark');
+    document.addEventListener('click', e => {
+      if (e.target.id === 'btnDark')  applyTheme('dark');
+      if (e.target.id === 'btnLight') applyTheme('light');
+    });
+  })();
+
+</script>
+</body>
+</html>

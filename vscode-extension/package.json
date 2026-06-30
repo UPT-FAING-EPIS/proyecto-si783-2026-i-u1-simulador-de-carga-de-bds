@@ -1,0 +1,39 @@
+{
+  "name": "simulador-carga-bd",
+  "displayName": "Simulador de Carga de BD",
+  "description": "Simula carga en bases de datos SQL (MySQL, PostgreSQL, SQL Server, SQLite, Oracle), MongoDB y Redis directamente en VS Code.",
+  "version": "1.0.0",
+  "publisher": "simulador-bd",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UPT-FAING-EPIS/proyecto-si783-2026-i-u1-simulador-de-carga-de-bds"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other", "Education"],
+  "keywords": ["database", "sql", "mysql", "postgresql", "mongodb", "redis", "load testing", "simulador", "bases de datos"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "simulador-bd.open",
+        "title": "Abrir Simulador de Carga de BD",
+        "category": "Simulador BD",
+        "icon": "$(database)"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.3.3"
+  }
+}
